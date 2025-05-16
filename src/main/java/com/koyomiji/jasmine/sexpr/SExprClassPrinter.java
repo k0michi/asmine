@@ -65,7 +65,7 @@ public class SExprClassPrinter extends Printer {
 
   private static final String USAGE =
           "Prints an S-expression view of the given class.\n"
-                  + "Usage: Textifier [-nodebug] <fully qualified class name or class file name>";
+                  + "Usage: SExprClassPrinter [-nodebug] <fully qualified class name or class file name>";
 
   public static void main(final String[] args){
     main(args, new PrintWriter(System.out, true), new PrintWriter(System.err, true));
