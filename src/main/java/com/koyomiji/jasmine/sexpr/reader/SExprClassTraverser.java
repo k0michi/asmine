@@ -599,7 +599,7 @@ public class SExprClassTraverser {
         case Opcodes.H_PUTFIELD:
         case Opcodes.H_PUTSTATIC:
           Triplet<String, String, String> fieldref = nextConstantFieldref("reference");
-          handle = new Handle(referenceKind, fieldref.first, fieldref.second, fieldref.third, false);
+          handle = new Handle(referenceKind, fieldref.first, fieldref.second, fieldref.third);
           break;
         case Opcodes.H_INVOKEVIRTUAL:
         case Opcodes.H_INVOKESTATIC:
@@ -607,7 +607,7 @@ public class SExprClassTraverser {
         case Opcodes.H_NEWINVOKESPECIAL:
         case Opcodes.H_INVOKEINTERFACE:
           Quartet<String, String, String, Boolean> methodref = nextConstantMethodref("reference");
-          handle = new Handle(referenceKind, methodref.first, methodref.second, methodref.third, methodref.fourth);
+          handle = new Handle(referenceKind, methodref.first, methodref.second, methodref.third);
           break;
       }
 
