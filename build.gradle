@@ -1,0 +1,41 @@
+plugins {
+    id 'java'
+}
+
+group = 'com.koyomiji.jasmine'
+version = '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(8)
+    }
+}
+
+tasks.named('compileTestJava') {
+    javaCompiler = javaToolchains.compilerFor {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
+tasks.named('test') {
+    javaLauncher = javaToolchains.launcherFor {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
+dependencies {
+    testImplementation platform('org.junit:junit-bom:5.9.1')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    implementation group: 'org.ow2.asm', name: 'asm', version: '9.7'
+    implementation group: 'org.ow2.asm', name: 'asm-commons', version: '9.7'
+    implementation group: 'org.ow2.asm', name: 'asm-tree', version: '9.7'
+    implementation group: 'org.ow2.asm', name: 'asm-util', version: '9.7'
+}
+
+test {
+    useJUnitPlatform()
+}
