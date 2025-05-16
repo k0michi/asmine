@@ -15,11 +15,12 @@ import com.koyomiji.jasmine.sexpr.tree.SExprSymbolNode;
 import com.koyomiji.jasmine.tuple.Pair;
 import org.objectweb.asm.*;
 import org.objectweb.asm.util.Printer;
+import org.objectweb.asm.util.TraceClassVisitor;
 
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.*;
 
 public class SExprClassPrinter extends Printer {
@@ -66,22 +67,49 @@ public class SExprClassPrinter extends Printer {
           "Prints an S-expression view of the given class.\n"
                   + "Usage: Textifier [-nodebug] <fully qualified class name or class file name>";
 
-  public static void main(final String[] args) throws IOException {
+  public static void main(final String[] args){
     main(args, new PrintWriter(System.out, true), new PrintWriter(System.err, true));
   }
 
   private static void main(final String[] args, final PrintWriter output, final PrintWriter logger) {
     try {
-      Method main = Printer.class.getDeclaredMethod("main",
-              String[].class, String.class, Printer.class, PrintWriter.class, PrintWriter.class);
-      main.setAccessible(true);
-      main.invoke(null, args, USAGE, new SExprClassPrinter(), output, logger);
-    } catch (NoSuchMethodException e) {
+      main(args, USAGE, new SExprClassPrinter(), output, logger);
+    } catch (IOException e) {
       throw new RuntimeException(e);
-    } catch (InvocationTargetException e) {
-      throw new RuntimeException(e);
-    } catch (IllegalAccessException e) {
-      throw new RuntimeException(e);
+    }
+  }
+
+  static void main(
+          final String[] args,
+          final String usage,
+          final Printer printer,
+          final PrintWriter output,
+          final PrintWriter logger)
+          throws IOException {
+    TraceClassVisitor traceClassVisitor = new TraceClassVisitor(null, printer, output);
+
+    String className = null;
+    int parsingOptions = 0;
+
+    for (int i = 0; i < args.length; i++) {
+      if (args[i].equals("-nodebug")) {
+        parsingOptions |= ClassReader.SKIP_DEBUG;
+      } else {
+        className = args[i];
+      }
+    }
+
+    if (className == null) {
+      logger.println(usage);
+      return;
+    }
+
+    if (className.endsWith(".class") || className.indexOf('\\') != -1  || className.indexOf('/') != -1) {
+      try (InputStream inputStream = new FileInputStream(className)) {
+        new ClassReader(inputStream).accept(traceClassVisitor, parsingOptions);
+      }
+    } else {
+      new ClassReader(className).accept(traceClassVisitor, parsingOptions);
     }
   }
 
