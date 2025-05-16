@@ -120,7 +120,7 @@ public class InsnListListAdapter implements List<AbstractInsnNode> {
   public boolean retainAll(Collection<?> c) {
     boolean modified = false;
 
-    for (AbstractInsnNode insn : insnList) {
+    for (AbstractInsnNode insn : new InsnListIterableAdapter(insnList)) {
       if (!c.contains(insn)) {
         remove(insn);
         modified = true;

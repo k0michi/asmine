@@ -1,9 +1,6 @@
 package com.koyomiji.jasmine.query;
 
-import com.koyomiji.jasmine.common.ArrayHelper;
-import com.koyomiji.jasmine.common.HashSetHelper;
-import com.koyomiji.jasmine.common.InsnListHelper;
-import com.koyomiji.jasmine.common.ListHelper;
+import com.koyomiji.jasmine.common.*;
 import com.koyomiji.jasmine.tree.AbstractInsnNodeHelper;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.InsnList;
@@ -21,7 +18,7 @@ public class MethodManipulator {
   public MethodManipulator(MethodNode methodNode) {
     this.methodNode = methodNode;
 
-    for (AbstractInsnNode insn : methodNode.instructions) {
+    for (AbstractInsnNode insn : new InsnListIterableAdapter(methodNode.instructions)) {
       if (AbstractInsnNodeHelper.isReal(insn)) {
         indexSymbols.add(HashSetHelper.of(new Object()));
       }
