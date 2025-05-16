@@ -5,36 +5,26 @@ import org.objectweb.asm.Handle;
 
 public class ConstantDynamicCompat {
   public static boolean instanceOf(Object object) {
-    return object instanceof ConstantDynamic;
+    return false;
   }
 
   public static Handle getBootstrapMethod(Object object) {
-    return object instanceof ConstantDynamic
-        ? ((ConstantDynamic) object).getBootstrapMethod()
-        : null;
+    return null;
   }
 
   public static int getBootstrapMethodArgumentCount(Object object) {
-    return object instanceof ConstantDynamic
-        ? ((ConstantDynamic) object).getBootstrapMethodArgumentCount()
-        : 0;
+    return 0;
   }
 
   public static Object getBootstrapMethodArgument(Object object, int index) {
-    return object instanceof ConstantDynamic
-        ? ((ConstantDynamic) object).getBootstrapMethodArgument(index)
-        : null;
+    return null;
   }
 
   public static String getName(Object object) {
-    return object instanceof ConstantDynamic
-        ? ((ConstantDynamic) object).getName()
-        : null;
+    return null;
   }
 
   public static String getDescriptor(Object object) {
-    return object instanceof ConstantDynamic
-        ? ((ConstantDynamic) object).getDescriptor()
-        : null;
+    return null;
   }
 }
