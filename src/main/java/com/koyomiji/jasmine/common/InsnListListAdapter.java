@@ -5,10 +5,10 @@ import org.objectweb.asm.tree.InsnList;
 
 import java.util.*;
 
-public class InsnListAdapter implements List<AbstractInsnNode> {
+public class InsnListListAdapter implements List<AbstractInsnNode> {
   private final InsnList insnList;
 
-  public InsnListAdapter(InsnList insnList) {
+  public InsnListListAdapter(InsnList insnList) {
     this.insnList = insnList;
   }
 
