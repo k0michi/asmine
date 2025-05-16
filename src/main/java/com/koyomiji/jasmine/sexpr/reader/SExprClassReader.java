@@ -65,56 +65,56 @@ public class SExprClassReader {
       } else if (traverser.isNextList("source_debug_extension")) {
         classNode.sourceDebug = readSourceDebugExtension(traverser.nextListTraverser());
 //      } else if (traverser.isNextList("bootstrap_method")) { // Bootstrap methods are inlined
-      } else if (traverser.isNextList("module")) {
-        if (classNode.module == null) {
-          classNode.module = new ModuleNode(OpcodesCompat.ASM_LATEST, null, 0, null, new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
-        }
-
-        ModuleNode moduleNode = readModule(traverser.nextListTraverser());
-        classNode.module.name = moduleNode.name;
-        classNode.module.access = moduleNode.access;
-        classNode.module.version = moduleNode.version;
-        classNode.module.requires = moduleNode.requires;
-        classNode.module.exports = moduleNode.exports;
-        classNode.module.opens = moduleNode.opens;
-        classNode.module.uses = moduleNode.uses;
-        classNode.module.provides = moduleNode.provides;
-      } else if (traverser.isNextList("module_package")) {
-        if (classNode.module == null) {
-          classNode.module = new ModuleNode(OpcodesCompat.ASM_LATEST, null, 0, null, new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
-        }
-
-        if (classNode.module.packages == null) {
-          classNode.module.packages = new ArrayList<>();
-        }
-
-        classNode.module.packages.add(readModulePackage(traverser.nextListTraverser()));
-      } else if (traverser.isNextList("module_main_class")) {
-        if (classNode.module == null) {
-          classNode.module = new ModuleNode(OpcodesCompat.ASM_LATEST, null, 0, null, new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
-        }
-
-        classNode.module.mainClass = readModuleMainClass(traverser.nextListTraverser());
-      } else if (traverser.isNextList("nest_host")) {
-        classNode.nestHostClass = readNestHost(traverser.nextListTraverser());
-      } else if (traverser.isNextList("nest_member")) {
-        if (classNode.nestMembers == null) {
-          classNode.nestMembers = new ArrayList<>();
-        }
-
-        classNode.nestMembers.add(readNestMember(traverser.nextListTraverser()));
-      } else if (traverser.isNextList("record_component")) {
-        if (classNode.recordComponents == null) {
-          classNode.recordComponents = new ArrayList<>();
-        }
-
-        classNode.recordComponents.add(readRecordComponent(traverser.nextListTraverser()));
-      } else if (traverser.isNextList("permitted_subclass")) {
-        if (classNode.permittedSubclasses == null) {
-          classNode.permittedSubclasses = new ArrayList<>();
-        }
-
-        classNode.permittedSubclasses.add(readPermittedSubclass(traverser.nextListTraverser()));
+//      } else if (traverser.isNextList("module")) {
+//        if (classNode.module == null) {
+//          classNode.module = new ModuleNode(OpcodesCompat.ASM_LATEST, null, 0, null, new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
+//        }
+//
+//        ModuleNode moduleNode = readModule(traverser.nextListTraverser());
+//        classNode.module.name = moduleNode.name;
+//        classNode.module.access = moduleNode.access;
+//        classNode.module.version = moduleNode.version;
+//        classNode.module.requires = moduleNode.requires;
+//        classNode.module.exports = moduleNode.exports;
+//        classNode.module.opens = moduleNode.opens;
+//        classNode.module.uses = moduleNode.uses;
+//        classNode.module.provides = moduleNode.provides;
+//      } else if (traverser.isNextList("module_package")) {
+//        if (classNode.module == null) {
+//          classNode.module = new ModuleNode(OpcodesCompat.ASM_LATEST, null, 0, null, new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
+//        }
+//
+//        if (classNode.module.packages == null) {
+//          classNode.module.packages = new ArrayList<>();
+//        }
+//
+//        classNode.module.packages.add(readModulePackage(traverser.nextListTraverser()));
+//      } else if (traverser.isNextList("module_main_class")) {
+//        if (classNode.module == null) {
+//          classNode.module = new ModuleNode(OpcodesCompat.ASM_LATEST, null, 0, null, new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
+//        }
+//
+//        classNode.module.mainClass = readModuleMainClass(traverser.nextListTraverser());
+//      } else if (traverser.isNextList("nest_host")) {
+//        classNode.nestHostClass = readNestHost(traverser.nextListTraverser());
+//      } else if (traverser.isNextList("nest_member")) {
+//        if (classNode.nestMembers == null) {
+//          classNode.nestMembers = new ArrayList<>();
+//        }
+//
+//        classNode.nestMembers.add(readNestMember(traverser.nextListTraverser()));
+//      } else if (traverser.isNextList("record_component")) {
+//        if (classNode.recordComponents == null) {
+//          classNode.recordComponents = new ArrayList<>();
+//        }
+//
+//        classNode.recordComponents.add(readRecordComponent(traverser.nextListTraverser()));
+//      } else if (traverser.isNextList("permitted_subclass")) {
+//        if (classNode.permittedSubclasses == null) {
+//          classNode.permittedSubclasses = new ArrayList<>();
+//        }
+//
+//        classNode.permittedSubclasses.add(readPermittedSubclass(traverser.nextListTraverser()));
       } else if (traverser.isNextList("synthetic")) {
         classNode.access |= readSynthetic(traverser.nextListTraverser());
       } else if (traverser.isNextList("deprecated")) {
@@ -252,14 +252,14 @@ public class SExprClassReader {
         }
 
         methodNode.visibleParameterAnnotations = ArrayHelper.add(methodNode.visibleParameterAnnotations, readParameterAnnotation(traverser.nextListTraverser()));
-        methodNode.visibleAnnotableParameterCount = methodNode.visibleParameterAnnotations.length;
+//        methodNode.visibleAnnotableParameterCount = methodNode.visibleParameterAnnotations.length;
       } else if (traverser.isNextList("runtime_invisible_parameter_annotation")) {
         if (methodNode.invisibleParameterAnnotations == null) {
           methodNode.invisibleParameterAnnotations = new List[0];
         }
 
         methodNode.invisibleParameterAnnotations = ArrayHelper.add(methodNode.invisibleParameterAnnotations, readParameterAnnotation(traverser.nextListTraverser()));
-        methodNode.invisibleAnnotableParameterCount = methodNode.invisibleParameterAnnotations.length;
+//        methodNode.invisibleAnnotableParameterCount = methodNode.invisibleParameterAnnotations.length;
       } else if (traverser.isNextList("annotation_default")) {
         methodNode.annotationDefault = readAnnotationDefault(traverser.nextListTraverser());
       } else if (traverser.isNextList("method_parameter")) {
@@ -344,66 +344,66 @@ public class SExprClassReader {
     return traverser.nextString();
   }
 
-  private ModuleNode readModule(SExprClassTraverser traverser) {
-    traverser.skip();
-    ModuleNode moduleNode = new ModuleNode(OpcodesCompat.ASM_LATEST, null, 0, null, new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
-    moduleNode.name = traverser.nextConstantModule("name");
-    moduleNode.access = traverser.nextFlags("flag", AccessFlagTarget.MODULE);
-    moduleNode.version = traverser.nextStringOptional("version");
-
-    while (traverser.hasNext()) {
-      if (traverser.isNextList("requires")) {
-        moduleNode.requires.add(readRequires(traverser.nextListTraverser()));
-      } else if (traverser.isNextList("exports")) {
-        moduleNode.exports.add(readExports(traverser.nextListTraverser()));
-      } else if (traverser.isNextList("opens")) {
-        moduleNode.opens.add(readOpens(traverser.nextListTraverser()));
-      } else if (traverser.isNextList("uses")) {
-        moduleNode.uses.addAll(traverser.nextConstantClasses("uses"));
-      } else if (traverser.isNextList("provides")) {
-        moduleNode.provides.add(readProvides(traverser.nextListTraverser()));
-      } else {
-        throw new IllegalArgumentException("Invalid S-Expression node");
-      }
-    }
-
-    return moduleNode;
-  }
-
-  private ModuleRequireNode readRequires(SExprClassTraverser traverser) {
-    traverser.skip();
-    ModuleRequireNode moduleRequireNode = new ModuleRequireNode(null, 0, null);
-    moduleRequireNode.module = traverser.nextConstantModule("requires");
-    moduleRequireNode.access = traverser.nextFlags("flag", AccessFlagTarget.MODULE_REQUIRES);
-    moduleRequireNode.version = traverser.nextStringOptional("version");
-    return moduleRequireNode;
-  }
-
-  private ModuleExportNode readExports(SExprClassTraverser traverser) {
-    traverser.skip();
-    ModuleExportNode moduleExportNode = new ModuleExportNode(null, 0, new ArrayList<>());
-    moduleExportNode.packaze = traverser.nextConstantPackage("exports");
-    moduleExportNode.access = traverser.nextFlags("flag", AccessFlagTarget.MODULE_EXPORTS);
-    moduleExportNode.modules = traverser.nextConstantModules("to");
-    return moduleExportNode;
-  }
-
-  private ModuleOpenNode readOpens(SExprClassTraverser traverser) {
-    traverser.skip();
-    ModuleOpenNode moduleOpenNode = new ModuleOpenNode(null, 0, new ArrayList<>());
-    moduleOpenNode.packaze = traverser.nextConstantPackage("exports");
-    moduleOpenNode.access = traverser.nextFlags("flag", AccessFlagTarget.MODULE_OPENS);
-    moduleOpenNode.modules = traverser.nextConstantModules("to");
-    return moduleOpenNode;
-  }
-
-  private ModuleProvideNode readProvides(SExprClassTraverser traverser) {
-    traverser.skip();
-    ModuleProvideNode moduleProvideNode = new ModuleProvideNode(null, new ArrayList<>());
-    moduleProvideNode.service = traverser.nextConstantClass("provides");
-    moduleProvideNode.providers = traverser.nextConstantClasses("with");
-    return moduleProvideNode;
-  }
+//  private ModuleNode readModule(SExprClassTraverser traverser) {
+//    traverser.skip();
+//    ModuleNode moduleNode = new ModuleNode(OpcodesCompat.ASM_LATEST, null, 0, null, new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
+//    moduleNode.name = traverser.nextConstantModule("name");
+//    moduleNode.access = traverser.nextFlags("flag", AccessFlagTarget.MODULE);
+//    moduleNode.version = traverser.nextStringOptional("version");
+//
+//    while (traverser.hasNext()) {
+//      if (traverser.isNextList("requires")) {
+//        moduleNode.requires.add(readRequires(traverser.nextListTraverser()));
+//      } else if (traverser.isNextList("exports")) {
+//        moduleNode.exports.add(readExports(traverser.nextListTraverser()));
+//      } else if (traverser.isNextList("opens")) {
+//        moduleNode.opens.add(readOpens(traverser.nextListTraverser()));
+//      } else if (traverser.isNextList("uses")) {
+//        moduleNode.uses.addAll(traverser.nextConstantClasses("uses"));
+//      } else if (traverser.isNextList("provides")) {
+//        moduleNode.provides.add(readProvides(traverser.nextListTraverser()));
+//      } else {
+//        throw new IllegalArgumentException("Invalid S-Expression node");
+//      }
+//    }
+//
+//    return moduleNode;
+//  }
+//
+//  private ModuleRequireNode readRequires(SExprClassTraverser traverser) {
+//    traverser.skip();
+//    ModuleRequireNode moduleRequireNode = new ModuleRequireNode(null, 0, null);
+//    moduleRequireNode.module = traverser.nextConstantModule("requires");
+//    moduleRequireNode.access = traverser.nextFlags("flag", AccessFlagTarget.MODULE_REQUIRES);
+//    moduleRequireNode.version = traverser.nextStringOptional("version");
+//    return moduleRequireNode;
+//  }
+//
+//  private ModuleExportNode readExports(SExprClassTraverser traverser) {
+//    traverser.skip();
+//    ModuleExportNode moduleExportNode = new ModuleExportNode(null, 0, new ArrayList<>());
+//    moduleExportNode.packaze = traverser.nextConstantPackage("exports");
+//    moduleExportNode.access = traverser.nextFlags("flag", AccessFlagTarget.MODULE_EXPORTS);
+//    moduleExportNode.modules = traverser.nextConstantModules("to");
+//    return moduleExportNode;
+//  }
+//
+//  private ModuleOpenNode readOpens(SExprClassTraverser traverser) {
+//    traverser.skip();
+//    ModuleOpenNode moduleOpenNode = new ModuleOpenNode(null, 0, new ArrayList<>());
+//    moduleOpenNode.packaze = traverser.nextConstantPackage("exports");
+//    moduleOpenNode.access = traverser.nextFlags("flag", AccessFlagTarget.MODULE_OPENS);
+//    moduleOpenNode.modules = traverser.nextConstantModules("to");
+//    return moduleOpenNode;
+//  }
+//
+//  private ModuleProvideNode readProvides(SExprClassTraverser traverser) {
+//    traverser.skip();
+//    ModuleProvideNode moduleProvideNode = new ModuleProvideNode(null, new ArrayList<>());
+//    moduleProvideNode.service = traverser.nextConstantClass("provides");
+//    moduleProvideNode.providers = traverser.nextConstantClasses("with");
+//    return moduleProvideNode;
+//  }
 
   private String readModulePackage(SExprClassTraverser traverser) {
     traverser.skip();
@@ -425,52 +425,52 @@ public class SExprClassReader {
     return traverser.nextConstantClass();
   }
 
-  private RecordComponentNode readRecordComponent(SExprClassTraverser traverser) {
-    traverser.skip();
-    RecordComponentNode recordComponentNode = new RecordComponentNode(null, null, null);
-    recordComponentNode.name = traverser.nextString("name");
-    recordComponentNode.descriptor = traverser.nextString("descriptor");
-
-    while (traverser.hasNext()) {
-      if (traverser.isNextList("signature")) {
-        recordComponentNode.signature = readSignature(traverser.nextListTraverser());
-      } else if (traverser.isNextList("runtime_visible_annotation")) {
-        if (recordComponentNode.visibleAnnotations == null) {
-          recordComponentNode.visibleAnnotations = new ArrayList<>();
-        }
-
-        recordComponentNode.visibleAnnotations.add(readAnnotation(traverser.nextListTraverser()));
-      } else if (traverser.isNextList("runtime_invisible_annotation")) {
-        if (recordComponentNode.invisibleAnnotations == null) {
-          recordComponentNode.invisibleAnnotations = new ArrayList<>();
-        }
-
-        recordComponentNode.invisibleAnnotations.add(readAnnotation(traverser.nextListTraverser()));
-      } else if (traverser.isNextList("runtime_visible_type_annotation")) {
-        if (recordComponentNode.visibleTypeAnnotations == null) {
-          recordComponentNode.visibleTypeAnnotations = new ArrayList<>();
-        }
-
-        recordComponentNode.visibleTypeAnnotations.add(readTypeAnnotation(traverser.nextListTraverser()));
-      } else if (traverser.isNextList("runtime_invisible_type_annotation")) {
-        if (recordComponentNode.invisibleTypeAnnotations == null) {
-          recordComponentNode.invisibleTypeAnnotations = new ArrayList<>();
-        }
-
-        recordComponentNode.invisibleTypeAnnotations.add(readTypeAnnotation(traverser.nextListTraverser()));
-      } else if (traverser.isNextList("unknown")) {
-        if (recordComponentNode.attrs == null) {
-          recordComponentNode.attrs = new ArrayList<>();
-        }
-
-        recordComponentNode.attrs.add(readUnknownAttribute(traverser.nextListTraverser(), false));
-      } else {
-        throw new IllegalArgumentException("Invalid S-Expression node");
-      }
-    }
-
-    return recordComponentNode;
-  }
+//  private RecordComponentNode readRecordComponent(SExprClassTraverser traverser) {
+//    traverser.skip();
+//    RecordComponentNode recordComponentNode = new RecordComponentNode(null, null, null);
+//    recordComponentNode.name = traverser.nextString("name");
+//    recordComponentNode.descriptor = traverser.nextString("descriptor");
+//
+//    while (traverser.hasNext()) {
+//      if (traverser.isNextList("signature")) {
+//        recordComponentNode.signature = readSignature(traverser.nextListTraverser());
+//      } else if (traverser.isNextList("runtime_visible_annotation")) {
+//        if (recordComponentNode.visibleAnnotations == null) {
+//          recordComponentNode.visibleAnnotations = new ArrayList<>();
+//        }
+//
+//        recordComponentNode.visibleAnnotations.add(readAnnotation(traverser.nextListTraverser()));
+//      } else if (traverser.isNextList("runtime_invisible_annotation")) {
+//        if (recordComponentNode.invisibleAnnotations == null) {
+//          recordComponentNode.invisibleAnnotations = new ArrayList<>();
+//        }
+//
+//        recordComponentNode.invisibleAnnotations.add(readAnnotation(traverser.nextListTraverser()));
+//      } else if (traverser.isNextList("runtime_visible_type_annotation")) {
+//        if (recordComponentNode.visibleTypeAnnotations == null) {
+//          recordComponentNode.visibleTypeAnnotations = new ArrayList<>();
+//        }
+//
+//        recordComponentNode.visibleTypeAnnotations.add(readTypeAnnotation(traverser.nextListTraverser()));
+//      } else if (traverser.isNextList("runtime_invisible_type_annotation")) {
+//        if (recordComponentNode.invisibleTypeAnnotations == null) {
+//          recordComponentNode.invisibleTypeAnnotations = new ArrayList<>();
+//        }
+//
+//        recordComponentNode.invisibleTypeAnnotations.add(readTypeAnnotation(traverser.nextListTraverser()));
+//      } else if (traverser.isNextList("unknown")) {
+//        if (recordComponentNode.attrs == null) {
+//          recordComponentNode.attrs = new ArrayList<>();
+//        }
+//
+//        recordComponentNode.attrs.add(readUnknownAttribute(traverser.nextListTraverser(), false));
+//      } else {
+//        throw new IllegalArgumentException("Invalid S-Expression node");
+//      }
+//    }
+//
+//    return recordComponentNode;
+//  }
 
   private String readPermittedSubclass(SExprClassTraverser traverser) {
     traverser.skip();

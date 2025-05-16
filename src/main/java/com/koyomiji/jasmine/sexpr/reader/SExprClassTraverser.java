@@ -309,8 +309,8 @@ public class SExprClassTraverser {
         return nextConstantMethodHandle(null);
       } else if (isNextList("method_type")) {
         return nextConstantMethodType(null);
-      } else if (isNextList("dynamic")) {
-        return nextConstantDynamic(null);
+//      } else if (isNextList("dynamic")) {
+//        return nextConstantDynamic(null);
       }
     }
 
@@ -638,26 +638,26 @@ public class SExprClassTraverser {
     throw new IllegalArgumentException("Invalid S-Expression node");
   }
 
-  public ConstantDynamic nextConstantDynamic(String name) {
-    if (name != null && isNextList(name)) {
-      SExprClassTraverser next = nextListTraverser();
-      next.skip();
-      ConstantDynamic value = next.nextConstantDynamic(null);
-      next.expectEnd();
-      return value;
-    } else if (name == null && isNextList("dynamic")) {
-      SExprClassTraverser next = nextListTraverser();
-      next.skip();
-
-      Pair<Handle, Object[]> bootstrapMethod = next.nextBootstrapMethod("bootstrap_method");
-      Pair<String, String> nameAndType = next.nextConstantNameAndType("name_and_type");
-
-      next.expectEnd();
-      return new ConstantDynamic(nameAndType.first, nameAndType.second, bootstrapMethod.first, bootstrapMethod.second);
-    }
-
-    throw new IllegalArgumentException("Invalid S-Expression node");
-  }
+//  public ConstantDynamic nextConstantDynamic(String name) {
+//    if (name != null && isNextList(name)) {
+//      SExprClassTraverser next = nextListTraverser();
+//      next.skip();
+//      ConstantDynamic value = next.nextConstantDynamic(null);
+//      next.expectEnd();
+//      return value;
+//    } else if (name == null && isNextList("dynamic")) {
+//      SExprClassTraverser next = nextListTraverser();
+//      next.skip();
+//
+//      Pair<Handle, Object[]> bootstrapMethod = next.nextBootstrapMethod("bootstrap_method");
+//      Pair<String, String> nameAndType = next.nextConstantNameAndType("name_and_type");
+//
+//      next.expectEnd();
+//      return new ConstantDynamic(nameAndType.first, nameAndType.second, bootstrapMethod.first, bootstrapMethod.second);
+//    }
+//
+//    throw new IllegalArgumentException("Invalid S-Expression node");
+//  }
 
   public Quartet<Handle, Object[], String, String> nextConstantInvokeDynamic(String name) {
     if (name != null && isNextList(name)) {

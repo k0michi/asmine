@@ -1,6 +1,5 @@
 package com.koyomiji.jasmine.compat;
 
-import org.objectweb.asm.ConstantDynamic;
 import org.objectweb.asm.Handle;
 
 public class ConstantDynamicCompat {
