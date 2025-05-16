@@ -2,11 +2,15 @@ package com.koyomiji.jasmine.test;
 
 import com.koyomiji.jasmine.common.InsnStencils;
 import com.koyomiji.jasmine.common.Insns;
+import com.koyomiji.jasmine.compat.OpcodesCompat;
 import com.koyomiji.jasmine.query.MethodQuery;
 import com.koyomiji.jasmine.regex.compiler.Regexes;
 import com.koyomiji.jasmine.regex.compiler.code.CodeRegexes;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.tree.InsnNode;
+import org.objectweb.asm.tree.MethodNode;
 
 public class MethodQueryTest {
   @Test
@@ -339,6 +343,34 @@ public class MethodQueryTest {
                             Regexes.anchorBegin(),
                             CodeRegexes.stencil(InsnStencils.iconst_0()),
                             CodeRegexes.stencil(InsnStencils.iconst_0()),
+                            CodeRegexes.stencil(InsnStencils.iconst_0()),
+                            Regexes.anchorEnd()
+                    )
+            )
+            .isPresent();
+
+    Assertions.assertTrue(present);
+  }
+
+  // Initialize from MethodNode
+  @Test
+  void test_3() {
+    MethodNode methodNode = new MethodNode(OpcodesCompat.ASM_LATEST);
+    methodNode.instructions.add(new InsnNode(Opcodes.NOP));
+
+    boolean present = MethodQuery.of(methodNode)
+            .selectCodeFragments(
+                    Regexes.concatenate(
+                            CodeRegexes.stencil(InsnStencils.nop())
+                    )
+            )
+            .replaceWith(
+                    InsnStencils.iconst_0()
+            )
+            .done()
+            .selectCodeFragment(
+                    Regexes.concatenate(
+                            Regexes.anchorBegin(),
                             CodeRegexes.stencil(InsnStencils.iconst_0()),
                             Regexes.anchorEnd()
                     )
