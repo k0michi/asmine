@@ -21,25 +21,26 @@ public class AlternateNode extends AbstractRegexNode {
 
   @Override
   public List<AbstractRegexInsn> compile(RegexCompilerContext context) {
-    int offset = 1;
-    List<Integer> offsets = new ArrayList<>();
     List<AbstractRegexInsn> insns = new ArrayList<>();
+    List<PseudoLabelInsn>  labels = new ArrayList<>();
+    PseudoLabelInsn end = new PseudoLabelInsn();
 
-    for(AbstractRegexNode c : options) {
-      offsets.add(offset);
-      List<AbstractRegexInsn> compiled = c.compile(context);
-      insns.add(null);
-      insns.addAll(compiled);
-      offset += compiled.size() + 1;
+    for (int i = 0; i < options.size(); i++) {
+      labels.add(new PseudoLabelInsn());
     }
 
-    insns.set(0, new ForkInsn(offsets));
+    insns.add(new PseudoForkInsn(labels));
 
-    for (int i = 1; i < offsets.size(); i++) {
-      int offsetValue = offsets.get(i) - 1;
-      insns.set(offsetValue, new JumpInsn(insns.size() - offsetValue));
+    for (int i = 0; i < options.size(); i++) {
+      insns.add(labels.get(i));
+      insns.addAll(options.get(i).compile(context));
+
+      if (i + 1 < options.size()) {
+        insns.add(new PseudoJumpInsn(end));
+      }
     }
 
+    insns.add(end);
     return insns;
   }
 }
