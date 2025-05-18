@@ -187,7 +187,7 @@ public class RegexProcessorTest {
 
   // star
   @Test
-  void test_compiler_4() {
+  void test_compiler_3() {
     List<AbstractRegexInsn> insns = compile(Regexes.concatenate(
             Regexes.star(
                     Regexes.alternate(
@@ -202,6 +202,27 @@ public class RegexProcessorTest {
     );
     RegexProcessor vm = new RegexProcessor(insns, string);
     Assertions.assertNotNull(vm.execute());
+  }
+
+  // lazy star
+  @Test
+  void test_compiler_4() {
+    List<AbstractRegexInsn> insns = compile(Regexes.concatenate(
+            Regexes.bind(0,
+                    Regexes.star(
+                            Regexes.alternate(
+                                    StringRegexes.literal('a'),
+                                    StringRegexes.literal('b')
+                            ),
+                            QuantifierType.LAZY)
+            )
+    ));
+    ArrayList<Object> string = ArrayListHelper.of(
+            'a',
+            'b'
+    );
+    RegexProcessor vm = new RegexProcessor(insns, string);
+    Assertions.assertEquals(Pair.of(0, 0), vm.execute().getBoundRange(0));
   }
 
   // plus
@@ -223,9 +244,30 @@ public class RegexProcessorTest {
     Assertions.assertNotNull(vm.execute());
   }
 
-  // question
+  // lazy plus
   @Test
   void test_compiler_6() {
+    List<AbstractRegexInsn> insns = compile(Regexes.concatenate(
+            Regexes.bind(0,
+                    Regexes.plus(
+                            Regexes.alternate(
+                                    StringRegexes.literal('a'),
+                                    StringRegexes.literal('b')
+                            ),
+                            QuantifierType.LAZY)
+            )
+    ));
+    ArrayList<Object> string = ArrayListHelper.of(
+            'a',
+            'b'
+    );
+    RegexProcessor vm = new RegexProcessor(insns, string);
+    Assertions.assertEquals(Pair.of(0, 1), vm.execute().getBoundRange(0));
+  }
+
+  // question
+  @Test
+  void test_compiler_7() {
     List<AbstractRegexInsn> insns = compile(Regexes.concatenate(
             Regexes.question(
                     StringRegexes.literal('a')
@@ -238,25 +280,25 @@ public class RegexProcessorTest {
     Assertions.assertNotNull(vm.execute());
   }
 
-  // star
+  // lazy question
   @Test
-  void test_compiler_3() {
+  void test_compiler_8() {
     List<AbstractRegexInsn> insns = compile(Regexes.concatenate(
-            Regexes.anchorBegin(),
-            Regexes.alternate(
-                    StringRegexes.literal('a'),
-                    StringRegexes.literal('b')
-            ),
-            StringRegexes.literal('c'),
-            Regexes.anchorEnd()
+            Regexes.bind(0,
+                    Regexes.question(
+                            Regexes.alternate(
+                                    StringRegexes.literal('a'),
+                                    StringRegexes.literal('b')
+                            ),
+                            QuantifierType.LAZY)
+            )
     ));
     ArrayList<Object> string = ArrayListHelper.of(
             'a',
-            'c',
-            'c'
+            'b'
     );
     RegexProcessor vm = new RegexProcessor(insns, string);
-    Assertions.assertNull(vm.execute());
+    Assertions.assertEquals(Pair.of(0, 0), vm.execute().getBoundRange(0));
   }
 
   @Test
