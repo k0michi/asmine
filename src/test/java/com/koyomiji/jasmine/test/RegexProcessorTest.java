@@ -130,6 +130,7 @@ public class RegexProcessorTest {
     return new RegexCompiler().compile(node);
   }
 
+  // concatenate
   @Test
   void test_compiler_0() {
     List<AbstractRegexInsn> insns = compile(Regexes.concatenate(
@@ -146,6 +147,7 @@ public class RegexProcessorTest {
     Assertions.assertNotNull(vm.execute());
   }
 
+  // alternate
   @Test
   void test_compiler_1() {
     List<AbstractRegexInsn> insns = compile(Regexes.concatenate(
@@ -161,6 +163,100 @@ public class RegexProcessorTest {
     );
     RegexProcessor vm = new RegexProcessor(insns, string);
     Assertions.assertNotNull(vm.execute());
+  }
+
+  // anchor begin, anchor end
+  @Test
+  void test_compiler_2() {
+    List<AbstractRegexInsn> insns = compile(Regexes.concatenate(
+            Regexes.anchorBegin(),
+            Regexes.alternate(
+                    StringRegexes.literal('a'),
+                    StringRegexes.literal('b')
+            ),
+            StringRegexes.literal('c'),
+            Regexes.anchorEnd()
+    ));
+    ArrayList<Object> string = ArrayListHelper.of(
+            'a',
+            'c'
+    );
+    RegexProcessor vm = new RegexProcessor(insns, string);
+    Assertions.assertNotNull(vm.execute());
+  }
+
+  // star
+  @Test
+  void test_compiler_4() {
+    List<AbstractRegexInsn> insns = compile(Regexes.concatenate(
+            Regexes.star(
+                    Regexes.alternate(
+                            StringRegexes.literal('a'),
+                            StringRegexes.literal('b')
+                    )
+            )
+    ));
+    ArrayList<Object> string = ArrayListHelper.of(
+            'a',
+            'b'
+    );
+    RegexProcessor vm = new RegexProcessor(insns, string);
+    Assertions.assertNotNull(vm.execute());
+  }
+
+  // plus
+  @Test
+  void test_compiler_5() {
+    List<AbstractRegexInsn> insns = compile(Regexes.concatenate(
+            Regexes.plus(
+                    Regexes.alternate(
+                            StringRegexes.literal('a'),
+                            StringRegexes.literal('b')
+                    )
+            )
+    ));
+    ArrayList<Object> string = ArrayListHelper.of(
+            'a',
+            'b'
+    );
+    RegexProcessor vm = new RegexProcessor(insns, string);
+    Assertions.assertNotNull(vm.execute());
+  }
+
+  // question
+  @Test
+  void test_compiler_6() {
+    List<AbstractRegexInsn> insns = compile(Regexes.concatenate(
+            Regexes.question(
+                    StringRegexes.literal('a')
+            )
+    ));
+    ArrayList<Object> string = ArrayListHelper.of(
+            'a'
+    );
+    RegexProcessor vm = new RegexProcessor(insns, string);
+    Assertions.assertNotNull(vm.execute());
+  }
+
+  // star
+  @Test
+  void test_compiler_3() {
+    List<AbstractRegexInsn> insns = compile(Regexes.concatenate(
+            Regexes.anchorBegin(),
+            Regexes.alternate(
+                    StringRegexes.literal('a'),
+                    StringRegexes.literal('b')
+            ),
+            StringRegexes.literal('c'),
+            Regexes.anchorEnd()
+    ));
+    ArrayList<Object> string = ArrayListHelper.of(
+            'a',
+            'c',
+            'c'
+    );
+    RegexProcessor vm = new RegexProcessor(insns, string);
+    Assertions.assertNull(vm.execute());
   }
 
   @Test
