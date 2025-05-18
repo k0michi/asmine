@@ -26,7 +26,7 @@ public class RegexProcessorTest {
   @Test
   void test_0() {
     ArrayList<AbstractRegexInsn> insns = ArrayListHelper.of(
-            new TerminalInsn()
+            new ReturnInsn()
     );
     ArrayList<Object> string = ArrayListHelper.of(
             'a'
@@ -39,7 +39,7 @@ public class RegexProcessorTest {
   void test_1() {
     ArrayList<AbstractRegexInsn> insns = ArrayListHelper.of(
             new CharLiteralInsn('a'),
-            new TerminalInsn()
+            new ReturnInsn()
     );
     ArrayList<Object> string = ArrayListHelper.of(
             'a'
@@ -54,7 +54,7 @@ public class RegexProcessorTest {
             new ForkInsn(1, 3),
             new CharLiteralInsn('a'),
             new JumpInsn(-2),
-            new TerminalInsn()
+            new ReturnInsn()
     );
     ArrayList<Object> string = ArrayListHelper.of(
             'a'
@@ -72,7 +72,7 @@ public class RegexProcessorTest {
             new ForkInsn(1, 3),
             new CharLiteralInsn('a'),
             new JumpInsn(-2),
-            new TerminalInsn()
+            new ReturnInsn()
     );
     ArrayList<Object> string = ArrayListHelper.of(
             'a',
@@ -91,7 +91,7 @@ public class RegexProcessorTest {
             new ForkInsn(1, 3),
             new CharLiteralInsn('a'),
             new JumpInsn(-2),
-            new TerminalInsn()
+            new ReturnInsn()
     );
     ArrayList<Object> string = ArrayListHelper.of(
             'a',
@@ -108,7 +108,7 @@ public class RegexProcessorTest {
     ArrayList<AbstractRegexInsn> insns = ArrayListHelper.of(
             new CharLiteralInsn('a'),
             new ForkInsn(-1, 1),
-            new TerminalInsn()
+            new ReturnInsn()
     );
     ArrayList<Object> string = ArrayListHelper.of(
             'b'
@@ -122,7 +122,7 @@ public class RegexProcessorTest {
     ArrayList<AbstractRegexInsn> insns = ArrayListHelper.of(
             new CharLiteralInsn('a'),
             new ForkInsn(-1, 1),
-            new TerminalInsn()
+            new ReturnInsn()
     );
     ArrayList<Object> string = ArrayListHelper.of(
             'a',
@@ -458,7 +458,7 @@ public class RegexProcessorTest {
   void test_7() {
     ArrayList<AbstractRegexInsn> insns = ArrayListHelper.of(
             new TraceInsn(0),
-            new TerminalInsn()
+            new ReturnInsn()
     );
     ArrayList<Object> string = ArrayListHelper.of();
     RegexProcessor vm = new RegexProcessor(insns, string);

@@ -38,18 +38,24 @@ public class RegexProcessor {
   }
 
   private List<RegexThread> skipTransitive(RegexThread thread) {
+    Stack<RegexThread> stack = new Stack<>();
+    stack.push(thread);
+
     LinkedList<RegexThread> intransitives = new LinkedList<>();
 
-    if (getInstruction(thread).isTransitive()) {
-      Pair<Boolean, List<RegexThread>> result = step(thread);
+    while (!stack.isEmpty()) {
+      RegexThread t = stack.pop();
 
-      if (result.first) {
-        for (RegexThread t : result.second) {
-          intransitives.addAll(skipTransitive(t));
+      if (t.isRunning() && getInstruction(t).isTransitive()) {
+        List<RegexThread> children = step(t).second;
+
+        for (int i = children.size() - 1; i >= 0; i--) {
+          RegexThread child = children.get(i);
+          stack.push(child);
         }
+      } else {
+        intransitives.add(t);
       }
-    } else {
-      intransitives.add(thread);
     }
 
     return intransitives;
@@ -106,19 +112,26 @@ public class RegexProcessor {
       match:
       for (int j = 0; j < threads.size(); j++) {
         RegexThread thread = threads.get(j);
+
+        if (thread.isTerminated()) {
+          terminated = thread;
+          break match;
+        }
+
         List<RegexThread> intransitives = skipTransitive(thread);
 
         for (int k = 0; k < intransitives.size(); k++) {
           RegexThread t = intransitives.get(k);
+
+          if (t.isTerminated()) {
+            terminated = t;
+            break match;
+          }
+
           Pair<Boolean, List<RegexThread>> result = step(t);
 
           if (result.first) {
-            if (result.second.size() == 0) {
-              terminated = t;
-              break match;
-            } else {
-              next.addAll(result.second);
-            }
+            next.addAll(result.second);
           }
         }
       }

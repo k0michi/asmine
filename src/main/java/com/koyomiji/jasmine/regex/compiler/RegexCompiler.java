@@ -3,7 +3,7 @@ package com.koyomiji.jasmine.regex.compiler;
 import com.koyomiji.jasmine.regex.AbstractRegexInsn;
 import com.koyomiji.jasmine.regex.ForkInsn;
 import com.koyomiji.jasmine.regex.JumpInsn;
-import com.koyomiji.jasmine.regex.TerminalInsn;
+import com.koyomiji.jasmine.regex.ReturnInsn;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,7 +21,7 @@ public class RegexCompiler {
 
     RegexCompilerContext context = new RegexCompilerContext();
     node.compile(context);
-    context.emit(new TerminalInsn());
+    context.emit(new ReturnInsn());
     return postprocess(context.getInsns());
   }
 
