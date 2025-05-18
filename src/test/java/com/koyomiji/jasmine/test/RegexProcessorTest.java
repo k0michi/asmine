@@ -466,4 +466,27 @@ public class RegexProcessorTest {
             0
     ), vm.execute().getTrace());
   }
+
+  // duplicate bind key
+  @Test
+  void test_8() {
+    Assertions.assertThrows(RegexCompilerException.class, () -> {
+      compile(Regexes.concatenate(
+              Regexes.bind(0, Regexes.any()),
+              Regexes.bind(0, Regexes.any())
+
+      ));
+    });
+  }
+
+  // missing bind key
+  @Test
+  void test_9() {
+    Assertions.assertThrows(RegexCompilerException.class, () -> {
+      compile(Regexes.concatenate(
+              Regexes.bound(0)
+
+      ));
+    });
+  }
 }
