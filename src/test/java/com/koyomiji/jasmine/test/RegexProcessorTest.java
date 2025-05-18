@@ -279,4 +279,18 @@ public class RegexProcessorTest {
     RegexProcessor vm = new RegexProcessor(insns, string);
     Assertions.assertEquals(Pair.of(2, 4), vm.execute().getBoundRange(1));
   }
+
+  // trace
+  @Test
+  void test_7() {
+    ArrayList<AbstractRegexInsn> insns = ArrayListHelper.of(
+            new TraceInsn(0),
+            new TerminalInsn()
+    );
+    ArrayList<Object> string = ArrayListHelper.of();
+    RegexProcessor vm = new RegexProcessor(insns, string);
+    Assertions.assertEquals(ArrayListHelper.of(
+            0
+    ), vm.execute().getTrace());
+  }
 }
