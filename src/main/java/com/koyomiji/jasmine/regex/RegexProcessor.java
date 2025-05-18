@@ -1,19 +1,24 @@
 package com.koyomiji.jasmine.regex;
 
+import com.koyomiji.jasmine.common.ArrayListHelper;
 import com.koyomiji.jasmine.common.ListHelper;
 import com.koyomiji.jasmine.tuple.Pair;
 
 import java.util.*;
 
 public class RegexProcessor {
-  protected List<AbstractRegexInsn> instructions;
+  protected RegexModule module;
   protected List<?> string;
   protected List<RegexThread> threads;
   protected int stringPointer = 0;
 
-  public RegexProcessor(List<AbstractRegexInsn> instructions, List<?> string) {
-    this.instructions = instructions;
+  public RegexProcessor(RegexModule module, List<?> string) {
+    this.module = module;
     this.string = string;
+  }
+
+  public RegexProcessor(List<AbstractRegexInsn> insns, List<?> string) {
+    this(new RegexModule(ArrayListHelper.of(new RegexFunction(0, insns))), string);
   }
 
   protected RegexThread newThread() {
@@ -25,7 +30,7 @@ public class RegexProcessor {
   }
 
   protected AbstractRegexInsn getInstruction(RegexThread thread) {
-    return this.instructions.get(thread.getProgramCounter());
+    return this.module.getFunction(thread.functionPointer).insns.get(thread.getProgramCounter());
   }
 
   protected Pair<Boolean, List<RegexThread>> step(RegexThread thread) {
@@ -35,7 +40,7 @@ public class RegexProcessor {
   private List<RegexThread> skipTransitive(RegexThread thread) {
     LinkedList<RegexThread> intransitives = new LinkedList<>();
 
-    if (this.instructions.get(thread.getProgramCounter()).isTransitive()) {
+    if (getInstruction(thread).isTransitive()) {
       Pair<Boolean, List<RegexThread>> result = step(thread);
 
       if (result.first) {
@@ -162,8 +167,8 @@ public class RegexProcessor {
    * Getters
    */
 
-  public List<AbstractRegexInsn> getInstructions() {
-    return instructions;
+  public RegexModule getModule() {
+    return module;
   }
 
   public List<?> getString() {

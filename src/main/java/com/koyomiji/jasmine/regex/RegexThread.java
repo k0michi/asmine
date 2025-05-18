@@ -6,6 +6,7 @@ import java.util.*;
 
 public class RegexThread implements Cloneable {
   protected int step = 0;
+  protected int functionPointer = 0;
   protected int programCounter = 0;
   protected Stack<Object> stack = new Stack<>();
   protected HashMap<Object, Pair<Integer, Integer>> stringBinds = new HashMap<>();
@@ -40,6 +41,18 @@ public class RegexThread implements Cloneable {
 
   public int getProgramCounter() {
     return programCounter;
+  }
+
+  public void setProgramCounter(int programCounter) {
+    this.programCounter = programCounter;
+  }
+
+  public int getFunctionPointer() {
+    return functionPointer;
+  }
+
+  public void setFunctionPointer(int functionPointer) {
+    this.functionPointer = functionPointer;
   }
 
   public void push(Object c) {
