@@ -16,16 +16,20 @@ public class RegexProcessor {
     this.string = string;
   }
 
-  protected RegexThread newThread(int programCounter) {
-    return new RegexThread(programCounter);
+  protected RegexThread newThread() {
+    return new RegexThread();
   }
 
   protected MatchResult newMatchResult(RegexThread thread) {
     return new MatchResult(thread);
   }
 
+  protected AbstractRegexInsn getInstruction(RegexThread thread) {
+    return this.instructions.get(thread.getProgramCounter());
+  }
+
   protected Pair<Boolean, List<RegexThread>> step(RegexThread thread) {
-    return this.instructions.get(thread.getProgramCounter()).execute(this, thread);
+    return getInstruction(thread).execute(this, thread);
   }
 
   private List<RegexThread> skipTransitive(RegexThread thread) {
@@ -84,7 +88,7 @@ public class RegexProcessor {
 
   public RegexThread execute(int begin) {
     this.threads = new ArrayList<>();
-    this.threads.add(newThread(0));
+    this.threads.add(newThread());
     RegexThread terminated = null;
 
     for (stringPointer = begin; stringPointer <= string.size(); stringPointer++) {

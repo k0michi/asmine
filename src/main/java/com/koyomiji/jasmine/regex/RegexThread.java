@@ -13,10 +13,6 @@ public class RegexThread implements Cloneable {
 
   public RegexThread() {}
 
-  public RegexThread(int programCounter) {
-    this.programCounter = programCounter;
-  }
-
   @Override
   protected Object clone() {
     try {
