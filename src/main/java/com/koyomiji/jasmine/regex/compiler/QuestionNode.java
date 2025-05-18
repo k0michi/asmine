@@ -16,17 +16,15 @@ public class QuestionNode extends AbstractQuantifierNode {
   }
 
   @Override
-  public List<AbstractRegexInsn> compile(RegexCompilerContext context) {
-    List<AbstractRegexInsn> insns = new ArrayList<>();
+  public void compile(RegexCompilerContext context) {
     PseudoLabelInsn l0 = new PseudoLabelInsn();
     PseudoLabelInsn l1 = new PseudoLabelInsn();
 
-    insns.add(type == QuantifierType.GREEDY
+    context.emit(type == QuantifierType.GREEDY
             ? new PseudoForkInsn(l0, l1)
             : new PseudoForkInsn(l1, l0));
-    insns.add(l0);
-    insns.addAll(child.compile(context));
-    insns.add(l1);
-    return insns;
+    context.emit(l0);
+    child.compile(context);
+    context.emit(l1);
   }
 }

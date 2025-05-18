@@ -18,13 +18,9 @@ public class ConcatenateNode extends AbstractRegexNode {
   }
 
   @Override
-  public List<AbstractRegexInsn> compile(RegexCompilerContext context) {
-    List<AbstractRegexInsn> insns = new ArrayList<>();
-
+  public void compile(RegexCompilerContext context) {
     for(AbstractRegexNode c : children) {
-      insns.addAll(c.compile(context));
+      c.compile(context);
     }
-
-    return insns;
   }
 }

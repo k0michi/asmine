@@ -17,7 +17,7 @@ public class InsnStencilNode extends AbstractRegexNode {
   }
 
   @Override
-  public List<AbstractRegexInsn> compile(RegexCompilerContext context) {
-    return ArrayListHelper.of(new InsnStencilInsn(stencil));
+  public void compile(RegexCompilerContext context) {
+    context.emit(new InsnStencilInsn(stencil));
   }
 }

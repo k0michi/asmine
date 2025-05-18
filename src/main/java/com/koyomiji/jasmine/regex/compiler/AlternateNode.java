@@ -20,8 +20,7 @@ public class AlternateNode extends AbstractRegexNode {
   }
 
   @Override
-  public List<AbstractRegexInsn> compile(RegexCompilerContext context) {
-    List<AbstractRegexInsn> insns = new ArrayList<>();
+  public void compile(RegexCompilerContext context) {
     List<PseudoLabelInsn>  labels = new ArrayList<>();
     PseudoLabelInsn end = new PseudoLabelInsn();
 
@@ -29,18 +28,17 @@ public class AlternateNode extends AbstractRegexNode {
       labels.add(new PseudoLabelInsn());
     }
 
-    insns.add(new PseudoForkInsn(labels));
+    context.emit(new PseudoForkInsn(labels));
 
     for (int i = 0; i < options.size(); i++) {
-      insns.add(labels.get(i));
-      insns.addAll(options.get(i).compile(context));
+      context.emit(labels.get(i));
+      options.get(i).compile(context);
 
       if (i + 1 < options.size()) {
-        insns.add(new PseudoJumpInsn(end));
+        context.emit(new PseudoJumpInsn(end));
       }
     }
 
-    insns.add(end);
-    return insns;
+    context.emit(end);
   }
 }

@@ -5,6 +5,7 @@ import com.koyomiji.jasmine.regex.ForkInsn;
 import com.koyomiji.jasmine.regex.JumpInsn;
 import com.koyomiji.jasmine.regex.TerminalInsn;
 
+import javax.naming.Context;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -19,10 +20,10 @@ public class RegexCompiler {
             new BindNode(BOUNDARY_KEY, node)
     );
 
-    List<AbstractRegexInsn> compiled = node.compile(new RegexCompilerContext());
-    compiled.add(new TerminalInsn());
-    compiled = postprocess(compiled);
-    return compiled;
+    RegexCompilerContext context = new RegexCompilerContext();
+    node.compile(context);
+    context.emit(new TerminalInsn());
+    return postprocess(context.insns);
   }
 
   private List<AbstractRegexInsn> postprocess(List<AbstractRegexInsn> insns) {
