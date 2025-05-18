@@ -11,8 +11,8 @@ import java.util.Objects;
 public class CodeRegexThread extends RegexThread implements IParameterRegistry {
   protected HashMap<Object, Object> parameterBinds = new HashMap<>();
 
-  public CodeRegexThread(int programCounter) {
-    super(programCounter);
+  public CodeRegexThread() {
+    super();
   }
 
   @Override

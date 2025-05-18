@@ -13,10 +13,10 @@ public class JumpInsn extends AbstractRegexInsn {
   }
 
   @Override
-  public Pair<Boolean, List<RegexThread>> execute(RegexProcessor processor, RegexThread thread) {
+  public List<RegexThread> execute(RegexProcessor processor, RegexThread thread) {
     RegexThread t = (RegexThread)thread.clone();
     t.advanceProgramCounter(offset);
-    return Pair.of(true, ArrayListHelper.of(t));
+    return ArrayListHelper.of(t);
   }
 
   @Override

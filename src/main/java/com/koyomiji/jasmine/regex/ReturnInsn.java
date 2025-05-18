@@ -5,23 +5,19 @@ import com.koyomiji.jasmine.tuple.Pair;
 
 import java.util.List;
 
-public class BindEndInsn extends AbstractRegexInsn {
-  public Object key;
-
-  public BindEndInsn(Object key) {
-    this.key = key;
-  }
-
+public class ReturnInsn extends AbstractRegexInsn {
   @Override
   public List<RegexThread> execute(RegexProcessor processor, RegexThread thread) {
-    if (thread.stackSize() == 0) {
-      return ArrayListHelper.of();
+    if (thread.stackSize() > 0) {
+      int fp = (Integer)thread.pop();
+      thread.setFunctionPointer(fp);
+      int pc = (Integer)thread.pop();
+      thread.setProgramCounter(pc + 1);
+
+      return ArrayListHelper.of(thread);
     }
 
-    Pair<Integer, Integer> range = Pair.of((Integer) thread.pop(), processor.getStringPointer());
-
-    thread.bind(key, range);
-    thread.advanceProgramCounter();
+    thread.terminate();
     return ArrayListHelper.of(thread);
   }
 

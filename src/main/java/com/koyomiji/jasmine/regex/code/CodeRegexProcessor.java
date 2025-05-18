@@ -20,8 +20,8 @@ public class CodeRegexProcessor extends RegexProcessor {
   }
 
   @Override
-  protected RegexThread newThread(int programCounter) {
-    return new CodeRegexThread(programCounter);
+  protected RegexThread newThread() {
+    return new CodeRegexThread();
   }
 
   @Override

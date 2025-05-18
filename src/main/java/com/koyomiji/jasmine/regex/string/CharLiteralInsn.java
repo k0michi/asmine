@@ -16,13 +16,13 @@ public class CharLiteralInsn extends AbstractRegexInsn {
   }
 
   @Override
-  public Pair<Boolean, List<RegexThread>> execute(RegexProcessor processor, RegexThread thread) {
+  public List<RegexThread> execute(RegexProcessor processor, RegexThread thread) {
     if (!processor.compareCurrentCharToLiteral(literal)) {
-      return Pair.of(false, ArrayListHelper.of());
+      return ArrayListHelper.of();
     }
 
     thread.advanceProgramCounter();
-    return Pair.of(true, ArrayListHelper.of(thread));
+    return ArrayListHelper.of(thread);
   }
 
   @Override

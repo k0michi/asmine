@@ -7,9 +7,9 @@ import java.util.List;
 
 public class AnyInsn extends AbstractRegexInsn {
   @Override
-  public Pair<Boolean, List<RegexThread>> execute(RegexProcessor processor, RegexThread thread) {
+  public List<RegexThread> execute(RegexProcessor processor, RegexThread thread) {
     thread.advanceProgramCounter();
-    return Pair.of(true, ArrayListHelper.of(thread));
+    return ArrayListHelper.of(thread);
   }
 
   @Override

@@ -14,14 +14,10 @@ public class BoundNode extends AbstractRegexNode {
 
   @Override
   public void compile(RegexCompilerContext context) {
-    if (!context.bindMap.containsKey(key)) {
-      throw new RegexCompilerException("Key not found: " + key);
-    }
-
     context.emit(new BoundBeginInsn());
-    context.insideBound++;
-    context.bindMap.get(key).child.compile(context);
-    context.insideBound--;
+    context.pushBound();
+    context.getBindNode(key).compile(context);
+    context.popBound();
     context.emit(new BoundEndInsn(key));
   }
 }

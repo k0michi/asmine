@@ -1,46 +1,61 @@
 package com.koyomiji.jasmine.regex;
 
+import com.koyomiji.jasmine.common.ArrayListHelper;
 import com.koyomiji.jasmine.common.ListHelper;
 import com.koyomiji.jasmine.tuple.Pair;
 
 import java.util.*;
 
 public class RegexProcessor {
-  protected List<AbstractRegexInsn> instructions;
+  protected RegexModule module;
   protected List<?> string;
   protected List<RegexThread> threads;
   protected int stringPointer = 0;
 
-  public RegexProcessor(List<AbstractRegexInsn> instructions, List<?> string) {
-    this.instructions = instructions;
+  public RegexProcessor(RegexModule module, List<?> string) {
+    this.module = module;
     this.string = string;
   }
 
-  protected RegexThread newThread(int programCounter) {
-    return new RegexThread(programCounter);
+  public RegexProcessor(List<AbstractRegexInsn> insns, List<?> string) {
+    this(new RegexModule(ArrayListHelper.of(new RegexFunction(0, insns))), string);
+  }
+
+  protected RegexThread newThread() {
+    return new RegexThread();
   }
 
   protected MatchResult newMatchResult(RegexThread thread) {
     return new MatchResult(thread);
   }
 
-  protected Pair<Boolean, List<RegexThread>> step(RegexThread thread) {
-    return this.instructions.get(thread.getProgramCounter()).execute(this, thread);
+  protected AbstractRegexInsn getInstruction(RegexThread thread) {
+    return this.module.getFunction(thread.functionPointer).insns.get(thread.getProgramCounter());
+  }
+
+  protected List<RegexThread> step(RegexThread thread) {
+    return getInstruction(thread).execute(this, thread);
   }
 
   private List<RegexThread> skipTransitive(RegexThread thread) {
+    Stack<RegexThread> stack = new Stack<>();
+    stack.push(thread);
+
     LinkedList<RegexThread> intransitives = new LinkedList<>();
 
-    if (this.instructions.get(thread.getProgramCounter()).isTransitive()) {
-      Pair<Boolean, List<RegexThread>> result = step(thread);
+    while (!stack.isEmpty()) {
+      RegexThread t = stack.pop();
 
-      if (result.first) {
-        for (RegexThread t : result.second) {
-          intransitives.addAll(skipTransitive(t));
+      if (t.isRunning() && getInstruction(t).isTransitive()) {
+        List<RegexThread> children = step(t);
+
+        for (int i = children.size() - 1; i >= 0; i--) {
+          RegexThread child = children.get(i);
+          stack.push(child);
         }
+      } else {
+        intransitives.add(t);
       }
-    } else {
-      intransitives.add(thread);
     }
 
     return intransitives;
@@ -84,7 +99,7 @@ public class RegexProcessor {
 
   public RegexThread execute(int begin) {
     this.threads = new ArrayList<>();
-    this.threads.add(newThread(0));
+    this.threads.add(newThread());
     RegexThread terminated = null;
 
     for (stringPointer = begin; stringPointer <= string.size(); stringPointer++) {
@@ -97,20 +112,23 @@ public class RegexProcessor {
       match:
       for (int j = 0; j < threads.size(); j++) {
         RegexThread thread = threads.get(j);
+
+        if (thread.isTerminated()) {
+          terminated = thread;
+          break match;
+        }
+
         List<RegexThread> intransitives = skipTransitive(thread);
 
         for (int k = 0; k < intransitives.size(); k++) {
           RegexThread t = intransitives.get(k);
-          Pair<Boolean, List<RegexThread>> result = step(t);
 
-          if (result.first) {
-            if (result.second.size() == 0) {
-              terminated = t;
-              break match;
-            } else {
-              next.addAll(result.second);
-            }
+          if (t.isTerminated()) {
+            terminated = t;
+            break match;
           }
+
+          next.addAll(step(t));
         }
       }
 
@@ -158,8 +176,8 @@ public class RegexProcessor {
    * Getters
    */
 
-  public List<AbstractRegexInsn> getInstructions() {
-    return instructions;
+  public RegexModule getModule() {
+    return module;
   }
 
   public List<?> getString() {

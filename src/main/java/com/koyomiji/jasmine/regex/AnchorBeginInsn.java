@@ -7,12 +7,12 @@ import java.util.List;
 
 public class AnchorBeginInsn extends AbstractRegexInsn {
   @Override
-  public Pair<Boolean, List<RegexThread>> execute(RegexProcessor processor, RegexThread thread) {
+  public List<RegexThread> execute(RegexProcessor processor, RegexThread thread) {
     if (processor.getStringPointer() == 0) {
       thread.advanceProgramCounter();
-      return Pair.of(true, ArrayListHelper.of(thread));
+      return ArrayListHelper.of(thread);
     } else {
-      return Pair.of(false, ArrayListHelper.of());
+      return  ArrayListHelper.of();
     }
   }
 

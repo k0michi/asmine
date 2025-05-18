@@ -5,17 +5,14 @@ import com.koyomiji.jasmine.tuple.Pair;
 import java.util.*;
 
 public class RegexThread implements Cloneable {
-  protected int step = 0;
+  protected boolean terminated = false;
+  protected int functionPointer = 0;
   protected int programCounter = 0;
   protected Stack<Object> stack = new Stack<>();
   protected HashMap<Object, Pair<Integer, Integer>> stringBinds = new HashMap<>();
   protected List<Object> trace = new ArrayList<>();
 
   public RegexThread() {}
-
-  public RegexThread(int programCounter) {
-    this.programCounter = programCounter;
-  }
 
   @Override
   protected Object clone() {
@@ -29,21 +26,28 @@ public class RegexThread implements Cloneable {
     }
   }
 
-  public int getStep() {
-    return step;
-  }
-
   public int advanceProgramCounter() {
     return advanceProgramCounter(1);
   }
 
   public int advanceProgramCounter(int offset) {
-    step++;
     return programCounter += offset;
   }
 
   public int getProgramCounter() {
     return programCounter;
+  }
+
+  public void setProgramCounter(int programCounter) {
+    this.programCounter = programCounter;
+  }
+
+  public int getFunctionPointer() {
+    return functionPointer;
+  }
+
+  public void setFunctionPointer(int functionPointer) {
+    this.functionPointer = functionPointer;
   }
 
   public void push(Object c) {
@@ -52,6 +56,18 @@ public class RegexThread implements Cloneable {
 
   public Object pop() {
     return stack.pop();
+  }
+
+  public void terminate() {
+    this.terminated = true;
+  }
+
+  public boolean isRunning() {
+    return !this.terminated;
+  }
+
+  public boolean isTerminated() {
+    return this.terminated;
   }
 
   public int stackSize() {

@@ -18,7 +18,7 @@ public class ForkInsn extends AbstractRegexInsn {
   }
 
   @Override
-  public Pair<Boolean, List<RegexThread>> execute(RegexProcessor processor, RegexThread thread) {
+  public List<RegexThread> execute(RegexProcessor processor, RegexThread thread) {
     List<RegexThread> threads = new ArrayList<>();
 
     for(int i = 0; i < offsets.size(); i++) {
@@ -27,7 +27,7 @@ public class ForkInsn extends AbstractRegexInsn {
       threads.add(cloned);
     }
 
-    return Pair.of(true, threads);
+    return threads;
   }
 
   @Override
