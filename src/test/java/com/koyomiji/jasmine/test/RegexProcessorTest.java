@@ -489,4 +489,25 @@ public class RegexProcessorTest {
       ));
     });
   }
+
+  // invoke
+  @Test
+  void test_10() {
+    RegexModule module = new RegexModule(ArrayListHelper.of(
+            new RegexFunction(0, ArrayListHelper.of(
+                    new InvokeInsn(1),
+                    new ReturnInsn()
+            )),
+            new RegexFunction(1, ArrayListHelper.of(
+                    new TraceInsn(0),
+                    new ReturnInsn()
+            ))
+    ));
+    ArrayList<Object> string = ArrayListHelper.of();
+    RegexProcessor vm = new RegexProcessor(module, string);
+    Assertions.assertEquals(
+            ArrayListHelper.of(
+                    0
+            ), vm.execute().getTrace());
+  }
 }

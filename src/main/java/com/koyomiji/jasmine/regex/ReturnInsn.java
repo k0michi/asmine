@@ -12,7 +12,7 @@ public class ReturnInsn extends AbstractRegexInsn {
       int fp = (Integer)thread.pop();
       thread.setFunctionPointer(fp);
       int pc = (Integer)thread.pop();
-      thread.setProgramCounter(pc);
+      thread.setProgramCounter(pc + 1);
 
       return ArrayListHelper.of(thread);
     }
