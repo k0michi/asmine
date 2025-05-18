@@ -19,10 +19,16 @@ public class PlusNode extends AbstractQuantifierNode {
   public List<AbstractRegexInsn> compile(RegexCompilerContext context) {
     List<AbstractRegexInsn> insns = new ArrayList<>();
     List<AbstractRegexInsn> compiled = child.compile(context);
+    PseudoLabelInsn l0 = new PseudoLabelInsn();
+    PseudoLabelInsn l1 = new PseudoLabelInsn();
+
+    insns.add(l0);
     insns.addAll(compiled);
     insns.add(type == QuantifierType.GREEDY
-            ? new ForkInsn(-(compiled.size()), 1)
-            : new ForkInsn(1, -(compiled.size())));
+            ? new PseudoForkInsn(l0, l1)
+            : new PseudoForkInsn(l1, l0));
+    insns.add(l1);
+
     return insns;
   }
 }

@@ -19,6 +19,10 @@ public class Parameters {
     return new BoundParameter<>(key);
   }
 
+  public static <T> ConstParameter<T> const_(T value) {
+    return new ConstParameter<>(value);
+  }
+
   public static <T> ListParameter<T> list(List<AbstractParameter<T>> children) {
     return new ListParameter<>(children);
   }

@@ -2,15 +2,14 @@ package com.koyomiji.jasmine.regex;
 
 import com.koyomiji.jasmine.tuple.Pair;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Stack;
+import java.util.*;
 
 public class RegexThread implements Cloneable {
   protected int step = 0;
   protected int programCounter = 0;
   protected Stack<Object> stack = new Stack<>();
   protected HashMap<Object, Pair<Integer, Integer>> stringBinds = new HashMap<>();
+  protected List<Object> trace = new ArrayList<>();
 
   public RegexThread() {}
 
@@ -77,5 +76,13 @@ public class RegexThread implements Cloneable {
 
   public Map<Object, Pair<Integer, Integer>> getStringBinds() {
     return stringBinds;
+  }
+
+  public void trace(Object obj) {
+    this.trace.add(obj);
+  }
+
+  public List<Object> getTrace() {
+    return trace;
   }
 }

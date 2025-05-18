@@ -35,11 +35,23 @@ public class Regexes {
     return new PlusNode(child);
   }
 
+  public static PlusNode plus(AbstractRegexNode child, QuantifierType type) {
+    return new PlusNode(child, type);
+  }
+
   public static QuestionNode question(AbstractRegexNode child) {
     return new QuestionNode(child);
   }
 
+  public static QuestionNode question(AbstractRegexNode child, QuantifierType type) {
+    return new QuestionNode(child, type);
+  }
+
   public static StarNode star(AbstractRegexNode child) {
     return new StarNode(child);
+  }
+
+  public static StarNode star(AbstractRegexNode child, QuantifierType type) {
+    return new StarNode(child, type);
   }
 }
