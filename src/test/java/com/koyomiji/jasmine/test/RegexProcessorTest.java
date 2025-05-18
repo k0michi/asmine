@@ -13,6 +13,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RegexProcessorTest {
+  private List<Object> split(String s) {
+    List<Object> string = new ArrayList<>();
+
+    for (int i = 0; i < s.length(); i++) {
+      string.add(s.charAt(i));
+    }
+
+    return string;
+  }
+
   @Test
   void test_0() {
     ArrayList<AbstractRegexInsn> insns = ArrayListHelper.of(
@@ -416,6 +426,31 @@ public class RegexProcessorTest {
     );
     RegexProcessor vm = new RegexProcessor(insns, string);
     Assertions.assertEquals(Pair.of(2, 4), vm.execute().getBoundRange(1));
+  }
+
+  // nested bound
+  @Test
+  void test_compiler_bound_3() {
+    List<AbstractRegexInsn> insns = compile(Regexes.concatenate(
+            Regexes.bind(0,
+                    Regexes.alternate(
+                            StringRegexes.literal('a'),
+                            StringRegexes.literal('b')
+                    )),
+            Regexes.bind(1,
+                    Regexes.concatenate(
+                            Regexes.bound(0),
+                            Regexes.bind(2, Regexes.alternate(
+                                    StringRegexes.literal('c'),
+                                    StringRegexes.literal('d')
+                            )))),
+            Regexes.bound(1),
+            Regexes.bound(2)
+
+    ));
+    List<Object> string = split("aacacc");
+    RegexProcessor vm = new RegexProcessor(insns, string);
+    Assertions.assertNotNull(vm.execute());
   }
 
   // trace

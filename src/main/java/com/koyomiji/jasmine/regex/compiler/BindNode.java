@@ -18,19 +18,19 @@ public class BindNode extends AbstractRegexNode {
 
   @Override
   public void compile(RegexCompilerContext context) {
-    if (!context.insideBound && context.bindMap.containsKey(key)) {
-      throw new RegexCompilerException("Duplicate key: " + key);
-    }
+    if (context.insideBound == 0) {
+      if (context.bindMap.containsKey(key)) {
+        throw new RegexCompilerException("Duplicate key: " + key);
+      }
 
-    context.bindMap.put(key, this);
+      context.bindMap.put(key, this);
 
-    if (!context.insideBound) {
       context.emit(new BindBeginInsn());
     }
 
     child.compile(context);
 
-    if (!context.insideBound) {
+    if (context.insideBound == 0) {
       context.emit(new BindEndInsn(key));
     }
   }

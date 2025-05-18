@@ -19,9 +19,9 @@ public class BoundNode extends AbstractRegexNode {
     }
 
     context.emit(new BoundBeginInsn());
-    context.insideBound = true;
+    context.insideBound++;
     context.bindMap.get(key).child.compile(context);
-    context.insideBound = false;
+    context.insideBound--;
     context.emit(new BoundEndInsn(key));
   }
 }
