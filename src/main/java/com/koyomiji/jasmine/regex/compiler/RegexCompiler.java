@@ -5,7 +5,6 @@ import com.koyomiji.jasmine.regex.ForkInsn;
 import com.koyomiji.jasmine.regex.JumpInsn;
 import com.koyomiji.jasmine.regex.TerminalInsn;
 
-import javax.naming.Context;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -23,7 +22,7 @@ public class RegexCompiler {
     RegexCompilerContext context = new RegexCompilerContext();
     node.compile(context);
     context.emit(new TerminalInsn());
-    return postprocess(context.insns);
+    return postprocess(context.getInsns());
   }
 
   private List<AbstractRegexInsn> postprocess(List<AbstractRegexInsn> insns) {
