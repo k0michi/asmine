@@ -510,4 +510,19 @@ public class RegexProcessorTest {
                     0
             ), vm.execute().getTrace());
   }
+
+  // recursive call
+  @Test
+  void test_11() {
+    ConcatenateNode c0;
+
+    RegexModule insns = compile((c0 = Regexes.concatenate()).setChildren(
+            StringRegexes.literal('('),
+            Regexes.question(c0),
+            StringRegexes.literal(')')
+    ));
+    List<Object> string = split("((()))");
+    RegexProcessor vm = new RegexProcessor(insns, string);
+    Assertions.assertNotNull(vm.execute());
+  }
 }

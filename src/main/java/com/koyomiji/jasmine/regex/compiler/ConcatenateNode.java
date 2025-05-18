@@ -19,6 +19,16 @@ public class ConcatenateNode extends AbstractRegexNode {
     this.children = ArrayListHelper.of(children);
   }
 
+  public ConcatenateNode setChildren(List<AbstractRegexNode> children) {
+    this.children = children;
+    return this;
+  }
+
+  public ConcatenateNode setChildren(AbstractRegexNode... children) {
+    this.children = ArrayListHelper.of(children);
+    return this;
+  }
+
   @Override
   public void compile(RegexCompilerContext context) {
     if (context.hasConcatFunction(this)){
