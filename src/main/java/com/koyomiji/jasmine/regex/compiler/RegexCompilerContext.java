@@ -1,16 +1,23 @@
 package com.koyomiji.jasmine.regex.compiler;
 
 import com.koyomiji.jasmine.regex.AbstractRegexInsn;
+import com.koyomiji.jasmine.regex.RegexFunction;
 
 import java.util.*;
 
 public class RegexCompilerContext {
   private Map<Object, BindNode> bindMap = new HashMap<>();
+  private Map<ConcatenateNode, Integer> concatFunctionMap = new HashMap<>();
   private int insideBound = 0;
-  private List<AbstractRegexInsn> insns = new ArrayList<>();
+  private int function = 0;
+  private List<RegexFunction> functions = new ArrayList<>();
+
+  public RegexCompilerContext() {
+    function = newFunction();
+  }
 
   public void emit(AbstractRegexInsn insn) {
-    insns.add(insn);
+    functions.get(function).insns.add(insn);
   }
 
   public void pushBound() {
@@ -41,7 +48,51 @@ public class RegexCompilerContext {
     return bindMap.get(key);
   }
 
-  public List<AbstractRegexInsn> getInsns() {
-    return insns;
+  public boolean hasConcatFunction(ConcatenateNode node) {
+    return concatFunctionMap.containsKey(node);
+  }
+
+  public int getConcatFunction(ConcatenateNode node) {
+    if (!concatFunctionMap.containsKey(node)) {
+      throw new RegexCompilerException("Concat function not found: " + node);
+    }
+
+    return concatFunctionMap.get(node);
+  }
+
+  public int getFunction() {
+    return function;
+  }
+
+  public List<RegexFunction> getFunctions() {
+    return functions;
+  }
+
+  private int newFunction() {
+    int function = functions.size();
+    functions.add(new RegexFunction(function, new ArrayList<>()));
+    return function;
+  }
+
+  private int newFunctionForConcat(ConcatenateNode node) {
+    int function = newFunction();
+    concatFunctionMap.put(node, function);
+    return function;
+  }
+
+  public RegexCompilerContext newContext() {
+    RegexCompilerContext newContext = new RegexCompilerContext();
+    newContext.bindMap = this.bindMap;
+    newContext.concatFunctionMap = this.concatFunctionMap;
+    newContext.insideBound = this.insideBound;
+    newContext.function = this.function;
+    newContext.functions = this.functions;
+    return newContext;
+  }
+
+  public RegexCompilerContext newConcatFunctionContext(ConcatenateNode node) {
+    RegexCompilerContext newContext = newContext();
+    newContext.function = newFunctionForConcat(node);
+    return newContext;
   }
 }

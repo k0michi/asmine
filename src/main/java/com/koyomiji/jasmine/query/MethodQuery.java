@@ -4,6 +4,7 @@ import com.koyomiji.jasmine.common.InsnListListAdapter;
 import com.koyomiji.jasmine.common.PrinterHelper;
 import com.koyomiji.jasmine.regex.AbstractRegexInsn;
 import com.koyomiji.jasmine.regex.MatchResult;
+import com.koyomiji.jasmine.regex.RegexModule;
 import com.koyomiji.jasmine.regex.code.CodeMatchResult;
 import com.koyomiji.jasmine.regex.code.CodeRegexProcessor;
 import com.koyomiji.jasmine.regex.compiler.AbstractRegexNode;
@@ -61,16 +62,16 @@ public class MethodQuery<T> extends AbstractQuery<T> {
 
   public CodeFragmentQuery<MethodQuery<T>> selectCodeFragment(AbstractRegexNode regex) {
     RegexCompiler compiler = new RegexCompiler();
-    List<AbstractRegexInsn> insns = compiler.compile(regex);
-    CodeRegexProcessor processor = new CodeRegexProcessor(insns, new InsnListListAdapter(methodNode.instructions));
+    RegexModule module = compiler.compile(regex);
+    CodeRegexProcessor processor = new CodeRegexProcessor(module, new InsnListListAdapter(methodNode.instructions));
     CodeMatchResult matchResult = (CodeMatchResult) processor.match();
     return new CodeFragmentQuery<>(this, methodManipulator, matchResult);
   }
 
   public CodeFragmentsQuery<MethodQuery<T>> selectCodeFragments(AbstractRegexNode regex) {
     RegexCompiler compiler = new RegexCompiler();
-    List<AbstractRegexInsn> insns = compiler.compile(regex);
-    CodeRegexProcessor processor = new CodeRegexProcessor(insns, new InsnListListAdapter(methodNode.instructions));
+    RegexModule module = compiler.compile(regex);
+    CodeRegexProcessor processor = new CodeRegexProcessor(module, new InsnListListAdapter(methodNode.instructions));
     List<MatchResult> matchResults = processor.matchAll();
     return new CodeFragmentsQuery<>(this, methodManipulator, (List<CodeMatchResult>) (Object) matchResults);
   }

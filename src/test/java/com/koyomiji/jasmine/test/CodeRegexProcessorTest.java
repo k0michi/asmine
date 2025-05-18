@@ -4,6 +4,7 @@ import com.koyomiji.jasmine.common.ArrayListHelper;
 import com.koyomiji.jasmine.common.InsnStencils;
 import com.koyomiji.jasmine.common.Insns;
 import com.koyomiji.jasmine.regex.AbstractRegexInsn;
+import com.koyomiji.jasmine.regex.RegexModule;
 import com.koyomiji.jasmine.regex.code.CodeRegexProcessor;
 import com.koyomiji.jasmine.regex.code.CodeRegexThread;
 import com.koyomiji.jasmine.regex.compiler.*;
@@ -18,7 +19,7 @@ import org.objectweb.asm.tree.LabelNode;
 import java.util.List;
 
 public class CodeRegexProcessorTest {
-  private List<AbstractRegexInsn> compile(AbstractRegexNode node) {
+  private RegexModule compile(AbstractRegexNode node) {
     return new RegexCompiler().compile(node);
   }
 
@@ -35,7 +36,7 @@ public class CodeRegexProcessorTest {
   // Stencil match
   @Test
   void test_0() {
-    List<AbstractRegexInsn> regex = compile(
+    RegexModule regex= compile(
             Regexes.concatenate(
                     CodeRegexes.stencil(InsnStencils.iconst_0())
             )
@@ -50,7 +51,7 @@ public class CodeRegexProcessorTest {
   // Literal match
   @Test
   void test_1() {
-    List<AbstractRegexInsn> regex = compile(
+    RegexModule regex= compile(
             Regexes.concatenate(
                     CodeRegexes.literal(Insns.iconst_0())
             )
@@ -65,7 +66,7 @@ public class CodeRegexProcessorTest {
   // Binding
   @Test
   void test_2() {
-    List<AbstractRegexInsn> regex = compile(
+    RegexModule regex= compile(
             Regexes.concatenate(
                     Regexes.bind(0, CodeRegexes.literal(Insns.iconst_0())),
                     Regexes.bound(0)
@@ -82,7 +83,7 @@ public class CodeRegexProcessorTest {
   // Stencil match failure
   @Test
   void test_3() {
-    List<AbstractRegexInsn> regex = compile(
+    RegexModule regex= compile(
             Regexes.concatenate(
                     CodeRegexes.stencil(InsnStencils.iconst_0())
             )
@@ -97,7 +98,7 @@ public class CodeRegexProcessorTest {
   // Literal match failure
   @Test
   void test_4() {
-    List<AbstractRegexInsn> regex = compile(
+    RegexModule regex= compile(
             Regexes.concatenate(
                     CodeRegexes.literal(Insns.iconst_0())
             )
@@ -112,7 +113,7 @@ public class CodeRegexProcessorTest {
   // Ignoring label
   @Test
   void test_5() {
-    List<AbstractRegexInsn> regex = compile(
+    RegexModule regex= compile(
             Regexes.concatenate(
                     CodeRegexes.literal(Insns.iconst_0())
             )
@@ -128,7 +129,7 @@ public class CodeRegexProcessorTest {
   // Label match
   @Test
   void test_6() {
-    List<AbstractRegexInsn> regex = compile(
+    RegexModule regex= compile(
             Regexes.concatenate(
                     CodeRegexes.stencil(InsnStencils.label(Parameters.any())),
                     CodeRegexes.literal(Insns.iconst_0())
@@ -145,7 +146,7 @@ public class CodeRegexProcessorTest {
   // Label and jump
   @Test
   void test_7() {
-    List<AbstractRegexInsn> regex = compile(
+    RegexModule regex= compile(
             Regexes.concatenate(
                     CodeRegexes.stencil(InsnStencils.goto_(Parameters.bind(p0))),
                     CodeRegexes.stencil(InsnStencils.label(Parameters.bound(p0))),
@@ -164,7 +165,7 @@ public class CodeRegexProcessorTest {
   // Label located at the end
   @Test
   void test_8() {
-    List<AbstractRegexInsn> regex = compile(
+    RegexModule regex= compile(
             Regexes.concatenate(
                     CodeRegexes.literal(Insns.iconst_0()),
                     CodeRegexes.stencil(InsnStencils.label(Parameters.bind(p0)))
@@ -181,7 +182,7 @@ public class CodeRegexProcessorTest {
   // Label resolves to the final label
   @Test
   void test_9() throws ResolutionExeption {
-    List<AbstractRegexInsn> regex = compile(
+    RegexModule regex= compile(
             Regexes.concatenate(
                     CodeRegexes.stencil(InsnStencils.label(Parameters.bind(p0))),
                     CodeRegexes.stencil(InsnStencils.label(Parameters.bind(p1))),
@@ -203,7 +204,7 @@ public class CodeRegexProcessorTest {
   // Line number and frame
   @Test
   void test_10() throws ResolutionExeption {
-    List<AbstractRegexInsn> regex = compile(
+    RegexModule regex= compile(
             Regexes.concatenate(
                     CodeRegexes.stencil(InsnStencils.label(Parameters.bind(p0))),
                     CodeRegexes.stencil(InsnStencils.lineNumber(Parameters.bind(p1), Parameters.bound(p0))),
@@ -225,7 +226,7 @@ public class CodeRegexProcessorTest {
   // Binding non-existent label
   @Test
   void test_11() throws ResolutionExeption {
-    List<AbstractRegexInsn> regex = compile(
+    RegexModule regex= compile(
             Regexes.concatenate(
                     CodeRegexes.stencil(InsnStencils.label(Parameters.bind(p0))),
                     CodeRegexes.literal(Insns.iconst_0())
@@ -242,7 +243,7 @@ public class CodeRegexProcessorTest {
   // Only label
   @Test
   void test_12() throws ResolutionExeption {
-    List<AbstractRegexInsn> regex = compile(
+    RegexModule regex= compile(
             Regexes.concatenate(
                     CodeRegexes.stencil(InsnStencils.label(Parameters.bind(p0)))
             )
@@ -258,7 +259,7 @@ public class CodeRegexProcessorTest {
   // Label literal match
   @Test
   void test_13() throws ResolutionExeption {
-    List<AbstractRegexInsn> regex = compile(
+    RegexModule regex= compile(
             Regexes.concatenate(
                     CodeRegexes.literal(l0 = Insns.label())
             )

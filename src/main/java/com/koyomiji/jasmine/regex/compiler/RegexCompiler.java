@@ -1,9 +1,6 @@
 package com.koyomiji.jasmine.regex.compiler;
 
-import com.koyomiji.jasmine.regex.AbstractRegexInsn;
-import com.koyomiji.jasmine.regex.ForkInsn;
-import com.koyomiji.jasmine.regex.JumpInsn;
-import com.koyomiji.jasmine.regex.ReturnInsn;
+import com.koyomiji.jasmine.regex.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,7 +10,7 @@ import java.util.Map;
 public class RegexCompiler {
   public static final Object BOUNDARY_KEY = new Object();
 
-  public List<AbstractRegexInsn> compile(AbstractRegexNode node) {
+  public RegexModule compile(AbstractRegexNode node) {
     node = new ConcatenateNode(
             new StarNode(new AnyNode(), QuantifierType.LAZY),
             new BindNode(BOUNDARY_KEY, node)
@@ -22,7 +19,14 @@ public class RegexCompiler {
     RegexCompilerContext context = new RegexCompilerContext();
     node.compile(context);
     context.emit(new ReturnInsn());
-    return postprocess(context.getInsns());
+
+    List<RegexFunction> functions = context.getFunctions();
+
+    for (RegexFunction function : functions) {
+      function.insns = postprocess(function.insns);
+    }
+
+    return new RegexModule(functions);
   }
 
   private List<AbstractRegexInsn> postprocess(List<AbstractRegexInsn> insns) {

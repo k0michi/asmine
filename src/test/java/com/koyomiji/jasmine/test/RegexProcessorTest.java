@@ -136,14 +136,14 @@ public class RegexProcessorTest {
     Assertions.assertEquals(2, vm.execute().getProgramCounter());
   }
 
-  private List<AbstractRegexInsn> compile(AbstractRegexNode node) {
+  private RegexModule compile(AbstractRegexNode node) {
     return new RegexCompiler().compile(node);
   }
 
   // concatenate
   @Test
   void test_compiler_0() {
-    List<AbstractRegexInsn> insns = compile(Regexes.concatenate(
+    RegexModule insns = compile(Regexes.concatenate(
             StringRegexes.literal('a'),
             StringRegexes.literal('b'),
             StringRegexes.literal('c')
@@ -160,7 +160,7 @@ public class RegexProcessorTest {
   // alternate
   @Test
   void test_compiler_1() {
-    List<AbstractRegexInsn> insns = compile(Regexes.concatenate(
+    RegexModule insns = compile(Regexes.concatenate(
             Regexes.alternate(
                     StringRegexes.literal('a'),
                     StringRegexes.literal('b')
@@ -178,7 +178,7 @@ public class RegexProcessorTest {
   // anchor begin, anchor end
   @Test
   void test_compiler_2() {
-    List<AbstractRegexInsn> insns = compile(Regexes.concatenate(
+    RegexModule insns = compile(Regexes.concatenate(
             Regexes.anchorBegin(),
             Regexes.alternate(
                     StringRegexes.literal('a'),
@@ -198,7 +198,7 @@ public class RegexProcessorTest {
   // star
   @Test
   void test_compiler_3() {
-    List<AbstractRegexInsn> insns = compile(Regexes.concatenate(
+    RegexModule insns = compile(Regexes.concatenate(
             Regexes.star(
                     Regexes.alternate(
                             StringRegexes.literal('a'),
@@ -217,7 +217,7 @@ public class RegexProcessorTest {
   // lazy star
   @Test
   void test_compiler_4() {
-    List<AbstractRegexInsn> insns = compile(Regexes.concatenate(
+    RegexModule insns = compile(Regexes.concatenate(
             Regexes.bind(0,
                     Regexes.star(
                             Regexes.alternate(
@@ -238,7 +238,7 @@ public class RegexProcessorTest {
   // plus
   @Test
   void test_compiler_5() {
-    List<AbstractRegexInsn> insns = compile(Regexes.concatenate(
+    RegexModule insns = compile(Regexes.concatenate(
             Regexes.plus(
                     Regexes.alternate(
                             StringRegexes.literal('a'),
@@ -257,7 +257,7 @@ public class RegexProcessorTest {
   // lazy plus
   @Test
   void test_compiler_6() {
-    List<AbstractRegexInsn> insns = compile(Regexes.concatenate(
+    RegexModule insns = compile(Regexes.concatenate(
             Regexes.bind(0,
                     Regexes.plus(
                             Regexes.alternate(
@@ -278,7 +278,7 @@ public class RegexProcessorTest {
   // question
   @Test
   void test_compiler_7() {
-    List<AbstractRegexInsn> insns = compile(Regexes.concatenate(
+    RegexModule insns = compile(Regexes.concatenate(
             Regexes.question(
                     StringRegexes.literal('a')
             )
@@ -293,7 +293,7 @@ public class RegexProcessorTest {
   // lazy question
   @Test
   void test_compiler_8() {
-    List<AbstractRegexInsn> insns = compile(Regexes.concatenate(
+    RegexModule insns = compile(Regexes.concatenate(
             Regexes.bind(0,
                     Regexes.question(
                             Regexes.alternate(
@@ -313,7 +313,7 @@ public class RegexProcessorTest {
 
   @Test
   void test_compiler_beginEnd_0() {
-    List<AbstractRegexInsn> insns = compile(Regexes.bind(0, Regexes.concatenate(
+    RegexModule insns = compile(Regexes.bind(0, Regexes.concatenate(
             Regexes.alternate(
                     StringRegexes.literal('a'),
                     StringRegexes.literal('b')
@@ -332,7 +332,7 @@ public class RegexProcessorTest {
 
   @Test
   void test_compiler_beginEnd_1() {
-    List<AbstractRegexInsn> insns = compile(Regexes.bind(0, Regexes.plus(
+    RegexModule insns = compile(Regexes.bind(0, Regexes.plus(
             Regexes.concatenate(
                     Regexes.alternate(
                             StringRegexes.literal('a'),
@@ -353,7 +353,7 @@ public class RegexProcessorTest {
 
   @Test
   void test_compiler_bound_0() {
-    List<AbstractRegexInsn> insns = compile(Regexes.concatenate(
+    RegexModule insns = compile(Regexes.concatenate(
             Regexes.bind(0, Regexes.plus(
                     Regexes.concatenate(
                             Regexes.alternate(
@@ -378,7 +378,7 @@ public class RegexProcessorTest {
   // bind nest
   @Test
   void test_compiler_bound_1() {
-    List<AbstractRegexInsn> insns = compile(Regexes.concatenate(
+    RegexModule insns = compile(Regexes.concatenate(
             Regexes.bind(0, Regexes.bind(1, Regexes.plus(
                     Regexes.concatenate(
                             Regexes.alternate(
@@ -403,7 +403,7 @@ public class RegexProcessorTest {
   // bound is nested inside bind
   @Test
   void test_compiler_bound_2() {
-    List<AbstractRegexInsn> insns = compile(Regexes.concatenate(
+    RegexModule insns = compile(Regexes.concatenate(
             Regexes.bind(0, Regexes.plus(
                     Regexes.concatenate(
                             Regexes.alternate(
@@ -431,7 +431,7 @@ public class RegexProcessorTest {
   // nested bound
   @Test
   void test_compiler_bound_3() {
-    List<AbstractRegexInsn> insns = compile(Regexes.concatenate(
+    RegexModule insns = compile(Regexes.concatenate(
             Regexes.bind(0,
                     Regexes.alternate(
                             StringRegexes.literal('a'),
