@@ -7,18 +7,18 @@ import java.util.List;
 
 public class ReturnInsn extends AbstractRegexInsn {
   @Override
-  public Pair<Boolean, List<RegexThread>> execute(RegexProcessor processor, RegexThread thread) {
+  public List<RegexThread> execute(RegexProcessor processor, RegexThread thread) {
     if (thread.stackSize() > 0) {
       int fp = (Integer)thread.pop();
       thread.setFunctionPointer(fp);
       int pc = (Integer)thread.pop();
       thread.setProgramCounter(pc);
 
-      return Pair.of(true, ArrayListHelper.of(thread));
+      return ArrayListHelper.of(thread);
     }
 
     thread.terminate();
-    return Pair.of(true, ArrayListHelper.of(thread));
+    return ArrayListHelper.of(thread);
   }
 
   @Override

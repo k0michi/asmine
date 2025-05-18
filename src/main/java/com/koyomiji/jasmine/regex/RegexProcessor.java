@@ -33,7 +33,7 @@ public class RegexProcessor {
     return this.module.getFunction(thread.functionPointer).insns.get(thread.getProgramCounter());
   }
 
-  protected Pair<Boolean, List<RegexThread>> step(RegexThread thread) {
+  protected List<RegexThread> step(RegexThread thread) {
     return getInstruction(thread).execute(this, thread);
   }
 
@@ -47,7 +47,7 @@ public class RegexProcessor {
       RegexThread t = stack.pop();
 
       if (t.isRunning() && getInstruction(t).isTransitive()) {
-        List<RegexThread> children = step(t).second;
+        List<RegexThread> children = step(t);
 
         for (int i = children.size() - 1; i >= 0; i--) {
           RegexThread child = children.get(i);
@@ -128,11 +128,7 @@ public class RegexProcessor {
             break match;
           }
 
-          Pair<Boolean, List<RegexThread>> result = step(t);
-
-          if (result.first) {
-            next.addAll(result.second);
-          }
+          next.addAll(step(t));
         }
       }
 

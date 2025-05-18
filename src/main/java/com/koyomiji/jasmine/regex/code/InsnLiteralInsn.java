@@ -21,7 +21,7 @@ public class InsnLiteralInsn extends AbstractRegexInsn {
   }
 
   @Override
-  public Pair<Boolean, List<RegexThread>> execute(RegexProcessor processor, RegexThread thread) {
+  public List<RegexThread> execute(RegexProcessor processor, RegexThread thread) {
     CodeRegexProcessor codeProcessor = (CodeRegexProcessor) processor;
 
     if (AbstractInsnNodeHelper.isPseudo(literal)) {
@@ -30,37 +30,37 @@ public class InsnLiteralInsn extends AbstractRegexInsn {
 
         if (codeProcessor.compareCharToLiteral(label, literal)) {
           thread.advanceProgramCounter();
-          return Pair.of(true, ArrayListHelper.of(thread));
+          return ArrayListHelper.of(thread);
         } else {
-          return Pair.of(false, ArrayListHelper.of());
+          return ArrayListHelper.of();
         }
       } else if (literal instanceof LineNumberNode) {
         LineNumberNode lineNumber = codeProcessor.getCurrentLineNumber();
 
         if (codeProcessor.compareCharToLiteral(lineNumber, literal)) {
           thread.advanceProgramCounter();
-          return Pair.of(true, ArrayListHelper.of(thread));
+          return ArrayListHelper.of(thread);
         } else {
-          return Pair.of(false, ArrayListHelper.of());
+          return ArrayListHelper.of();
         }
       } else if (literal instanceof FrameNode) {
         FrameNode frame = codeProcessor.getCurrentFrame();
 
         if (codeProcessor.compareCharToLiteral(frame, literal)) {
           thread.advanceProgramCounter();
-          return Pair.of(true, ArrayListHelper.of(thread));
+          return ArrayListHelper.of(thread);
         } else {
-          return Pair.of(false, ArrayListHelper.of());
+          return ArrayListHelper.of();
         }
       }
     }
 
     if (!codeProcessor.compareCurrentCharToLiteral(literal)) {
-      return Pair.of(false, ArrayListHelper.of());
+      return ArrayListHelper.of();
     }
 
     thread.advanceProgramCounter();
-    return Pair.of(true, ArrayListHelper.of(thread));
+    return ArrayListHelper.of(thread);
   }
 
   @Override

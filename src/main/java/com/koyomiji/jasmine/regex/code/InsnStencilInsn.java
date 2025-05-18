@@ -23,7 +23,7 @@ public class InsnStencilInsn extends AbstractRegexInsn {
   }
 
   @Override
-  public Pair<Boolean, List<RegexThread>> execute(RegexProcessor processor, RegexThread thread) {
+  public List<RegexThread> execute(RegexProcessor processor, RegexThread thread) {
     CodeRegexProcessor codeProcessor = (CodeRegexProcessor) processor;
 
     if (stencil.isPseudo()) {
@@ -32,37 +32,37 @@ public class InsnStencilInsn extends AbstractRegexInsn {
 
         if (codeProcessor.compareCharToStencil(thread, label, stencil)) {
           thread.advanceProgramCounter();
-          return Pair.of(true, ArrayListHelper.of(thread));
+          return ArrayListHelper.of(thread);
         } else {
-          return Pair.of(false, ArrayListHelper.of());
+          return ArrayListHelper.of();
         }
       } else if (stencil instanceof LineNumberStencil) {
         LineNumberNode lineNumber = codeProcessor.getCurrentLineNumber();
 
         if (codeProcessor.compareCharToStencil(thread, lineNumber, stencil)) {
           thread.advanceProgramCounter();
-          return Pair.of(true, ArrayListHelper.of(thread));
+          return ArrayListHelper.of(thread);
         } else {
-          return Pair.of(false, ArrayListHelper.of());
+          return ArrayListHelper.of();
         }
       } else if (stencil instanceof FrameStencil) {
         FrameNode frame = codeProcessor.getCurrentFrame();
 
         if (codeProcessor.compareCharToStencil(thread, frame, stencil)) {
           thread.advanceProgramCounter();
-          return Pair.of(true, ArrayListHelper.of(thread));
+          return ArrayListHelper.of(thread);
         } else {
-          return Pair.of(false, ArrayListHelper.of());
+          return ArrayListHelper.of();
         }
       }
     }
 
     if (!codeProcessor.compareCurrentCharToStencil(thread, stencil)) {
-      return Pair.of(false, ArrayListHelper.of());
+      return ArrayListHelper.of();
     }
 
     thread.advanceProgramCounter();
-    return Pair.of(true, ArrayListHelper.of(thread));
+    return ArrayListHelper.of(thread);
   }
 
   @Override
