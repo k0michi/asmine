@@ -17,24 +17,21 @@ public class BindNode extends AbstractRegexNode {
   }
 
   @Override
-  public List<AbstractRegexInsn> compile(RegexCompilerContext context) {
-    if (!context.insideBound && context.bindMap.containsKey(key)) {
-      throw new RegexCompilerException("Duplicate key: " + key);
+  public void compile(RegexCompilerContext context) {
+    if (context.insideBound == 0) {
+      if (context.bindMap.containsKey(key)) {
+        throw new RegexCompilerException("Duplicate key: " + key);
+      }
+
+      context.bindMap.put(key, this);
+
+      context.emit(new BindBeginInsn());
     }
 
-    context.bindMap.put(key, this);
-    ArrayList<AbstractRegexInsn> insns = new ArrayList<>();
+    child.compile(context);
 
-    if (!context.insideBound) {
-      insns.add(new BindBeginInsn());
+    if (context.insideBound == 0) {
+      context.emit(new BindEndInsn(key));
     }
-
-    insns.addAll(child.compile(context));
-
-    if (!context.insideBound) {
-      insns.add(new BindEndInsn(key));
-    }
-
-    return insns;
   }
 }

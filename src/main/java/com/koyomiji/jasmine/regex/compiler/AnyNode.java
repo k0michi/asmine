@@ -8,7 +8,7 @@ import java.util.List;
 
 public class AnyNode extends AbstractRegexNode {
   @Override
-  public List<AbstractRegexInsn> compile(RegexCompilerContext context) {
-    return ArrayListHelper.of(new AnyInsn());
+  public void compile(RegexCompilerContext context) {
+    context.emit(new AnyInsn());
   }
 }

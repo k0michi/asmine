@@ -8,7 +8,7 @@ import java.util.List;
 
 public class AnchorEndNode extends AbstractRegexNode {
   @Override
-  public List<AbstractRegexInsn> compile(RegexCompilerContext context) {
-    return ArrayListHelper.of(new AnchorEndInsn());
+  public void compile(RegexCompilerContext context) {
+    context.emit(new AnchorEndInsn());
   }
 }

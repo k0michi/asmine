@@ -1,9 +1,15 @@
 package com.koyomiji.jasmine.regex.compiler;
 
-import java.util.HashMap;
-import java.util.Map;
+import com.koyomiji.jasmine.regex.AbstractRegexInsn;
+
+import java.util.*;
 
 public class RegexCompilerContext {
   public Map<Object, BindNode> bindMap = new HashMap<>();
-  public boolean insideBound = false;
+  public int insideBound = 0;
+  public List<AbstractRegexInsn> insns = new ArrayList<>();
+
+  public void emit(AbstractRegexInsn insn) {
+    insns.add(insn);
+  }
 }

@@ -13,17 +13,15 @@ public class BoundNode extends AbstractRegexNode {
   }
 
   @Override
-  public List<AbstractRegexInsn> compile(RegexCompilerContext context) {
+  public void compile(RegexCompilerContext context) {
     if (!context.bindMap.containsKey(key)) {
       throw new RegexCompilerException("Key not found: " + key);
     }
 
-    ArrayList<AbstractRegexInsn> insns = new ArrayList<>();
-    insns.add(new BoundBeginInsn());
-    context.insideBound = true;
-    insns.addAll(context.bindMap.get(key).child.compile(context));
-    context.insideBound = false;
-    insns.add(new BoundEndInsn(key));
-    return insns;
+    context.emit(new BoundBeginInsn());
+    context.insideBound++;
+    context.bindMap.get(key).child.compile(context);
+    context.insideBound--;
+    context.emit(new BoundEndInsn(key));
   }
 }

@@ -17,7 +17,7 @@ public class InsnLiteralNode extends AbstractRegexNode {
   }
 
   @Override
-  public List<AbstractRegexInsn> compile(RegexCompilerContext context) {
-    return ArrayListHelper.of(new InsnLiteralInsn(literal));
+  public void compile(RegexCompilerContext context) {
+    context.emit(new InsnLiteralInsn(literal));
   }
 }
