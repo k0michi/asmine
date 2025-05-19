@@ -352,6 +352,75 @@ public class RegexProcessorTest {
   }
 
   @Test
+  void test_compiler_bound_m3() {
+    RegexModule insns = compile(Regexes.concatenate(
+            Regexes.bind(0,
+                    Regexes.concatenate(
+                            StringRegexes.literal('a'),
+                            StringRegexes.literal('b')
+                    )
+            ),
+            Regexes.bound(0)
+    ));
+    ArrayList<Object> string = ArrayListHelper.of(
+            'a',
+            'b',
+            'a',
+            'b'
+    );
+    RegexProcessor vm = new RegexProcessor(insns, string);
+    Assertions.assertEquals(Pair.of(0, 2), vm.execute().getBoundRange(0));
+  }
+
+  @Test
+  void test_compiler_bound_m2() {
+    RegexModule insns = compile(Regexes.concatenate(
+            Regexes.bind(0,
+                    Regexes.concatenate(
+                            Regexes.alternate(
+                                    StringRegexes.literal('a'),
+                                    StringRegexes.literal('b')
+                            ),
+                            StringRegexes.literal('c')
+                    )
+            ),
+            Regexes.bound(0)
+    ));
+    ArrayList<Object> string = ArrayListHelper.of(
+            'a',
+            'c',
+            'a',
+            'c'
+    );
+    RegexProcessor vm = new RegexProcessor(insns, string);
+    Assertions.assertEquals(Pair.of(0, 2), vm.execute().getBoundRange(0));
+  }
+
+  @Test
+  void test_compiler_bound_m1() {
+    RegexModule insns = compile(Regexes.concatenate(
+            Regexes.bind(0,
+                    Regexes.concatenate(
+                            Regexes.alternate(
+                                    StringRegexes.literal('a'),
+                                    StringRegexes.literal('b')
+                            ),
+                            StringRegexes.literal('c')
+                    )
+            ),
+            Regexes.bound(0)
+    ));
+    ArrayList<Object> string = ArrayListHelper.of(
+            'a',
+            'c',
+            'b',
+            'c'
+    );
+    RegexProcessor vm = new RegexProcessor(insns, string);
+    Assertions.assertNull(vm.execute());
+  }
+
+  @Test
   void test_compiler_bound_0() {
     RegexModule insns = compile(Regexes.concatenate(
             Regexes.bind(0, Regexes.plus(
@@ -451,6 +520,34 @@ public class RegexProcessorTest {
     List<Object> string = split("aacacc");
     RegexProcessor vm = new RegexProcessor(insns, string);
     Assertions.assertNotNull(vm.execute());
+  }
+
+  // bind nest with concat
+  @Test
+  void test_compiler_bound_4() {
+    RegexModule insns = compile(Regexes.concatenate(
+            Regexes.bind(0,
+                    Regexes.concatenate(
+                            Regexes.bind(1, Regexes.plus(
+                                            Regexes.concatenate(
+                                                    Regexes.alternate(
+                                                            StringRegexes.literal('a'),
+                                                            StringRegexes.literal('b')
+                                                    ),
+                                                    StringRegexes.literal('c')
+                                            )
+                                    )
+                            ))),
+            Regexes.bound(0)
+    ));
+    ArrayList<Object> string = ArrayListHelper.of(
+            'a',
+            'c',
+            'a',
+            'c'
+    );
+    RegexProcessor vm = new RegexProcessor(insns, string);
+    Assertions.assertEquals(Pair.of(0, 2), vm.execute().getBoundRange(1));
   }
 
   // trace
