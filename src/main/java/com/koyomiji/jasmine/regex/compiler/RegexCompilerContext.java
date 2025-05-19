@@ -2,12 +2,13 @@ package com.koyomiji.jasmine.regex.compiler;
 
 import com.koyomiji.jasmine.regex.AbstractRegexInsn;
 import com.koyomiji.jasmine.regex.RegexFunction;
+import com.koyomiji.jasmine.tuple.Pair;
 
 import java.util.*;
 
 public class RegexCompilerContext {
   private Map<Object, BindNode> bindMap = new HashMap<>();
-  private Map<ConcatenateNode, Integer> concatFunctionMap = new HashMap<>();
+  private Map<Pair<ConcatenateNode, Boolean>, Integer> concatFunctionMap = new HashMap<>();
   private int insideBound = 0;
   private int function = 0;
   private List<RegexFunction> functions = new ArrayList<>();
@@ -49,15 +50,15 @@ public class RegexCompilerContext {
   }
 
   public boolean hasConcatFunction(ConcatenateNode node) {
-    return concatFunctionMap.containsKey(node);
+    return concatFunctionMap.containsKey(Pair.of(node, isInsideBound()));
   }
 
   public int getConcatFunction(ConcatenateNode node) {
-    if (!concatFunctionMap.containsKey(node)) {
+    if (!concatFunctionMap.containsKey(Pair.of(node, isInsideBound()))) {
       throw new RegexCompilerException("Concat function not found: " + node);
     }
 
-    return concatFunctionMap.get(node);
+    return concatFunctionMap.get(Pair.of(node, isInsideBound()));
   }
 
   public int getFunction() {
@@ -76,7 +77,7 @@ public class RegexCompilerContext {
 
   private int newFunctionForConcat(ConcatenateNode node) {
     int function = newFunction();
-    concatFunctionMap.put(node, function);
+    concatFunctionMap.put(Pair.of(node, isInsideBound()), function);
     return function;
   }
 
