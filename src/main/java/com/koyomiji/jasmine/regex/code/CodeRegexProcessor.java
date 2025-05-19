@@ -1,9 +1,6 @@
 package com.koyomiji.jasmine.regex.code;
 
-import com.koyomiji.jasmine.regex.AbstractRegexInsn;
-import com.koyomiji.jasmine.regex.MatchResult;
-import com.koyomiji.jasmine.regex.RegexProcessor;
-import com.koyomiji.jasmine.regex.RegexThread;
+import com.koyomiji.jasmine.regex.*;
 import com.koyomiji.jasmine.stencil.AbstractStencil;
 import com.koyomiji.jasmine.stencil.insn.AbstractInsnStencil;
 import com.koyomiji.jasmine.tree.AbstractInsnNodeHelper;
@@ -15,6 +12,10 @@ import org.objectweb.asm.tree.LineNumberNode;
 import java.util.List;
 
 public class CodeRegexProcessor extends RegexProcessor {
+  public CodeRegexProcessor(RegexModule module, List<?> string) {
+    super(module, string);
+  }
+
   public CodeRegexProcessor(List<AbstractRegexInsn> instructions, List<? extends AbstractInsnNode> string) {
     super(instructions, string);
   }

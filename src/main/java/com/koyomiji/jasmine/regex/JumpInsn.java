@@ -14,9 +14,8 @@ public class JumpInsn extends AbstractRegexInsn {
 
   @Override
   public List<RegexThread> execute(RegexProcessor processor, RegexThread thread) {
-    RegexThread t = (RegexThread)thread.clone();
-    t.advanceProgramCounter(offset);
-    return ArrayListHelper.of(t);
+    thread.advanceProgramCounter(offset);
+    return ArrayListHelper.of(thread);
   }
 
   @Override

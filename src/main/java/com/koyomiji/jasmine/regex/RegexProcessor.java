@@ -30,6 +30,10 @@ public class RegexProcessor {
   }
 
   protected AbstractRegexInsn getInstruction(RegexThread thread) {
+    if (!module.hasFunction(thread.functionPointer)) {
+      throw new RegexProcessorException("Function not found: " + thread.functionPointer);
+    }
+
     return this.module.getFunction(thread.functionPointer).insns.get(thread.getProgramCounter());
   }
 
