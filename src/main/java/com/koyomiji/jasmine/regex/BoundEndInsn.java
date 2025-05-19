@@ -19,7 +19,7 @@ public class BoundEndInsn extends AbstractRegexInsn {
     }
 
     Pair<Integer, Integer> range = Pair.of((Integer) thread.pop(), processor.getStringPointer());
-    Pair<Integer, Integer> bound = thread.getBoundRange(key);
+    Pair<Integer, Integer> bound = thread.getBoundLast(key);
 
     if(bound != null && processor.compareSubstrings(bound, range)) {
       // Succeeded to match the previous appearance

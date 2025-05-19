@@ -232,7 +232,7 @@ public class RegexProcessorTest {
             'b'
     );
     RegexProcessor vm = new RegexProcessor(insns, string);
-    Assertions.assertEquals(Pair.of(0, 0), vm.execute().getBoundRange(0));
+    Assertions.assertEquals(Pair.of(0, 0), vm.execute().getBoundLast(0));
   }
 
   // plus
@@ -272,7 +272,7 @@ public class RegexProcessorTest {
             'b'
     );
     RegexProcessor vm = new RegexProcessor(insns, string);
-    Assertions.assertEquals(Pair.of(0, 1), vm.execute().getBoundRange(0));
+    Assertions.assertEquals(Pair.of(0, 1), vm.execute().getBoundLast(0));
   }
 
   // question
@@ -308,7 +308,7 @@ public class RegexProcessorTest {
             'b'
     );
     RegexProcessor vm = new RegexProcessor(insns, string);
-    Assertions.assertEquals(Pair.of(0, 0), vm.execute().getBoundRange(0));
+    Assertions.assertEquals(Pair.of(0, 0), vm.execute().getBoundLast(0));
   }
 
   @Test
@@ -327,7 +327,7 @@ public class RegexProcessorTest {
             'c'
     );
     RegexProcessor vm = new RegexProcessor(insns, string);
-    Assertions.assertEquals(Pair.of(0, 2), vm.execute().getBoundRange(0));
+    Assertions.assertEquals(Pair.of(0, 2), vm.execute().getBoundLast(0));
   }
 
   @Test
@@ -348,7 +348,7 @@ public class RegexProcessorTest {
             'c'
     );
     RegexProcessor vm = new RegexProcessor(insns, string);
-    Assertions.assertEquals(Pair.of(0, 4), vm.execute().getBoundRange(0));
+    Assertions.assertEquals(Pair.of(0, 4), vm.execute().getBoundLast(0));
   }
 
   @Test
@@ -369,7 +369,7 @@ public class RegexProcessorTest {
             'b'
     );
     RegexProcessor vm = new RegexProcessor(insns, string);
-    Assertions.assertEquals(Pair.of(0, 2), vm.execute().getBoundRange(0));
+    Assertions.assertEquals(Pair.of(0, 2), vm.execute().getBoundLast(0));
   }
 
   @Test
@@ -393,7 +393,7 @@ public class RegexProcessorTest {
             'c'
     );
     RegexProcessor vm = new RegexProcessor(insns, string);
-    Assertions.assertEquals(Pair.of(0, 2), vm.execute().getBoundRange(0));
+    Assertions.assertEquals(Pair.of(0, 2), vm.execute().getBoundLast(0));
   }
 
   @Test
@@ -441,7 +441,7 @@ public class RegexProcessorTest {
             'c'
     );
     RegexProcessor vm = new RegexProcessor(insns, string);
-    Assertions.assertEquals(Pair.of(0, 2), vm.execute().getBoundRange(0));
+    Assertions.assertEquals(Pair.of(0, 2), vm.execute().getBoundLast(0));
   }
 
   // bind nest
@@ -466,7 +466,7 @@ public class RegexProcessorTest {
             'c'
     );
     RegexProcessor vm = new RegexProcessor(insns, string);
-    Assertions.assertEquals(Pair.of(0, 2), vm.execute().getBoundRange(1));
+    Assertions.assertEquals(Pair.of(0, 2), vm.execute().getBoundLast(1));
   }
 
   // bound is nested inside bind
@@ -494,7 +494,7 @@ public class RegexProcessorTest {
             'c'
     );
     RegexProcessor vm = new RegexProcessor(insns, string);
-    Assertions.assertEquals(Pair.of(2, 4), vm.execute().getBoundRange(1));
+    Assertions.assertEquals(Pair.of(2, 4), vm.execute().getBoundLast(1));
   }
 
   // nested bound
@@ -547,7 +547,7 @@ public class RegexProcessorTest {
             'c'
     );
     RegexProcessor vm = new RegexProcessor(insns, string);
-    Assertions.assertEquals(Pair.of(0, 2), vm.execute().getBoundRange(1));
+    Assertions.assertEquals(Pair.of(0, 2), vm.execute().getBoundLast(1));
   }
 
   // trace
@@ -621,5 +621,55 @@ public class RegexProcessorTest {
     List<Object> string = split("((()))");
     RegexProcessor vm = new RegexProcessor(insns, string);
     Assertions.assertNotNull(vm.execute());
+  }
+
+  // multiple binds
+  @Test
+  void test_12() {
+    ConcatenateNode c0;
+
+    RegexModule insns = compile((c0 = Regexes.concatenate()).setChildren(
+            Regexes.bind(0,
+                    Regexes.concatenate(
+                            StringRegexes.literal('('),
+                            Regexes.question(c0),
+                            StringRegexes.literal(')')
+                    )
+            )
+    ));
+    List<Object> string = split("((()))");
+    RegexProcessor vm = new RegexProcessor(insns, string);
+    RegexThread thread = vm.execute();
+    Assertions.assertEquals(ArrayListHelper.of(
+            Pair.of(2, 4),
+            Pair.of(1, 5),
+            Pair.of(0, 6)
+    ), thread.getBounds(0));
+  }
+
+  // multiple binds - 2
+  @Test
+  void test_13() {
+    ConcatenateNode c0;
+
+    RegexModule insns = compile((c0 = Regexes.concatenate()).setChildren(
+            Regexes.plus(
+                    Regexes.bind(0,
+                            Regexes.concatenate(
+                                    StringRegexes.literal('('),
+                                    Regexes.question(c0),
+                                    StringRegexes.literal(')')
+                            )
+                    )
+            )
+    ));
+    List<Object> string = split("(()())");
+    RegexProcessor vm = new RegexProcessor(insns, string);
+    RegexThread thread = vm.execute();
+    Assertions.assertEquals(ArrayListHelper.of(
+            Pair.of(1, 3),
+            Pair.of(3, 5),
+            Pair.of(0, 6)
+    ), thread.getBounds(0));
   }
 }

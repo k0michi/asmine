@@ -17,7 +17,7 @@ import java.util.Map;
 public class CodeFragmentQuery<T> extends AbstractQuery<T> {
   protected MethodManipulator methodManipulator;
   protected CodeMatchResult matchResult;
-  protected Map<Object, Pair<Object, Object>> stringBinds;
+  protected Map<Object, List<Pair<Object, Object>>> stringBinds;
   protected Pair<Object, Object> range;
 
   public CodeFragmentQuery(T parent, MethodManipulator methodManipulator, CodeMatchResult matchResult) {
@@ -28,8 +28,14 @@ public class CodeFragmentQuery<T> extends AbstractQuery<T> {
     this.stringBinds = new HashMap<>();
 
     if (matchResult != null) {
-      for (Map.Entry<Object, Pair<Integer, Integer>> entry : matchResult.getStringBinds().entrySet()) {
-        stringBinds.put(entry.getKey(), Pair.of(methodManipulator.getIndexSymbol(entry.getValue().first), methodManipulator.getIndexSymbol(entry.getValue().second)));
+      for (Map.Entry<Object, List<Pair<Integer, Integer>>> entry : matchResult.getBounds().entrySet()) {
+        for (Pair<Integer, Integer> range : entry.getValue()) {
+          if (!stringBinds.containsKey(entry.getKey())) {
+            stringBinds.put(entry.getKey(), ArrayListHelper.of());
+          }
+
+          stringBinds.get(entry.getKey()).add(Pair.of(methodManipulator.getIndexSymbol(range.first), methodManipulator.getIndexSymbol(range.second)));
+        }
       }
 
       this.range = Pair.of(methodManipulator.getIndexSymbol(matchResult.getRange().first), methodManipulator.getIndexSymbol(matchResult.getRange().second));

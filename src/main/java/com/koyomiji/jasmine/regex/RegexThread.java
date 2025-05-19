@@ -9,7 +9,7 @@ public class RegexThread implements Cloneable {
   protected int functionPointer = 0;
   protected int programCounter = 0;
   protected Stack<Object> stack = new Stack<>();
-  protected HashMap<Object, Pair<Integer, Integer>> stringBinds = new HashMap<>();
+  protected HashMap<Object, List<Pair<Integer, Integer>>> stringBinds = new HashMap<>();
   protected List<Object> trace = new ArrayList<>();
 
   public RegexThread() {}
@@ -19,7 +19,7 @@ public class RegexThread implements Cloneable {
     try {
       RegexThread clone = (RegexThread) super.clone();
       clone.stack = (Stack<Object>) this.stack.clone();
-      clone.stringBinds = (HashMap<Object, Pair<Integer, Integer>>) this.stringBinds.clone();
+      clone.stringBinds = (HashMap<Object, List<Pair<Integer, Integer>>>) this.stringBinds.clone();
       return clone;
     } catch (CloneNotSupportedException e) {
       throw new RuntimeException(e);
@@ -79,19 +79,27 @@ public class RegexThread implements Cloneable {
   }
 
   public void bind(Object index, Pair<Integer, Integer> range) {
-    this.stringBinds.put(index, range);
+    if (!stringBinds.containsKey(index)) {
+      stringBinds.put(index, new ArrayList<>());
+    }
+
+    this.stringBinds.get(index).add(range);
   }
 
-  public Pair<Integer, Integer> getBoundRange(Object index) {
+  public Pair<Integer, Integer> getBoundLast(Object index) {
+    return stringBinds.get(index).get(stringBinds.get(index).size() - 1);
+  }
+
+  public List<Pair<Integer, Integer>> getBounds(Object index) {
     return stringBinds.get(index);
+  }
+
+  public Map<Object, List<Pair<Integer, Integer>>> getBounds() {
+    return stringBinds;
   }
 
   public Stack<Object> getStack() {
     return stack;
-  }
-
-  public Map<Object, Pair<Integer, Integer>> getStringBinds() {
-    return stringBinds;
   }
 
   public void trace(Object obj) {

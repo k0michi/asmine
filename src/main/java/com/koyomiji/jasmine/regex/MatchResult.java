@@ -3,6 +3,7 @@ package com.koyomiji.jasmine.regex;
 import com.koyomiji.jasmine.regex.compiler.RegexCompiler;
 import com.koyomiji.jasmine.tuple.Pair;
 
+import java.util.List;
 import java.util.Map;
 
 public class MatchResult {
@@ -13,14 +14,14 @@ public class MatchResult {
   }
 
   public Pair<Integer, Integer> getRange() {
-    return thread.getBoundRange(RegexCompiler.BOUNDARY_KEY);
+    return thread.getBoundLast(RegexCompiler.BOUNDARY_KEY);
   }
 
   public Pair<Integer, Integer> getBound(Object key) {
-    return thread.getBoundRange(key);
+    return thread.getBoundLast(key);
   }
 
-  public Map<Object, Pair<Integer, Integer>> getStringBinds() {
-    return thread.getStringBinds();
+  public Map<Object, List<Pair<Integer, Integer>>> getBounds() {
+    return thread.getBounds();
   }
 }
