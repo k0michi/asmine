@@ -379,4 +379,68 @@ public class MethodQueryTest {
 
     Assertions.assertTrue(present);
   }
+
+  @Test
+  void test_insert_0() {
+    MethodNode methodNode = new MethodNode(OpcodesCompat.ASM_LATEST);
+    methodNode.instructions.add(new InsnNode(Opcodes.NOP));
+
+    boolean present = MethodQuery.of(methodNode)
+            .selectCodeFragments(
+                    Regexes.concatenate(
+                            CodeRegexes.stencil(InsnStencils.nop())
+                    )
+            )
+            .insertBefore(
+                    InsnStencils.iconst_0()
+            )
+            .insertAfter(
+                    InsnStencils.iconst_1()
+            )
+            .done()
+            .selectCodeFragment(
+                    Regexes.concatenate(
+                            Regexes.anchorBegin(),
+                            CodeRegexes.stencil(InsnStencils.iconst_0()),
+                            CodeRegexes.stencil(InsnStencils.nop()),
+                            CodeRegexes.stencil(InsnStencils.iconst_1()),
+                            Regexes.anchorEnd()
+                    )
+            )
+            .isPresent();
+
+    Assertions.assertTrue(present);
+  }
+
+  @Test
+  void test_insert_1() {
+    MethodNode methodNode = new MethodNode(OpcodesCompat.ASM_LATEST);
+    methodNode.instructions.add(new InsnNode(Opcodes.NOP));
+
+    boolean present = MethodQuery.of(methodNode)
+            .selectCodeFragments(
+                    Regexes.concatenate(
+                            CodeRegexes.stencil(InsnStencils.nop())
+                    )
+            )
+            .insertFirst(
+                    InsnStencils.iconst_0()
+            )
+            .insertLast(
+                    InsnStencils.iconst_1()
+            )
+            .done()
+            .selectCodeFragment(
+                    Regexes.concatenate(
+                            Regexes.anchorBegin(),
+                            CodeRegexes.stencil(InsnStencils.iconst_0()),
+                            CodeRegexes.stencil(InsnStencils.nop()),
+                            CodeRegexes.stencil(InsnStencils.iconst_1()),
+                            Regexes.anchorEnd()
+                    )
+            )
+            .isPresent();
+
+    Assertions.assertTrue(present);
+  }
 }
