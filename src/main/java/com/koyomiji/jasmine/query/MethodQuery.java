@@ -56,7 +56,7 @@ public class MethodQuery<T> extends AbstractQuery<T> {
 
   public MethodQuery<T> require() {
     if (methodNode == null) {
-      throw new IllegalStateException("Method not found");
+      throw new QueryException("Method not found");
     }
 
     return this;

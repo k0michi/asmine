@@ -22,9 +22,9 @@ public class FieldQuery<T> extends AbstractQuery<T> {
     return fieldNode;
   }
 
-  public FieldQuery require() {
+  public FieldQuery<T> require() {
     if (fieldNode == null) {
-      throw new IllegalStateException("Field not found");
+      throw new QueryException("Field not found");
     }
 
     return this;
