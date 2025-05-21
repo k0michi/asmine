@@ -3,6 +3,7 @@ package com.koyomiji.jasmine.query;
 import com.koyomiji.jasmine.common.ArrayHelper;
 import com.koyomiji.jasmine.common.ArrayListHelper;
 import com.koyomiji.jasmine.common.InsnListHelper;
+import com.koyomiji.jasmine.regex.RegexMatcher;
 import com.koyomiji.jasmine.regex.code.CodeMatchResult;
 import com.koyomiji.jasmine.stencil.ResolutionExeption;
 import com.koyomiji.jasmine.stencil.insn.AbstractInsnStencil;
@@ -18,7 +19,6 @@ public class CodeFragmentQuery<T> extends AbstractQuery<T> {
   protected MethodManipulator methodManipulator;
   protected CodeMatchResult matchResult;
   protected Map<Object, List<Pair<Object, Object>>> stringBinds;
-  protected Pair<Object, Object> range;
 
   public CodeFragmentQuery(T parent, MethodManipulator methodManipulator, CodeMatchResult matchResult) {
     super(parent);
@@ -37,8 +37,6 @@ public class CodeFragmentQuery<T> extends AbstractQuery<T> {
           stringBinds.get(entry.getKey()).add(Pair.of(methodManipulator.getIndexSymbol(range.first), methodManipulator.getIndexSymbol(range.second)));
         }
       }
-
-      this.range = Pair.of(methodManipulator.getIndexSymbol(matchResult.getRange().first), methodManipulator.getIndexSymbol(matchResult.getRange().second));
     }
   }
 
@@ -61,48 +59,48 @@ public class CodeFragmentQuery<T> extends AbstractQuery<T> {
   }
 
   public CodeFragmentQuery<T> replaceWith(List<AbstractInsnStencil> insns) {
-    try {
-      replaceWith(
-              instantiate(insns)
-      );
-    } catch (ResolutionExeption e) {
+    if (!stringBinds.containsKey(RegexMatcher.BOUNDARY_KEY)) {
       return this;
     }
 
-    return this;
-  }
+    for(Pair<Object, Object> range : stringBinds.get(RegexMatcher.BOUNDARY_KEY)) {
+      Pair<Integer, Integer> indices = methodManipulator.getIndicesForSymbols(range);
 
-  public CodeFragmentQuery<T> replaceWith(AbstractInsnNode insn) {
-    return replaceWith(InsnListHelper.of(insn));
-  }
+      if (indices == null) {
+        continue;
+      }
 
-  public CodeFragmentQuery<T> replaceWith(AbstractInsnNode... insns) {
-    return replaceWith(InsnListHelper.of(insns));
-  }
-
-  public CodeFragmentQuery<T> replaceWith(InsnList insns) {
-    if (matchResult == null) {
-      return this;
+      try {
+        methodManipulator.replaceInsns(
+                indices.first,
+                indices.second,
+                instantiate(insns)
+        );
+      } catch (ResolutionExeption e) {
+        throw new RuntimeException(e);
+      }
     }
-
-    methodManipulator.replaceInsns(
-            methodManipulator.getIndexForSymbol(range.first),
-            methodManipulator.getIndexForSymbol(range.second),
-            insns
-    );
 
     return this;
   }
 
   public CodeFragmentQuery<T> remove() {
-    if (matchResult == null) {
+    if (!stringBinds.containsKey(RegexMatcher.BOUNDARY_KEY)) {
       return this;
     }
 
-    methodManipulator.removeInsns(
-            methodManipulator.getIndexForSymbol(range.first),
-            methodManipulator.getIndexForSymbol(range.second)
-    );
+    for(Pair<Object, Object> range : stringBinds.get(RegexMatcher.BOUNDARY_KEY)) {
+      Pair<Integer, Integer> indices = methodManipulator.getIndicesForSymbols(range);
+
+      if (indices == null) {
+        continue;
+      }
+
+      methodManipulator.removeInsns(
+              indices.first,
+              indices.second
+      );
+    }
 
     return this;
   }

@@ -2,6 +2,7 @@ package com.koyomiji.jasmine.query;
 
 import com.koyomiji.jasmine.common.*;
 import com.koyomiji.jasmine.tree.AbstractInsnNodeHelper;
+import com.koyomiji.jasmine.tuple.Pair;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.InsnList;
 import org.objectweb.asm.tree.LabelNode;
@@ -39,6 +40,17 @@ public class MethodManipulator {
     }
 
     return -1;
+  }
+
+  public Pair<Integer, Integer> getIndicesForSymbols(Pair<Object, Object> symbols) {
+    int begin = getIndexForSymbol(symbols.first);
+    int end = getIndexForSymbol(symbols.second);
+
+    if (begin == -1 || end == -1) {
+      return null;
+    }
+
+    return Pair.of(begin, end);
   }
 
   public void removeInsn(int index) {

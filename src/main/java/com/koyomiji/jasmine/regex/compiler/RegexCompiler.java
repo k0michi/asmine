@@ -8,14 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 public class RegexCompiler {
-  public static final Object BOUNDARY_KEY = new Object();
-
   public RegexModule compile(AbstractRegexNode node) {
-    node = new ConcatenateNode(
-            new StarNode(new AnyNode(), QuantifierType.LAZY),
-            new BindNode(BOUNDARY_KEY, node)
-    );
-
     RegexCompilerContext context = new RegexCompilerContext();
     node.compile(context);
     context.emit(new ReturnInsn());

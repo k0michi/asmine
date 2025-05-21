@@ -65,38 +65,6 @@ public class RegexProcessor {
     return intransitives;
   }
 
-  public MatchResult match() {
-    return match(0);
-  }
-
-  public MatchResult match(int begin) {
-    RegexThread terminated = execute(begin);
-
-    if (terminated == null) {
-      return null;
-    }
-
-    return newMatchResult(terminated);
-  }
-
-  public List<MatchResult> matchAll() {
-    List<MatchResult> results = new ArrayList<>();
-    int begin = 0;
-
-    while (true) {
-      MatchResult terminated = match(begin);
-
-      if (terminated == null) {
-        break;
-      }
-
-      results.add(terminated);
-      begin = terminated.getRange().second;
-    }
-
-    return results;
-  }
-
   public RegexThread execute() {
     return execute(0);
   }

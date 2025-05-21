@@ -13,12 +13,8 @@ public class MatchResult {
     this.thread = thread;
   }
 
-  public Pair<Integer, Integer> getRange() {
-    return thread.getBoundLast(RegexCompiler.BOUNDARY_KEY);
-  }
-
-  public Pair<Integer, Integer> getBound(Object key) {
-    return thread.getBoundLast(key);
+  public List<Pair<Integer, Integer>> getBounds(Object key) {
+    return thread.getBounds().get(key);
   }
 
   public Map<Object, List<Pair<Integer, Integer>>> getBounds() {

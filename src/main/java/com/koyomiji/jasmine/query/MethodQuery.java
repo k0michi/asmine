@@ -4,8 +4,10 @@ import com.koyomiji.jasmine.common.InsnListListAdapter;
 import com.koyomiji.jasmine.common.PrinterHelper;
 import com.koyomiji.jasmine.regex.AbstractRegexInsn;
 import com.koyomiji.jasmine.regex.MatchResult;
+import com.koyomiji.jasmine.regex.RegexMatcher;
 import com.koyomiji.jasmine.regex.RegexModule;
 import com.koyomiji.jasmine.regex.code.CodeMatchResult;
+import com.koyomiji.jasmine.regex.code.CodeRegexMatcher;
 import com.koyomiji.jasmine.regex.code.CodeRegexProcessor;
 import com.koyomiji.jasmine.regex.compiler.AbstractRegexNode;
 import com.koyomiji.jasmine.regex.compiler.RegexCompiler;
@@ -61,19 +63,15 @@ public class MethodQuery<T> extends AbstractQuery<T> {
   }
 
   public CodeFragmentQuery<MethodQuery<T>> selectCodeFragment(AbstractRegexNode regex) {
-    RegexCompiler compiler = new RegexCompiler();
-    RegexModule module = compiler.compile(regex);
-    CodeRegexProcessor processor = new CodeRegexProcessor(module, new InsnListListAdapter(methodNode.instructions));
-    CodeMatchResult matchResult = (CodeMatchResult) processor.match();
+    CodeRegexMatcher matcher = new CodeRegexMatcher(regex);
+    CodeMatchResult matchResult = matcher.match(methodNode.instructions, 0);
     return new CodeFragmentQuery<>(this, methodManipulator, matchResult);
   }
 
-  public CodeFragmentsQuery<MethodQuery<T>> selectCodeFragments(AbstractRegexNode regex) {
-    RegexCompiler compiler = new RegexCompiler();
-    RegexModule module = compiler.compile(regex);
-    CodeRegexProcessor processor = new CodeRegexProcessor(module, new InsnListListAdapter(methodNode.instructions));
-    List<MatchResult> matchResults = processor.matchAll();
-    return new CodeFragmentsQuery<>(this, methodManipulator, (List<CodeMatchResult>) (Object) matchResults);
+  public CodeFragmentQuery<MethodQuery<T>> selectCodeFragments(AbstractRegexNode regex) {
+    CodeRegexMatcher matcher = new CodeRegexMatcher(regex);
+    CodeMatchResult matchResult = matcher.matchAll(methodNode.instructions, 0);
+    return new CodeFragmentQuery<>(this, methodManipulator, matchResult);
   }
 
   public MethodQuery<T> print(Printer printer) {

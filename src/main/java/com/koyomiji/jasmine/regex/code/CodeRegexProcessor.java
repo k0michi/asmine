@@ -1,13 +1,11 @@
 package com.koyomiji.jasmine.regex.code;
 
+import com.koyomiji.jasmine.common.InsnListListAdapter;
 import com.koyomiji.jasmine.regex.*;
 import com.koyomiji.jasmine.stencil.AbstractStencil;
 import com.koyomiji.jasmine.stencil.insn.AbstractInsnStencil;
 import com.koyomiji.jasmine.tree.AbstractInsnNodeHelper;
-import org.objectweb.asm.tree.AbstractInsnNode;
-import org.objectweb.asm.tree.FrameNode;
-import org.objectweb.asm.tree.LabelNode;
-import org.objectweb.asm.tree.LineNumberNode;
+import org.objectweb.asm.tree.*;
 
 import java.util.List;
 
