@@ -443,4 +443,45 @@ public class MethodQueryTest {
 
     Assertions.assertTrue(present);
   }
+
+  // Insert multiple times
+  @Test
+  void test_insert_2() {
+    MethodNode methodNode = new MethodNode(OpcodesCompat.ASM_LATEST);
+    methodNode.instructions.add(new InsnNode(Opcodes.NOP));
+
+    boolean present = MethodQuery.of(methodNode)
+            .selectCodeFragments(
+                    Regexes.concatenate(
+                            CodeRegexes.stencil(InsnStencils.nop())
+                    )
+            )
+            .insertBefore(
+                    InsnStencils.iconst_0()
+            )
+            .insertBefore(
+                    InsnStencils.iconst_1()
+            )
+            .insertAfter(
+                    InsnStencils.iconst_2()
+            )
+            .insertAfter(
+                    InsnStencils.iconst_3()
+            )
+            .done()
+            .selectCodeFragment(
+                    Regexes.concatenate(
+                            Regexes.anchorBegin(),
+                            CodeRegexes.stencil(InsnStencils.iconst_1()),
+                            CodeRegexes.stencil(InsnStencils.iconst_0()),
+                            CodeRegexes.stencil(InsnStencils.nop()),
+                            CodeRegexes.stencil(InsnStencils.iconst_2()),
+                            CodeRegexes.stencil(InsnStencils.iconst_3()),
+                            Regexes.anchorEnd()
+                    )
+            )
+            .isPresent();
+
+    Assertions.assertTrue(present);
+  }
 }
