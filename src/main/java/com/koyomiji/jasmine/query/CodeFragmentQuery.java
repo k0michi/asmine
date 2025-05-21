@@ -50,20 +50,28 @@ public class CodeFragmentQuery<T> extends AbstractQuery<T> {
     return insnList;
   }
 
+  public CodeFragmentQuery<T> replaceBoundWith(Object key, AbstractInsnStencil insn) {
+    return replaceBoundWith(key, ArrayListHelper.of(insn));
+  }
+
   public CodeFragmentQuery<T> replaceWith(AbstractInsnStencil insn) {
-    return replaceWith(ArrayListHelper.of(insn));
+    return replaceBoundWith(RegexMatcher.BOUNDARY_KEY, insn);
+  }
+
+  public CodeFragmentQuery<T> replaceBoundWith(Object key, AbstractInsnStencil... insns) {
+    return replaceBoundWith(key, ArrayHelper.toList(insns));
   }
 
   public CodeFragmentQuery<T> replaceWith(AbstractInsnStencil... insns) {
-    return replaceWith(ArrayHelper.toList(insns));
+    return replaceBoundWith(RegexMatcher.BOUNDARY_KEY, insns);
   }
 
-  public CodeFragmentQuery<T> replaceWith(List<AbstractInsnStencil> insns) {
-    if (!stringBinds.containsKey(RegexMatcher.BOUNDARY_KEY)) {
+  public CodeFragmentQuery<T> replaceBoundWith(Object key, List<AbstractInsnStencil> insns) {
+    if (!stringBinds.containsKey(key)) {
       return this;
     }
 
-    for(Pair<Object, Object> range : stringBinds.get(RegexMatcher.BOUNDARY_KEY)) {
+    for(Pair<Object, Object> range : stringBinds.get(key)) {
       Pair<Integer, Integer> indices = methodManipulator.getIndicesForSymbols(range);
 
       if (indices == null) {
@@ -84,12 +92,16 @@ public class CodeFragmentQuery<T> extends AbstractQuery<T> {
     return this;
   }
 
-  public CodeFragmentQuery<T> remove() {
-    if (!stringBinds.containsKey(RegexMatcher.BOUNDARY_KEY)) {
+  public CodeFragmentQuery<T> replaceWith(List<AbstractInsnStencil> insns) {
+    return replaceBoundWith(RegexMatcher.BOUNDARY_KEY, insns);
+  }
+
+  public CodeFragmentQuery<T> remove(Object key) {
+    if (!stringBinds.containsKey(key)) {
       return this;
     }
 
-    for(Pair<Object, Object> range : stringBinds.get(RegexMatcher.BOUNDARY_KEY)) {
+    for(Pair<Object, Object> range : stringBinds.get(key)) {
       Pair<Integer, Integer> indices = methodManipulator.getIndicesForSymbols(range);
 
       if (indices == null) {
@@ -103,6 +115,10 @@ public class CodeFragmentQuery<T> extends AbstractQuery<T> {
     }
 
     return this;
+  }
+
+  public CodeFragmentQuery<T> remove() {
+    return remove(RegexMatcher.BOUNDARY_KEY);
   }
 
   public boolean isPresent() {
