@@ -383,10 +383,10 @@ public class MethodQueryTest {
 
   @Test
   void test_insert_0() {
-    MethodNode methodNode = new MethodNode(OpcodesCompat.ASM_LATEST);
-    methodNode.instructions.add(new InsnNode(Opcodes.NOP));
-
-    boolean present = MethodQuery.of(methodNode)
+    boolean present = MethodQuery.ofNew()
+            .addInsns(
+                    Insns.nop()
+            )
             .selectCodeFragments(
                     Regexes.concatenate(
                             CodeRegexes.stencil(InsnStencils.nop())
@@ -418,7 +418,10 @@ public class MethodQueryTest {
     MethodNode methodNode = new MethodNode(OpcodesCompat.ASM_LATEST);
     methodNode.instructions.add(new InsnNode(Opcodes.NOP));
 
-    boolean present = MethodQuery.of(methodNode)
+    boolean present = MethodQuery.ofNew()
+            .addInsns(
+                    Insns.nop()
+            )
             .selectCodeFragments(
                     Regexes.concatenate(
                             CodeRegexes.stencil(InsnStencils.nop())
@@ -448,10 +451,10 @@ public class MethodQueryTest {
   // Insert multiple times
   @Test
   void test_insert_2() {
-    MethodNode methodNode = new MethodNode(OpcodesCompat.ASM_LATEST);
-    methodNode.instructions.add(new InsnNode(Opcodes.NOP));
-
-    boolean present = MethodQuery.of(methodNode)
+    boolean present = MethodQuery.ofNew()
+            .addInsns(
+                    Insns.nop()
+            )
             .selectCodeFragments(
                     Regexes.concatenate(
                             CodeRegexes.stencil(InsnStencils.nop())
