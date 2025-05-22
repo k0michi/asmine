@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.objectweb.asm.tree.MethodNode;
 
 public class MethodManipulatorTest {
+  // Replace empty with empty
   @Test
   void test_symbol_m1() {
     MethodManipulator q = new MethodManipulator(new MethodNode());
@@ -133,5 +134,21 @@ public class MethodManipulatorTest {
     q.replaceInsns(0, 1);
     Assertions.assertEquals(0, q.getIndexForSymbol(s0));
     Assertions.assertEquals(0, q.getIndexForSymbol(s1));
+  }
+
+  @Test
+  void test_symbol_8() {
+    MethodManipulator q = new MethodManipulator(new MethodNode());
+    q.addInsns(
+            Insns.iconst_0(),
+            Insns.return_()
+    );
+    Object s0 = q.getIndexSymbol(0);
+    Object s1 = q.getIndexSymbol(1);
+    Object s2 = q.getIndexSymbol(2);
+    q.insertInsnsAfter(1, Insns.iconst_1());
+    Assertions.assertEquals(0, q.getIndexForSymbol(s0));
+    Assertions.assertEquals(1, q.getIndexForSymbol(s1));
+    Assertions.assertEquals(3, q.getIndexForSymbol(s2));
   }
 }
