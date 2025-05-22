@@ -1,0 +1,7 @@
+package com.koyomiji.jasmine.stencil;
+
+public abstract class AbstractParameter<T> {
+  public abstract boolean match(IParameterRegistry registry, T value);
+
+  public abstract T instantiate(IParameterRegistry registry) throws ResolutionExeption;
+}
