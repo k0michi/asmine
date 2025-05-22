@@ -32,7 +32,7 @@ public class CodeFragmentQuery<T> extends AbstractQuery<T> {
             stringBinds.put(entry.getKey(), ArrayListHelper.of());
           }
 
-          stringBinds.get(entry.getKey()).add(Pair.of(codeManipulator.getIndexSymbol(range.first), codeManipulator.getIndexSymbol(range.second)));
+          stringBinds.get(entry.getKey()).add(Pair.of(codeManipulator.getCursor(range.first), codeManipulator.getCursor(range.second)));
         }
       }
     }
@@ -58,7 +58,7 @@ public class CodeFragmentQuery<T> extends AbstractQuery<T> {
     }
 
     for(Pair<Object, Object> range : stringBinds.get(key)) {
-      Pair<Integer, Integer> indices = codeManipulator.getIndicesForSymbols(range);
+      Pair<Integer, Integer> indices = codeManipulator.getIndicesForCursors(range);
 
       if (indices == null) {
         continue;
@@ -95,7 +95,7 @@ public class CodeFragmentQuery<T> extends AbstractQuery<T> {
     }
 
     for(Pair<Object, Object> range : stringBinds.get(key)) {
-      Pair<Integer, Integer> indices = codeManipulator.getIndicesForSymbols(range);
+      Pair<Integer, Integer> indices = codeManipulator.getIndicesForCursors(range);
 
       if (indices == null) {
         continue;
@@ -164,7 +164,7 @@ public class CodeFragmentQuery<T> extends AbstractQuery<T> {
     }
 
     for(Pair<Object, Object> range : stringBinds.get(key)) {
-      Pair<Integer, Integer> indices = codeManipulator.getIndicesForSymbols(range);
+      Pair<Integer, Integer> indices = codeManipulator.getIndicesForCursors(range);
 
       if (indices == null) {
         continue;
@@ -202,7 +202,7 @@ public class CodeFragmentQuery<T> extends AbstractQuery<T> {
     }
 
     for(Pair<Object, Object> range : stringBinds.get(key)) {
-      Pair<Integer, Integer> indices = codeManipulator.getIndicesForSymbols(range);
+      Pair<Integer, Integer> indices = codeManipulator.getIndicesForCursors(range);
 
       if (indices == null) {
         continue;

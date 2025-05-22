@@ -17,32 +17,32 @@ import java.util.Set;
  */
 public class CodeManipulator {
   protected MethodNode methodNode;
-  protected List<Set<Object>> indexSymbols = new ArrayList<>();
+  protected List<Set<Object>> cursors = new ArrayList<>();
 
   public CodeManipulator(MethodNode methodNode) {
     this.methodNode = methodNode;
 
-    indexSymbols.add(HashSetHelper.of(new Object()));
+    cursors.add(HashSetHelper.of(new Object()));
 
     for (AbstractInsnNode insn : new InsnListIterableAdapter(methodNode.instructions)) {
-      indexSymbols.add(HashSetHelper.of(new Object()));
+      cursors.add(HashSetHelper.of(new Object()));
     }
 
-    indexSymbols.add(HashSetHelper.of(new Object()));
-    indexSymbols.add(HashSetHelper.of(new Object()));
+    cursors.add(HashSetHelper.of(new Object()));
+    cursors.add(HashSetHelper.of(new Object()));
   }
 
   /*
    * Indices
    */
 
-  public Object getIndexSymbol(int index) {
-    return indexSymbols.get(index + 1).iterator().next();
+  public Object getCursor(int index) {
+    return cursors.get(index + 1).iterator().next();
   }
 
-  public int getIndexForSymbol(Object symbol) {
-    for (int i = 0; i < indexSymbols.size(); i++) {
-      if (indexSymbols.get(i).contains(symbol)) {
+  public int getIndexForCursor(Object cursor) {
+    for (int i = 0; i < cursors.size(); i++) {
+      if (cursors.get(i).contains(cursor)) {
         return i - 1;
       }
     }
@@ -50,9 +50,9 @@ public class CodeManipulator {
     return -2;
   }
 
-  public int getLastIndexForSymbol(Object symbol) {
-    for (int i = indexSymbols.size() - 1; i >= 0; i--) {
-      if (indexSymbols.get(i).contains(symbol)) {
+  public int getLastIndexForCursor(Object cursor) {
+    for (int i = cursors.size() - 1; i >= 0; i--) {
+      if (cursors.get(i).contains(cursor)) {
         return i - 1;
       }
     }
@@ -60,9 +60,9 @@ public class CodeManipulator {
     return -2;
   }
 
-  public Pair<Integer, Integer> getIndicesForSymbols(Pair<Object, Object> symbols) {
-    int begin = getIndexForSymbol(symbols.first);
-    int end = getLastIndexForSymbol(symbols.second);
+  public Pair<Integer, Integer> getIndicesForCursors(Pair<Object, Object> cursors) {
+    int begin = getIndexForCursor(cursors.first);
+    int end = getLastIndexForCursor(cursors.second);
 
     if (begin == -2 || end == -2) {
       return null;
@@ -97,7 +97,7 @@ public class CodeManipulator {
 
   public void insertAfter(int index, List<AbstractInsnNode> insns) {
     for (int i = 0; i < insns.size(); i++) {
-      indexSymbols.add(index + 1 + 1, HashSetHelper.of(new Object()));
+      cursors.add(index + 1 + 1, HashSetHelper.of(new Object()));
     }
 
     InsnListHelper.insert(methodNode.instructions, InsnListHelper.getHeaded(methodNode.instructions, index), insns);
@@ -117,7 +117,7 @@ public class CodeManipulator {
 
   public void insertBefore(int index, List<AbstractInsnNode> insns) {
     for (int i = 0; i < insns.size(); i++) {
-      indexSymbols.add(index + 1, HashSetHelper.of(new Object()));
+      cursors.add(index + 1, HashSetHelper.of(new Object()));
     }
 
     InsnListHelper.insertBefore(methodNode.instructions, InsnListHelper.getTailed(methodNode.instructions, index), insns);
@@ -180,18 +180,18 @@ public class CodeManipulator {
   }
 
   public void replace(int begin, int end, List<AbstractInsnNode> insns) {
-    Set<Object> endSymbols = indexSymbols.get(end + 1);
-    ListHelper.removeRange(indexSymbols, begin + 1 + 1, end + 1 + 1);
+    Set<Object> endSymbols = cursors.get(end + 1);
+    ListHelper.removeRange(cursors, begin + 1 + 1, end + 1 + 1);
     InsnListHelper.removeRange(methodNode.instructions, InsnListHelper.getTailed(methodNode.instructions, begin), InsnListHelper.getTailed(methodNode.instructions, end));
 
     if (insns.size() == 0) {
-      indexSymbols.get(begin + 1).addAll(endSymbols);
+      cursors.get(begin + 1).addAll(endSymbols);
     } else {
-      indexSymbols.add(begin + 1 + 1, endSymbols);
+      cursors.add(begin + 1 + 1, endSymbols);
     }
 
     for (int i = 0; i < insns.size() - 1; i++) {
-      indexSymbols.add(begin + 1 + 1, HashSetHelper.of(new Object()));
+      cursors.add(begin + 1 + 1, HashSetHelper.of(new Object()));
     }
 
     InsnListHelper.insert(methodNode.instructions, InsnListHelper.getHeaded(methodNode.instructions, begin - 1), insns);
