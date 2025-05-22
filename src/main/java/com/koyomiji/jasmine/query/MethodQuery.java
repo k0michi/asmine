@@ -1,30 +1,22 @@
 package com.koyomiji.jasmine.query;
 
-import com.koyomiji.jasmine.common.InsnListListAdapter;
 import com.koyomiji.jasmine.common.PrinterHelper;
-import com.koyomiji.jasmine.regex.AbstractRegexInsn;
-import com.koyomiji.jasmine.regex.MatchResult;
-import com.koyomiji.jasmine.regex.RegexMatcher;
-import com.koyomiji.jasmine.regex.RegexModule;
 import com.koyomiji.jasmine.regex.code.CodeMatchResult;
 import com.koyomiji.jasmine.regex.code.CodeRegexMatcher;
-import com.koyomiji.jasmine.regex.code.CodeRegexProcessor;
 import com.koyomiji.jasmine.regex.compiler.AbstractRegexNode;
-import com.koyomiji.jasmine.regex.compiler.RegexCompiler;
 import org.objectweb.asm.tree.*;
 import org.objectweb.asm.util.Printer;
 
 import java.io.PrintWriter;
-import java.util.*;
 
 public class MethodQuery<T> extends AbstractQuery<T> {
   protected MethodNode methodNode;
-  protected MethodManipulator methodManipulator;
+  protected CodeManipulator codeManipulator;
 
   public MethodQuery(T parent, MethodNode methodNode) {
     super(parent);
     this.methodNode = methodNode;
-    this.methodManipulator = new MethodManipulator(methodNode);
+    this.codeManipulator = new CodeManipulator(methodNode);
   }
 
   public static MethodQuery<MethodNode> of(MethodNode methodNode) {
@@ -36,17 +28,17 @@ public class MethodQuery<T> extends AbstractQuery<T> {
   }
 
   public MethodQuery<T> addInsns(AbstractInsnNode... insns) {
-    methodManipulator.addInsnsLast(insns);
+    codeManipulator.addInsnsLast(insns);
     return this;
   }
 
   public MethodQuery<T> addInsnsFirst(AbstractInsnNode... insns) {
-    methodManipulator.addInsnsFirst(insns);
+    codeManipulator.addInsnsFirst(insns);
     return this;
   }
 
   public MethodQuery<T> addInsnsLast(AbstractInsnNode... insns) {
-    methodManipulator.addInsnsLast(insns);
+    codeManipulator.addInsnsLast(insns);
     return this;
   }
 
@@ -65,13 +57,13 @@ public class MethodQuery<T> extends AbstractQuery<T> {
   public CodeFragmentQuery<MethodQuery<T>> selectCodeFragment(AbstractRegexNode regex) {
     CodeRegexMatcher matcher = new CodeRegexMatcher(regex);
     CodeMatchResult matchResult = matcher.match(methodNode.instructions, 0);
-    return new CodeFragmentQuery<>(this, methodManipulator, matchResult);
+    return new CodeFragmentQuery<>(this, codeManipulator, matchResult);
   }
 
   public CodeFragmentQuery<MethodQuery<T>> selectCodeFragments(AbstractRegexNode regex) {
     CodeRegexMatcher matcher = new CodeRegexMatcher(regex);
     CodeMatchResult matchResult = matcher.matchAll(methodNode.instructions, 0);
-    return new CodeFragmentQuery<>(this, methodManipulator, matchResult);
+    return new CodeFragmentQuery<>(this, codeManipulator, matchResult);
   }
 
   public MethodQuery<T> print(Printer printer) {

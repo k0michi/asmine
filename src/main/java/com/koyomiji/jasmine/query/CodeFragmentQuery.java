@@ -2,13 +2,11 @@ package com.koyomiji.jasmine.query;
 
 import com.koyomiji.jasmine.common.ArrayHelper;
 import com.koyomiji.jasmine.common.ArrayListHelper;
-import com.koyomiji.jasmine.common.InsnListHelper;
 import com.koyomiji.jasmine.regex.RegexMatcher;
 import com.koyomiji.jasmine.regex.code.CodeMatchResult;
 import com.koyomiji.jasmine.stencil.ResolutionExeption;
 import com.koyomiji.jasmine.stencil.insn.AbstractInsnStencil;
 import com.koyomiji.jasmine.tuple.Pair;
-import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.InsnList;
 
 import java.util.HashMap;
@@ -16,13 +14,13 @@ import java.util.List;
 import java.util.Map;
 
 public class CodeFragmentQuery<T> extends AbstractQuery<T> {
-  protected MethodManipulator methodManipulator;
+  protected CodeManipulator codeManipulator;
   protected CodeMatchResult matchResult;
   protected Map<Object, List<Pair<Object, Object>>> stringBinds;
 
-  public CodeFragmentQuery(T parent, MethodManipulator methodManipulator, CodeMatchResult matchResult) {
+  public CodeFragmentQuery(T parent, CodeManipulator codeManipulator, CodeMatchResult matchResult) {
     super(parent);
-    this.methodManipulator = methodManipulator;
+    this.codeManipulator = codeManipulator;
     this.matchResult = matchResult;
 
     this.stringBinds = new HashMap<>();
@@ -34,7 +32,7 @@ public class CodeFragmentQuery<T> extends AbstractQuery<T> {
             stringBinds.put(entry.getKey(), ArrayListHelper.of());
           }
 
-          stringBinds.get(entry.getKey()).add(Pair.of(methodManipulator.getIndexSymbol(range.first), methodManipulator.getIndexSymbol(range.second)));
+          stringBinds.get(entry.getKey()).add(Pair.of(codeManipulator.getIndexSymbol(range.first), codeManipulator.getIndexSymbol(range.second)));
         }
       }
     }
@@ -64,14 +62,14 @@ public class CodeFragmentQuery<T> extends AbstractQuery<T> {
     }
 
     for(Pair<Object, Object> range : stringBinds.get(key)) {
-      Pair<Integer, Integer> indices = methodManipulator.getIndicesForSymbols(range);
+      Pair<Integer, Integer> indices = codeManipulator.getIndicesForSymbols(range);
 
       if (indices == null) {
         continue;
       }
 
       try {
-        methodManipulator.insertInsnsBefore(
+        codeManipulator.insertInsnsBefore(
                 indices.first,
                 instantiate(insns)
         );
@@ -109,14 +107,14 @@ public class CodeFragmentQuery<T> extends AbstractQuery<T> {
     }
 
     for(Pair<Object, Object> range : stringBinds.get(key)) {
-      Pair<Integer, Integer> indices = methodManipulator.getIndicesForSymbols(range);
+      Pair<Integer, Integer> indices = codeManipulator.getIndicesForSymbols(range);
 
       if (indices == null) {
         continue;
       }
 
       try {
-        methodManipulator.insertInsnsAfter(
+        codeManipulator.insertInsnsAfter(
                 indices.second - 1,
                 instantiate(insns)
         );
@@ -150,7 +148,7 @@ public class CodeFragmentQuery<T> extends AbstractQuery<T> {
 
   public CodeFragmentQuery<T> insertFirst(List<AbstractInsnStencil> insns) {
     try {
-      methodManipulator.insertInsnsAfter(-1, instantiate(insns));
+      codeManipulator.insertInsnsAfter(-1, instantiate(insns));
     } catch (ResolutionExeption e) {
       throw new RuntimeException(e);
     }
@@ -168,7 +166,7 @@ public class CodeFragmentQuery<T> extends AbstractQuery<T> {
 
   public CodeFragmentQuery<T> insertLast(List<AbstractInsnStencil> insns) {
     try {
-      methodManipulator.insertInsnsBefore(methodManipulator.getMethodNode().instructions.size(), instantiate(insns));
+      codeManipulator.insertInsnsBefore(codeManipulator.getMethodNode().instructions.size(), instantiate(insns));
     } catch (ResolutionExeption e) {
       throw new RuntimeException(e);
     }
@@ -190,14 +188,14 @@ public class CodeFragmentQuery<T> extends AbstractQuery<T> {
     }
 
     for(Pair<Object, Object> range : stringBinds.get(key)) {
-      Pair<Integer, Integer> indices = methodManipulator.getIndicesForSymbols(range);
+      Pair<Integer, Integer> indices = codeManipulator.getIndicesForSymbols(range);
 
       if (indices == null) {
         continue;
       }
 
       try {
-        methodManipulator.replaceInsns(
+        codeManipulator.replaceInsns(
                 indices.first,
                 indices.second,
                 instantiate(insns)
@@ -228,13 +226,13 @@ public class CodeFragmentQuery<T> extends AbstractQuery<T> {
     }
 
     for(Pair<Object, Object> range : stringBinds.get(key)) {
-      Pair<Integer, Integer> indices = methodManipulator.getIndicesForSymbols(range);
+      Pair<Integer, Integer> indices = codeManipulator.getIndicesForSymbols(range);
 
       if (indices == null) {
         continue;
       }
 
-      methodManipulator.removeInsns(
+      codeManipulator.removeInsns(
               indices.first,
               indices.second
       );

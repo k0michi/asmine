@@ -1,16 +1,16 @@
 package com.koyomiji.jasmine.test;
 
 import com.koyomiji.jasmine.common.Insns;
-import com.koyomiji.jasmine.query.MethodManipulator;
+import com.koyomiji.jasmine.query.CodeManipulator;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.objectweb.asm.tree.MethodNode;
 
-public class MethodManipulatorTest {
+public class CodeManipulatorTest {
   // Replace empty with empty
   @Test
   void test_symbol_m1() {
-    MethodManipulator q = new MethodManipulator(new MethodNode());
+    CodeManipulator q = new CodeManipulator(new MethodNode());
     q.addInsns(
             Insns.iconst_0(),
             Insns.return_()
@@ -24,7 +24,7 @@ public class MethodManipulatorTest {
 
   @Test
   void test_symbol_0() {
-    MethodManipulator q = new MethodManipulator(new MethodNode());
+    CodeManipulator q = new CodeManipulator(new MethodNode());
     q.addInsns(
             Insns.iconst_0(),
             Insns.return_()
@@ -38,7 +38,7 @@ public class MethodManipulatorTest {
 
   @Test
   void test_symbol_1() {
-    MethodManipulator q = new MethodManipulator(new MethodNode());
+    CodeManipulator q = new CodeManipulator(new MethodNode());
     q.addInsns(
             Insns.iconst_0(),
             Insns.return_()
@@ -52,7 +52,7 @@ public class MethodManipulatorTest {
 
   @Test
   void test_symbol_2() {
-    MethodManipulator q = new MethodManipulator(new MethodNode());
+    CodeManipulator q = new CodeManipulator(new MethodNode());
     q.addInsns(
             Insns.iconst_0(),
             Insns.return_()
@@ -66,7 +66,7 @@ public class MethodManipulatorTest {
 
   @Test
   void test_symbol_3() {
-    MethodManipulator q = new MethodManipulator(new MethodNode());
+    CodeManipulator q = new CodeManipulator(new MethodNode());
     q.addInsns(
             Insns.iconst_0(),
             Insns.return_()
@@ -80,7 +80,7 @@ public class MethodManipulatorTest {
 
   @Test
   void test_symbol_4() {
-    MethodManipulator q = new MethodManipulator(new MethodNode());
+    CodeManipulator q = new CodeManipulator(new MethodNode());
     q.addInsns(
             Insns.iconst_0(),
             Insns.return_()
@@ -94,7 +94,7 @@ public class MethodManipulatorTest {
 
   @Test
   void test_symbol_5() {
-    MethodManipulator q = new MethodManipulator(new MethodNode());
+    CodeManipulator q = new CodeManipulator(new MethodNode());
     q.addInsns(
             Insns.iconst_0(),
             Insns.return_()
@@ -107,7 +107,7 @@ public class MethodManipulatorTest {
   // Replace empty range
   @Test
   void test_symbol_6() {
-    MethodManipulator q = new MethodManipulator(new MethodNode());
+    CodeManipulator q = new CodeManipulator(new MethodNode());
     q.addInsns(
             Insns.iconst_0(),
             Insns.return_()
@@ -124,7 +124,7 @@ public class MethodManipulatorTest {
   // Replace with empty
   @Test
   void test_symbol_7() {
-    MethodManipulator q = new MethodManipulator(new MethodNode());
+    CodeManipulator q = new CodeManipulator(new MethodNode());
     q.addInsns(
             Insns.iconst_0(),
             Insns.return_()
@@ -138,7 +138,7 @@ public class MethodManipulatorTest {
 
   @Test
   void test_symbol_8() {
-    MethodManipulator q = new MethodManipulator(new MethodNode());
+    CodeManipulator q = new CodeManipulator(new MethodNode());
     q.addInsns(
             Insns.iconst_0(),
             Insns.return_()

@@ -1,15 +1,12 @@
 package com.koyomiji.jasmine.query;
 
 import com.koyomiji.jasmine.common.*;
-import com.koyomiji.jasmine.tree.AbstractInsnNodeHelper;
 import com.koyomiji.jasmine.tuple.Pair;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.InsnList;
-import org.objectweb.asm.tree.LabelNode;
 import org.objectweb.asm.tree.MethodNode;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
@@ -18,11 +15,11 @@ import java.util.Set;
  * |   | _ | _ | ... | _ |   |
  * -1  0   1   2     n-1 n   n+1
  */
-public class MethodManipulator {
+public class CodeManipulator {
   protected MethodNode methodNode;
   protected List<Set<Object>> indexSymbols = new ArrayList<>();
 
-  public MethodManipulator(MethodNode methodNode) {
+  public CodeManipulator(MethodNode methodNode) {
     this.methodNode = methodNode;
 
     indexSymbols.add(HashSetHelper.of(new Object()));
