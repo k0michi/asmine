@@ -6,7 +6,9 @@ import com.koyomiji.asmine.regex.RegexMatcher;
 import com.koyomiji.asmine.regex.code.CodeMatchResult;
 import com.koyomiji.asmine.stencil.ResolutionExeption;
 import com.koyomiji.asmine.stencil.insn.AbstractInsnStencil;
+import com.koyomiji.asmine.tree.AbstractInsnNodeHelper;
 import com.koyomiji.asmine.tuple.Pair;
+import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.InsnList;
 
 import java.util.ArrayList;
@@ -84,7 +86,7 @@ public class CodeFragmentQuery<T> extends AbstractQuery<T> {
   }
 
   public CodeFragmentQuery<T> insertBefore(List<AbstractInsnStencil> insns) {
-    for(Pair<Object, Object> range : selected) {
+    for (Pair<Object, Object> range : selected) {
       Pair<Integer, Integer> indices = codeManipulator.getIndicesForCursors(range);
 
       if (indices == null) {
@@ -109,7 +111,7 @@ public class CodeFragmentQuery<T> extends AbstractQuery<T> {
   }
 
   public CodeFragmentQuery<T> insertAfter(List<AbstractInsnStencil> insns) {
-    for(Pair<Object, Object> range : selected) {
+    for (Pair<Object, Object> range : selected) {
       Pair<Integer, Integer> indices = codeManipulator.getIndicesForCursors(range);
 
       if (indices == null) {
@@ -162,7 +164,7 @@ public class CodeFragmentQuery<T> extends AbstractQuery<T> {
   }
 
   public CodeFragmentQuery<T> replaceWith(List<AbstractInsnStencil> insns) {
-    for(Pair<Object, Object> range : selected) {
+    for (Pair<Object, Object> range : selected) {
       Pair<Integer, Integer> indices = codeManipulator.getIndicesForCursors(range);
 
       if (indices == null) {
@@ -184,7 +186,7 @@ public class CodeFragmentQuery<T> extends AbstractQuery<T> {
   }
 
   public CodeFragmentQuery<T> remove() {
-    for(Pair<Object, Object> range : selected) {
+    for (Pair<Object, Object> range : selected) {
       Pair<Integer, Integer> indices = codeManipulator.getIndicesForCursors(range);
 
       if (indices == null) {
@@ -198,6 +200,38 @@ public class CodeFragmentQuery<T> extends AbstractQuery<T> {
     }
 
     return this;
+  }
+
+  public CodeFragmentQuery<T> before() {
+    List<Pair<Object, Object>> newSelected = new ArrayList<>();
+
+    for (Pair<Object, Object> selectedRange : selected) {
+      int selectedStart = codeManipulator.getIndexForCursor(selectedRange.first);
+
+      do {
+        selectedStart--;
+      } while (selectedStart >= 0 && AbstractInsnNodeHelper.isPseudo(codeManipulator.getMethodNode().instructions.get(selectedStart)));
+
+      newSelected.add(Pair.of(codeManipulator.getCursor(selectedStart), codeManipulator.getCursor(selectedStart + 1)));
+    }
+
+    return new CodeFragmentQuery<>(parent, codeManipulator, matchResult, stringBinds, newSelected);
+  }
+
+  public CodeFragmentQuery<T> after() {
+    List<Pair<Object, Object>> newSelected = new ArrayList<>();
+
+    for (Pair<Object, Object> selectedRange : selected) {
+      int selectedEnd = codeManipulator.getLastIndexForCursor(selectedRange.second);
+
+      while (selectedEnd < codeManipulator.getMethodNode().instructions.size() && AbstractInsnNodeHelper.isPseudo(codeManipulator.getMethodNode().instructions.get(selectedEnd))) {
+        selectedEnd++;
+      }
+
+      newSelected.add(Pair.of(codeManipulator.getCursor(selectedEnd), codeManipulator.getCursor(selectedEnd + 1)));
+    }
+
+    return new CodeFragmentQuery<>(parent, codeManipulator, matchResult, stringBinds, newSelected);
   }
 
   public boolean isPresent() {
