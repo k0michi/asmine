@@ -2,38 +2,52 @@ package com.koyomiji.jasmine.query;
 
 import com.koyomiji.jasmine.common.ArrayHelper;
 import com.koyomiji.jasmine.common.ArrayListHelper;
-import com.koyomiji.jasmine.common.InsnListHelper;
+import com.koyomiji.jasmine.regex.RegexMatcher;
 import com.koyomiji.jasmine.regex.code.CodeMatchResult;
 import com.koyomiji.jasmine.stencil.ResolutionExeption;
 import com.koyomiji.jasmine.stencil.insn.AbstractInsnStencil;
 import com.koyomiji.jasmine.tuple.Pair;
-import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.InsnList;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class CodeFragmentQuery<T> extends AbstractQuery<T> {
-  protected MethodManipulator methodManipulator;
+  protected CodeManipulator codeManipulator;
   protected CodeMatchResult matchResult;
-  protected Map<Object, Pair<Object, Object>> stringBinds;
-  protected Pair<Object, Object> range;
+  protected Map<Object, List<Pair<Object, Object>>> stringBinds;
+  protected List<Pair<Object, Object>> selected;
 
-  public CodeFragmentQuery(T parent, MethodManipulator methodManipulator, CodeMatchResult matchResult) {
+  public CodeFragmentQuery(T parent, CodeManipulator codeManipulator, CodeMatchResult matchResult) {
     super(parent);
-    this.methodManipulator = methodManipulator;
+    this.codeManipulator = codeManipulator;
     this.matchResult = matchResult;
-
     this.stringBinds = new HashMap<>();
+    this.selected = new ArrayList<>();
 
     if (matchResult != null) {
-      for (Map.Entry<Object, Pair<Integer, Integer>> entry : matchResult.getStringBinds().entrySet()) {
-        stringBinds.put(entry.getKey(), Pair.of(methodManipulator.getIndexSymbol(entry.getValue().first), methodManipulator.getIndexSymbol(entry.getValue().second)));
+      for (Map.Entry<Object, List<Pair<Integer, Integer>>> entry : matchResult.getBounds().entrySet()) {
+        for (Pair<Integer, Integer> range : entry.getValue()) {
+          if (!stringBinds.containsKey(entry.getKey())) {
+            stringBinds.put(entry.getKey(), ArrayListHelper.of());
+          }
+
+          stringBinds.get(entry.getKey()).add(Pair.of(codeManipulator.getCursor(range.first), codeManipulator.getCursor(range.second)));
+        }
       }
 
-      this.range = Pair.of(methodManipulator.getIndexSymbol(matchResult.getRange().first), methodManipulator.getIndexSymbol(matchResult.getRange().second));
+      this.selected = stringBinds.get(RegexMatcher.BOUNDARY_KEY);
     }
+  }
+
+  public CodeFragmentQuery(T parent, CodeManipulator codeManipulator, CodeMatchResult matchResult, Map<Object, List<Pair<Object, Object>>> stringBinds, List<Pair<Object, Object>> selected) {
+    super(parent);
+    this.codeManipulator = codeManipulator;
+    this.matchResult = matchResult;
+    this.stringBinds = stringBinds;
+    this.selected = selected;
   }
 
   private InsnList instantiate(List<AbstractInsnStencil> insns) throws ResolutionExeption {
@@ -46,8 +60,101 @@ public class CodeFragmentQuery<T> extends AbstractQuery<T> {
     return insnList;
   }
 
-  public CodeFragmentQuery<T> replaceWith(AbstractInsnStencil insn) {
-    return replaceWith(ArrayListHelper.of(insn));
+  public CodeFragmentQuery<CodeFragmentQuery<T>> selectBound(Object key) {
+    List<Pair<Object, Object>> newSelected = new ArrayList<>();
+
+    for (Pair<Object, Object> range : stringBinds.get(key)) {
+      for (Pair<Object, Object> selectedRange : selected) {
+        int start = codeManipulator.getIndexForCursor(range.first);
+        int end = codeManipulator.getLastIndexForCursor(range.second);
+        int selectedStart = codeManipulator.getIndexForCursor(selectedRange.first);
+        int selectedEnd = codeManipulator.getLastIndexForCursor(selectedRange.second);
+
+        if (start >= selectedStart && end <= selectedEnd) {
+          newSelected.add(Pair.of(range.first, range.second));
+        }
+      }
+    }
+
+    return new CodeFragmentQuery<>(this, codeManipulator, matchResult, stringBinds, newSelected);
+  }
+
+  public CodeFragmentQuery<T> insertBefore(AbstractInsnStencil... insns) {
+    return insertBefore(ArrayListHelper.of(insns));
+  }
+
+  public CodeFragmentQuery<T> insertBefore(List<AbstractInsnStencil> insns) {
+    for(Pair<Object, Object> range : selected) {
+      Pair<Integer, Integer> indices = codeManipulator.getIndicesForCursors(range);
+
+      if (indices == null) {
+        continue;
+      }
+
+      try {
+        codeManipulator.insertBefore(
+                indices.first,
+                instantiate(insns)
+        );
+      } catch (ResolutionExeption e) {
+        throw new RuntimeException(e);
+      }
+    }
+
+    return this;
+  }
+
+  public CodeFragmentQuery<T> insertAfter(AbstractInsnStencil... insns) {
+    return insertAfter(ArrayListHelper.of(insns));
+  }
+
+  public CodeFragmentQuery<T> insertAfter(List<AbstractInsnStencil> insns) {
+    for(Pair<Object, Object> range : selected) {
+      Pair<Integer, Integer> indices = codeManipulator.getIndicesForCursors(range);
+
+      if (indices == null) {
+        continue;
+      }
+
+      try {
+        codeManipulator.insertAfter(
+                indices.second - 1,
+                instantiate(insns)
+        );
+      } catch (ResolutionExeption e) {
+        throw new RuntimeException(e);
+      }
+    }
+
+    return this;
+  }
+
+  public CodeFragmentQuery<T> addFirst(AbstractInsnStencil... insns) {
+    return addFirst(ArrayHelper.toList(insns));
+  }
+
+  public CodeFragmentQuery<T> addFirst(List<AbstractInsnStencil> insns) {
+    try {
+      codeManipulator.addFirst(instantiate(insns));
+    } catch (ResolutionExeption e) {
+      throw new RuntimeException(e);
+    }
+
+    return this;
+  }
+
+  public CodeFragmentQuery<T> addLast(AbstractInsnStencil... insns) {
+    return addLast(ArrayHelper.toList(insns));
+  }
+
+  public CodeFragmentQuery<T> addLast(List<AbstractInsnStencil> insns) {
+    try {
+      codeManipulator.insertBefore(codeManipulator.getMethodNode().instructions.size(), instantiate(insns));
+    } catch (ResolutionExeption e) {
+      throw new RuntimeException(e);
+    }
+
+    return this;
   }
 
   public CodeFragmentQuery<T> replaceWith(AbstractInsnStencil... insns) {
@@ -55,53 +162,45 @@ public class CodeFragmentQuery<T> extends AbstractQuery<T> {
   }
 
   public CodeFragmentQuery<T> replaceWith(List<AbstractInsnStencil> insns) {
-    try {
-      replaceWith(
-              instantiate(insns)
-      );
-    } catch (ResolutionExeption e) {
-      return this;
+    for(Pair<Object, Object> range : selected) {
+      Pair<Integer, Integer> indices = codeManipulator.getIndicesForCursors(range);
+
+      if (indices == null) {
+        continue;
+      }
+
+      try {
+        codeManipulator.replace(
+                indices.first,
+                indices.second,
+                instantiate(insns)
+        );
+      } catch (ResolutionExeption e) {
+        throw new RuntimeException(e);
+      }
     }
-
-    return this;
-  }
-
-  public CodeFragmentQuery<T> replaceWith(AbstractInsnNode insn) {
-    return replaceWith(InsnListHelper.of(insn));
-  }
-
-  public CodeFragmentQuery<T> replaceWith(AbstractInsnNode... insns) {
-    return replaceWith(InsnListHelper.of(insns));
-  }
-
-  public CodeFragmentQuery<T> replaceWith(InsnList insns) {
-    if (matchResult == null) {
-      return this;
-    }
-
-    methodManipulator.replaceInsns(
-            methodManipulator.getIndexForSymbol(range.first),
-            methodManipulator.getIndexForSymbol(range.second),
-            insns
-    );
 
     return this;
   }
 
   public CodeFragmentQuery<T> remove() {
-    if (matchResult == null) {
-      return this;
-    }
+    for(Pair<Object, Object> range : selected) {
+      Pair<Integer, Integer> indices = codeManipulator.getIndicesForCursors(range);
 
-    methodManipulator.removeInsns(
-            methodManipulator.getIndexForSymbol(range.first),
-            methodManipulator.getIndexForSymbol(range.second)
-    );
+      if (indices == null) {
+        continue;
+      }
+
+      codeManipulator.remove(
+              indices.first,
+              indices.second
+      );
+    }
 
     return this;
   }
 
   public boolean isPresent() {
-    return matchResult != null;
+    return selected.size() > 0;
   }
 }

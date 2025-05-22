@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.InsnNode;
 import org.objectweb.asm.tree.MethodNode;
+import org.objectweb.asm.util.Textifier;
 
 public class MethodQueryTest {
   @Test
@@ -378,5 +379,215 @@ public class MethodQueryTest {
             .isPresent();
 
     Assertions.assertTrue(present);
+  }
+
+  @Test
+  void test_insert_0() {
+    boolean present = MethodQuery.ofNew()
+            .addInsns(
+                    Insns.nop()
+            )
+            .selectCodeFragments(
+                    Regexes.concatenate(
+                            CodeRegexes.stencil(InsnStencils.nop())
+                    )
+            )
+            .insertBefore(
+                    InsnStencils.iconst_0()
+            )
+            .insertAfter(
+                    InsnStencils.iconst_1()
+            )
+            .done()
+            .selectCodeFragment(
+                    Regexes.concatenate(
+                            Regexes.anchorBegin(),
+                            CodeRegexes.stencil(InsnStencils.iconst_0()),
+                            CodeRegexes.stencil(InsnStencils.nop()),
+                            CodeRegexes.stencil(InsnStencils.iconst_1()),
+                            Regexes.anchorEnd()
+                    )
+            )
+            .isPresent();
+
+    Assertions.assertTrue(present);
+  }
+
+  @Test
+  void test_insert_1() {
+    MethodNode methodNode = new MethodNode(OpcodesCompat.ASM_LATEST);
+    methodNode.instructions.add(new InsnNode(Opcodes.NOP));
+
+    boolean present = MethodQuery.ofNew()
+            .addInsns(
+                    Insns.nop()
+            )
+            .selectCodeFragments(
+                    Regexes.concatenate(
+                            CodeRegexes.stencil(InsnStencils.nop())
+                    )
+            )
+            .addFirst(
+                    InsnStencils.iconst_0()
+            )
+            .addLast(
+                    InsnStencils.iconst_1()
+            )
+            .done()
+            .selectCodeFragment(
+                    Regexes.concatenate(
+                            Regexes.anchorBegin(),
+                            CodeRegexes.stencil(InsnStencils.iconst_0()),
+                            CodeRegexes.stencil(InsnStencils.nop()),
+                            CodeRegexes.stencil(InsnStencils.iconst_1()),
+                            Regexes.anchorEnd()
+                    )
+            )
+            .isPresent();
+
+    Assertions.assertTrue(present);
+  }
+
+  // Insert multiple times
+  @Test
+  void test_insert_2() {
+    boolean present = MethodQuery.ofNew()
+            .addInsns(
+                    Insns.nop()
+            )
+            .selectCodeFragments(
+                    Regexes.concatenate(
+                            CodeRegexes.stencil(InsnStencils.nop())
+                    )
+            )
+            .insertBefore(
+                    InsnStencils.iconst_1()
+            )
+            .insertBefore(
+                    InsnStencils.iconst_0()
+            )
+            .insertAfter(
+                    InsnStencils.iconst_2()
+            )
+            .insertAfter(
+                    InsnStencils.iconst_3()
+            )
+            .done()
+            .selectCodeFragment(
+                    Regexes.concatenate(
+                            Regexes.anchorBegin(),
+                            CodeRegexes.stencil(InsnStencils.iconst_1()),
+                            CodeRegexes.stencil(InsnStencils.iconst_0()),
+                            CodeRegexes.stencil(InsnStencils.nop()),
+                            CodeRegexes.stencil(InsnStencils.iconst_2()),
+                            CodeRegexes.stencil(InsnStencils.iconst_3()),
+                            Regexes.anchorEnd()
+                    )
+            )
+            .isPresent();
+
+    Assertions.assertTrue(present);
+  }
+
+  @Test
+  void test_bound_0() {
+    boolean present = MethodQuery.ofNew()
+            .addInsns(
+                    Insns.nop(),
+                    Insns.iconst_0()
+            )
+            .selectCodeFragments(
+                    Regexes.bind(0,
+                            Regexes.concatenate(
+                                    CodeRegexes.stencil(InsnStencils.nop()),
+                                    Regexes.bind(1,
+                                            Regexes.any()
+                                    )
+                            )
+                    )
+            )
+            .selectBound(1)
+            .replaceWith(
+                    InsnStencils.iconst_1()
+            )
+            .done()
+            .done()
+            .selectCodeFragment(
+                    Regexes.concatenate(
+                            Regexes.anchorBegin(),
+                            CodeRegexes.stencil(InsnStencils.nop()),
+                            CodeRegexes.stencil(InsnStencils.iconst_1()),
+                            Regexes.anchorEnd()
+                    )
+            )
+            .isPresent();
+
+    Assertions.assertTrue(present);
+  }
+
+  // Nested bound
+  @Test
+  void test_bound_1() {
+    boolean present = MethodQuery.ofNew()
+            .addInsns(
+                    Insns.nop(),
+                    Insns.iconst_0()
+            )
+            .selectCodeFragments(
+                    Regexes.bind(0,
+                            Regexes.concatenate(
+                                    CodeRegexes.stencil(InsnStencils.nop()),
+                                    Regexes.bind(1,
+                                            Regexes.any()
+                                    )
+                            )
+                    )
+            )
+            .selectBound(0)
+            .selectBound(1)
+            .replaceWith(
+                    InsnStencils.iconst_1()
+            )
+            .done()
+            .done()
+            .done()
+            .selectCodeFragment(
+                    Regexes.concatenate(
+                            Regexes.anchorBegin(),
+                            CodeRegexes.stencil(InsnStencils.nop()),
+                            CodeRegexes.stencil(InsnStencils.iconst_1()),
+                            Regexes.anchorEnd()
+                    )
+            )
+            .isPresent();
+
+    Assertions.assertTrue(present);
+  }
+
+  // Nested bound
+  @Test
+  void test_bound_2() {
+    boolean present = MethodQuery.ofNew()
+            .addInsns(
+                    Insns.nop(),
+                    Insns.iconst_0()
+            )
+            .selectCodeFragments(
+                    Regexes.concatenate(
+                    Regexes.bind(0,
+                            Regexes.concatenate(
+                                    CodeRegexes.stencil(InsnStencils.nop())
+                            )
+                    ),
+                    Regexes.bind(1,
+                            Regexes.any()
+                    )
+                    )
+            )
+            .selectBound(0)
+            .selectBound(1)
+            .isPresent();
+
+    Assertions.assertFalse(present);
   }
 }
