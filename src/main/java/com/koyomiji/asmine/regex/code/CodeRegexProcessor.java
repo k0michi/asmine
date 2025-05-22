@@ -10,6 +10,10 @@ import org.objectweb.asm.tree.*;
 import java.util.List;
 
 public class CodeRegexProcessor extends RegexProcessor {
+  private LineNumberNode lineNumberNode;
+  private FrameNode frameNode;
+  private LabelNode labelNode;
+
   public CodeRegexProcessor(RegexModule module, List<?> string) {
     super(module, string);
   }
@@ -27,6 +31,23 @@ public class CodeRegexProcessor extends RegexProcessor {
   protected MatchResult newMatchResult(RegexThread thread) {
     CodeRegexThread codeThread = (CodeRegexThread) thread;
     return new CodeMatchResult(codeThread);
+  }
+
+  @Override
+  protected void visitChar(Object character) {
+    if (character instanceof AbstractInsnNode) {
+      AbstractInsnNode insn = (AbstractInsnNode) character;
+
+      if (insn instanceof LineNumberNode) {
+        lineNumberNode = (LineNumberNode) insn;
+      } else if (insn instanceof FrameNode) {
+        frameNode = (FrameNode) insn;
+      } else if (insn instanceof LabelNode) {
+        labelNode = (LabelNode) insn;
+      }
+    }
+
+    super.visitChar(character);
   }
 
   @Override
@@ -71,45 +92,15 @@ public class CodeRegexProcessor extends RegexProcessor {
     return compareCharToStencil(thread, getCurrentChar(), expected);
   }
 
-  private LabelNode getLabel(List<?> list, int insn) {
-    for (int i = insn - 1; i >= 0; i--) {
-      if (list.get(i) instanceof LabelNode) {
-        return (LabelNode) list.get(i);
-      }
-    }
-
-    return null;
-  }
-
   public LabelNode getCurrentLabel() {
-    return getLabel(getString(), getStringPointer());
-  }
-
-  private LineNumberNode getLineNumber(List<?> list, int insn) {
-    for (int i = insn - 1; i >= 0; i--) {
-      if (list.get(i) instanceof LineNumberNode) {
-        return (LineNumberNode) list.get(i);
-      }
-    }
-
-    return null;
+    return labelNode;
   }
 
   public LineNumberNode getCurrentLineNumber() {
-    return getLineNumber(getString(), getStringPointer());
-  }
-
-  private FrameNode getFrame(List<?> list, int insn) {
-    for (int i = insn - 1; i >= 0; i--) {
-      if (list.get(i) instanceof FrameNode) {
-        return (FrameNode) list.get(i);
-      }
-    }
-
-    return null;
+    return lineNumberNode;
   }
 
   public FrameNode getCurrentFrame() {
-    return getFrame(getString(), getStringPointer());
+    return frameNode;
   }
 }

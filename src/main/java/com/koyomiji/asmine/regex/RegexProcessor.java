@@ -65,6 +65,9 @@ public class RegexProcessor {
     return intransitives;
   }
 
+  protected void visitChar(Object character) {
+  }
+
   public RegexThread execute() {
     return execute(0);
   }
@@ -75,6 +78,8 @@ public class RegexProcessor {
     RegexThread terminated = null;
 
     for (stringPointer = begin; stringPointer <= string.size(); stringPointer++) {
+      visitChar(getCurrentChar());
+
       if (isTransitiveChar(getCurrentChar())) {
         continue;
       }
