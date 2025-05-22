@@ -683,7 +683,7 @@ public class RegexProcessorTest {
                     Regexes.bind(0,
                             Regexes.concatenate(
                                     StringRegexes.literal('('),
-                                    Regexes.question(c0),
+                                    c0,
                                     StringRegexes.literal(')')
                             )
                     )
