@@ -9,6 +9,7 @@ import com.koyomiji.jasmine.stencil.insn.AbstractInsnStencil;
 import com.koyomiji.jasmine.tuple.Pair;
 import org.objectweb.asm.tree.InsnList;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,13 +18,14 @@ public class CodeFragmentQuery<T> extends AbstractQuery<T> {
   protected CodeManipulator codeManipulator;
   protected CodeMatchResult matchResult;
   protected Map<Object, List<Pair<Object, Object>>> stringBinds;
+  protected List<Pair<Object, Object>> selected;
 
   public CodeFragmentQuery(T parent, CodeManipulator codeManipulator, CodeMatchResult matchResult) {
     super(parent);
     this.codeManipulator = codeManipulator;
     this.matchResult = matchResult;
-
     this.stringBinds = new HashMap<>();
+    this.selected = new ArrayList<>();
 
     if (matchResult != null) {
       for (Map.Entry<Object, List<Pair<Integer, Integer>>> entry : matchResult.getBounds().entrySet()) {
@@ -35,7 +37,17 @@ public class CodeFragmentQuery<T> extends AbstractQuery<T> {
           stringBinds.get(entry.getKey()).add(Pair.of(codeManipulator.getCursor(range.first), codeManipulator.getCursor(range.second)));
         }
       }
+
+      this.selected = stringBinds.get(RegexMatcher.BOUNDARY_KEY);
     }
+  }
+
+  public CodeFragmentQuery(T parent, CodeManipulator codeManipulator, CodeMatchResult matchResult, Map<Object, List<Pair<Object, Object>>> stringBinds, List<Pair<Object, Object>> selected) {
+    super(parent);
+    this.codeManipulator = codeManipulator;
+    this.matchResult = matchResult;
+    this.stringBinds = stringBinds;
+    this.selected = selected;
   }
 
   private InsnList instantiate(List<AbstractInsnStencil> insns) throws ResolutionExeption {
@@ -48,16 +60,31 @@ public class CodeFragmentQuery<T> extends AbstractQuery<T> {
     return insnList;
   }
 
-  public CodeFragmentQuery<T> insertBeforeBound(Object key, AbstractInsnStencil... insns) {
-    return insertBeforeBound(key, ArrayHelper.toList(insns));
-  }
+  public CodeFragmentQuery<CodeFragmentQuery<T>> selectBound(Object key) {
+    List<Pair<Object, Object>> newSelected = new ArrayList<>();
 
-  public CodeFragmentQuery<T> insertBeforeBound(Object key, List<AbstractInsnStencil> insns) {
-    if (!stringBinds.containsKey(key)) {
-      return this;
+    for (Pair<Object, Object> range : stringBinds.get(key)) {
+      for (Pair<Object, Object> selectedRange : selected) {
+        int start = codeManipulator.getIndexForCursor(range.first);
+        int end = codeManipulator.getLastIndexForCursor(range.second);
+        int selectedStart = codeManipulator.getIndexForCursor(selectedRange.first);
+        int selectedEnd = codeManipulator.getLastIndexForCursor(selectedRange.second);
+
+        if (start >= selectedStart && end <= selectedEnd) {
+          newSelected.add(Pair.of(range.first, range.second));
+        }
+      }
     }
 
-    for(Pair<Object, Object> range : stringBinds.get(key)) {
+    return new CodeFragmentQuery<>(this, codeManipulator, matchResult, stringBinds, newSelected);
+  }
+
+  public CodeFragmentQuery<T> insertBefore(AbstractInsnStencil... insns) {
+    return insertBefore(ArrayListHelper.of(insns));
+  }
+
+  public CodeFragmentQuery<T> insertBefore(List<AbstractInsnStencil> insns) {
+    for(Pair<Object, Object> range : selected) {
       Pair<Integer, Integer> indices = codeManipulator.getIndicesForCursors(range);
 
       if (indices == null) {
@@ -77,24 +104,12 @@ public class CodeFragmentQuery<T> extends AbstractQuery<T> {
     return this;
   }
 
-  public CodeFragmentQuery<T> insertBefore(AbstractInsnStencil... insns) {
-    return insertBeforeBound(RegexMatcher.BOUNDARY_KEY, insns);
+  public CodeFragmentQuery<T> insertAfter(AbstractInsnStencil... insns) {
+    return insertAfter(ArrayListHelper.of(insns));
   }
 
-  public CodeFragmentQuery<T> insertBefore(List<AbstractInsnStencil> insns) {
-    return insertBeforeBound(RegexMatcher.BOUNDARY_KEY, insns);
-  }
-
-  public CodeFragmentQuery<T> insertAfterBound(Object key, AbstractInsnStencil... insns) {
-    return insertAfterBound(key, ArrayHelper.toList(insns));
-  }
-
-  public CodeFragmentQuery<T> insertAfterBound(Object key, List<AbstractInsnStencil> insns) {
-    if (!stringBinds.containsKey(key)) {
-      return this;
-    }
-
-    for(Pair<Object, Object> range : stringBinds.get(key)) {
+  public CodeFragmentQuery<T> insertAfter(List<AbstractInsnStencil> insns) {
+    for(Pair<Object, Object> range : selected) {
       Pair<Integer, Integer> indices = codeManipulator.getIndicesForCursors(range);
 
       if (indices == null) {
@@ -112,14 +127,6 @@ public class CodeFragmentQuery<T> extends AbstractQuery<T> {
     }
 
     return this;
-  }
-
-  public CodeFragmentQuery<T> insertAfter(AbstractInsnStencil... insns) {
-    return insertAfterBound(RegexMatcher.BOUNDARY_KEY, insns);
-  }
-
-  public CodeFragmentQuery<T> insertAfter(List<AbstractInsnStencil> insns) {
-    return insertAfterBound(RegexMatcher.BOUNDARY_KEY, insns);
   }
 
   public CodeFragmentQuery<T> addFirst(AbstractInsnStencil... insns) {
@@ -150,20 +157,12 @@ public class CodeFragmentQuery<T> extends AbstractQuery<T> {
     return this;
   }
 
-  public CodeFragmentQuery<T> replaceBoundWith(Object key, AbstractInsnStencil insn) {
-    return replaceBoundWith(key, ArrayListHelper.of(insn));
+  public CodeFragmentQuery<T> replaceWith(AbstractInsnStencil... insns) {
+    return replaceWith(ArrayHelper.toList(insns));
   }
 
-  public CodeFragmentQuery<T> replaceBoundWith(Object key, AbstractInsnStencil... insns) {
-    return replaceBoundWith(key, ArrayHelper.toList(insns));
-  }
-
-  public CodeFragmentQuery<T> replaceBoundWith(Object key, List<AbstractInsnStencil> insns) {
-    if (!stringBinds.containsKey(key)) {
-      return this;
-    }
-
-    for(Pair<Object, Object> range : stringBinds.get(key)) {
+  public CodeFragmentQuery<T> replaceWith(List<AbstractInsnStencil> insns) {
+    for(Pair<Object, Object> range : selected) {
       Pair<Integer, Integer> indices = codeManipulator.getIndicesForCursors(range);
 
       if (indices == null) {
@@ -184,24 +183,8 @@ public class CodeFragmentQuery<T> extends AbstractQuery<T> {
     return this;
   }
 
-  public CodeFragmentQuery<T> replaceWith(AbstractInsnStencil insn) {
-    return replaceBoundWith(RegexMatcher.BOUNDARY_KEY, insn);
-  }
-
-  public CodeFragmentQuery<T> replaceWith(AbstractInsnStencil... insns) {
-    return replaceBoundWith(RegexMatcher.BOUNDARY_KEY, insns);
-  }
-
-  public CodeFragmentQuery<T> replaceWith(List<AbstractInsnStencil> insns) {
-    return replaceBoundWith(RegexMatcher.BOUNDARY_KEY, insns);
-  }
-
-  public CodeFragmentQuery<T> remove(Object key) {
-    if (!stringBinds.containsKey(key)) {
-      return this;
-    }
-
-    for(Pair<Object, Object> range : stringBinds.get(key)) {
+  public CodeFragmentQuery<T> remove() {
+    for(Pair<Object, Object> range : selected) {
       Pair<Integer, Integer> indices = codeManipulator.getIndicesForCursors(range);
 
       if (indices == null) {
@@ -217,11 +200,7 @@ public class CodeFragmentQuery<T> extends AbstractQuery<T> {
     return this;
   }
 
-  public CodeFragmentQuery<T> remove() {
-    return remove(RegexMatcher.BOUNDARY_KEY);
-  }
-
   public boolean isPresent() {
-    return matchResult != null;
+    return selected.size() > 0;
   }
 }
