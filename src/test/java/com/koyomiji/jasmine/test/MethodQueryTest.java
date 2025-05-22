@@ -457,10 +457,10 @@ public class MethodQueryTest {
                     )
             )
             .insertBefore(
-                    InsnStencils.iconst_0()
+                    InsnStencils.iconst_1()
             )
             .insertBefore(
-                    InsnStencils.iconst_1()
+                    InsnStencils.iconst_0()
             )
             .insertAfter(
                     InsnStencils.iconst_2()
