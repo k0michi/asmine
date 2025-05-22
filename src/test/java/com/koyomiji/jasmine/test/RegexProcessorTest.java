@@ -653,7 +653,33 @@ public class RegexProcessorTest {
     ConcatenateNode c0;
 
     RegexModule insns = compile((c0 = Regexes.concatenate()).setChildren(
-            Regexes.plus(
+            Regexes.star(
+                    Regexes.bind(0,
+                            Regexes.concatenate(
+                                    StringRegexes.literal('('),
+                                    Regexes.question(c0),
+                                    StringRegexes.literal(')')
+                            )
+                    )
+            )
+    ));
+    List<Object> string = split("(()())");
+    RegexProcessor vm = new RegexProcessor(insns, string);
+    RegexThread thread = vm.execute();
+    Assertions.assertEquals(ArrayListHelper.of(
+            Pair.of(1, 3),
+            Pair.of(3, 5),
+            Pair.of(0, 6)
+    ), thread.getBounds(0));
+  }
+
+  // multiple binds - 3
+  @Test
+  void test_14() {
+    ConcatenateNode c0;
+
+    RegexModule insns = compile((c0 = Regexes.concatenate()).setChildren(
+            Regexes.star(
                     Regexes.bind(0,
                             Regexes.concatenate(
                                     StringRegexes.literal('('),

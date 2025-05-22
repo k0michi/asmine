@@ -19,7 +19,13 @@ public class RegexThread implements Cloneable {
     try {
       RegexThread clone = (RegexThread) super.clone();
       clone.stack = (Stack<Object>) this.stack.clone();
-      clone.stringBinds = (HashMap<Object, List<Pair<Integer, Integer>>>) this.stringBinds.clone();
+
+      clone.stringBinds = new HashMap<>();
+      for (Map.Entry<Object, List<Pair<Integer, Integer>>> entry : this.stringBinds.entrySet()) {
+        List<Pair<Integer, Integer>> clonedList = new ArrayList<>(entry.getValue());
+        clone.stringBinds.put(entry.getKey(), clonedList);
+      }
+
       return clone;
     } catch (CloneNotSupportedException e) {
       throw new RuntimeException(e);
