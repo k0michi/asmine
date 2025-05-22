@@ -28,17 +28,17 @@ public class MethodQuery<T> extends AbstractQuery<T> {
   }
 
   public MethodQuery<T> addInsns(AbstractInsnNode... insns) {
-    codeManipulator.addInsnsLast(insns);
+    codeManipulator.addLast(insns);
     return this;
   }
 
   public MethodQuery<T> addInsnsFirst(AbstractInsnNode... insns) {
-    codeManipulator.addInsnsFirst(insns);
+    codeManipulator.addFirst(insns);
     return this;
   }
 
   public MethodQuery<T> addInsnsLast(AbstractInsnNode... insns) {
-    codeManipulator.addInsnsLast(insns);
+    codeManipulator.addLast(insns);
     return this;
   }
 

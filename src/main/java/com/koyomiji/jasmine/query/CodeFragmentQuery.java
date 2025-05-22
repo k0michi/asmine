@@ -48,10 +48,6 @@ public class CodeFragmentQuery<T> extends AbstractQuery<T> {
     return insnList;
   }
 
-  public CodeFragmentQuery<T> insertBeforeBound(Object key, AbstractInsnStencil insn) {
-    return insertBeforeBound(key, ArrayListHelper.of(insn));
-  }
-
   public CodeFragmentQuery<T> insertBeforeBound(Object key, AbstractInsnStencil... insns) {
     return insertBeforeBound(key, ArrayHelper.toList(insns));
   }
@@ -69,7 +65,7 @@ public class CodeFragmentQuery<T> extends AbstractQuery<T> {
       }
 
       try {
-        codeManipulator.insertInsnsBefore(
+        codeManipulator.insertBefore(
                 indices.first,
                 instantiate(insns)
         );
@@ -81,20 +77,12 @@ public class CodeFragmentQuery<T> extends AbstractQuery<T> {
     return this;
   }
 
-  public CodeFragmentQuery<T> insertBefore(AbstractInsnStencil insn) {
-    return insertBeforeBound(RegexMatcher.BOUNDARY_KEY, insn);
-  }
-
   public CodeFragmentQuery<T> insertBefore(AbstractInsnStencil... insns) {
     return insertBeforeBound(RegexMatcher.BOUNDARY_KEY, insns);
   }
 
   public CodeFragmentQuery<T> insertBefore(List<AbstractInsnStencil> insns) {
     return insertBeforeBound(RegexMatcher.BOUNDARY_KEY, insns);
-  }
-
-  public CodeFragmentQuery<T> insertAfterBound(Object key, AbstractInsnStencil insn) {
-    return insertAfterBound(key, ArrayListHelper.of(insn));
   }
 
   public CodeFragmentQuery<T> insertAfterBound(Object key, AbstractInsnStencil... insns) {
@@ -114,7 +102,7 @@ public class CodeFragmentQuery<T> extends AbstractQuery<T> {
       }
 
       try {
-        codeManipulator.insertInsnsAfter(
+        codeManipulator.insertAfter(
                 indices.second - 1,
                 instantiate(insns)
         );
@@ -126,10 +114,6 @@ public class CodeFragmentQuery<T> extends AbstractQuery<T> {
     return this;
   }
 
-  public CodeFragmentQuery<T> insertAfter(AbstractInsnStencil insn) {
-    return insertAfterBound(RegexMatcher.BOUNDARY_KEY, insn);
-  }
-
   public CodeFragmentQuery<T> insertAfter(AbstractInsnStencil... insns) {
     return insertAfterBound(RegexMatcher.BOUNDARY_KEY, insns);
   }
@@ -138,17 +122,13 @@ public class CodeFragmentQuery<T> extends AbstractQuery<T> {
     return insertAfterBound(RegexMatcher.BOUNDARY_KEY, insns);
   }
 
-  public CodeFragmentQuery<T> insertFirst(AbstractInsnStencil insn) {
-    return insertFirst(ArrayListHelper.of(insn));
+  public CodeFragmentQuery<T> addFirst(AbstractInsnStencil... insns) {
+    return addFirst(ArrayHelper.toList(insns));
   }
 
-  public CodeFragmentQuery<T> insertFirst(AbstractInsnStencil... insns) {
-    return insertFirst(ArrayHelper.toList(insns));
-  }
-
-  public CodeFragmentQuery<T> insertFirst(List<AbstractInsnStencil> insns) {
+  public CodeFragmentQuery<T> addFirst(List<AbstractInsnStencil> insns) {
     try {
-      codeManipulator.insertInsnsAfter(-1, instantiate(insns));
+      codeManipulator.addFirst(instantiate(insns));
     } catch (ResolutionExeption e) {
       throw new RuntimeException(e);
     }
@@ -156,17 +136,13 @@ public class CodeFragmentQuery<T> extends AbstractQuery<T> {
     return this;
   }
 
-  public CodeFragmentQuery<T> insertLast(AbstractInsnStencil insn) {
-    return insertLast(ArrayListHelper.of(insn));
+  public CodeFragmentQuery<T> addLast(AbstractInsnStencil... insns) {
+    return addLast(ArrayHelper.toList(insns));
   }
 
-  public CodeFragmentQuery<T> insertLast(AbstractInsnStencil... insns) {
-    return insertLast(ArrayHelper.toList(insns));
-  }
-
-  public CodeFragmentQuery<T> insertLast(List<AbstractInsnStencil> insns) {
+  public CodeFragmentQuery<T> addLast(List<AbstractInsnStencil> insns) {
     try {
-      codeManipulator.insertInsnsBefore(codeManipulator.getMethodNode().instructions.size(), instantiate(insns));
+      codeManipulator.insertBefore(codeManipulator.getMethodNode().instructions.size(), instantiate(insns));
     } catch (ResolutionExeption e) {
       throw new RuntimeException(e);
     }
@@ -195,7 +171,7 @@ public class CodeFragmentQuery<T> extends AbstractQuery<T> {
       }
 
       try {
-        codeManipulator.replaceInsns(
+        codeManipulator.replace(
                 indices.first,
                 indices.second,
                 instantiate(insns)
@@ -232,7 +208,7 @@ public class CodeFragmentQuery<T> extends AbstractQuery<T> {
         continue;
       }
 
-      codeManipulator.removeInsns(
+      codeManipulator.remove(
               indices.first,
               indices.second
       );

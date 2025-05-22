@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.InsnNode;
 import org.objectweb.asm.tree.MethodNode;
+import org.objectweb.asm.util.Textifier;
 
 public class MethodQueryTest {
   @Test
@@ -423,10 +424,10 @@ public class MethodQueryTest {
                             CodeRegexes.stencil(InsnStencils.nop())
                     )
             )
-            .insertFirst(
+            .addFirst(
                     InsnStencils.iconst_0()
             )
-            .insertLast(
+            .addLast(
                     InsnStencils.iconst_1()
             )
             .done()
