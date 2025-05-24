@@ -1,9 +1,7 @@
 package com.koyomiji.asmine.stencil;
 
-import org.objectweb.asm.tree.AbstractInsnNode;
-
 public interface IStencil<T> {
-  boolean match(IParameterRegistry registry, T value);
+  boolean match(IStencilRegistry registry, T value);
 
-  T instantiate(IParameterRegistry registry) throws ResolutionExeption;
+  T instantiate(IStencilRegistry registry) throws ResolutionExeption;
 }

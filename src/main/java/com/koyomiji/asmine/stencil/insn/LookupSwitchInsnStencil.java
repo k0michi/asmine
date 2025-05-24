@@ -2,8 +2,8 @@ package com.koyomiji.asmine.stencil.insn;
 
 import com.koyomiji.asmine.common.ListHelper;
 import com.koyomiji.asmine.stencil.IStencil;
-import com.koyomiji.asmine.stencil.IParameterRegistry;
-import com.koyomiji.asmine.stencil.ConstParameter;
+import com.koyomiji.asmine.stencil.IStencilRegistry;
+import com.koyomiji.asmine.stencil.ConstStencil;
 import com.koyomiji.asmine.stencil.ResolutionExeption;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
@@ -18,14 +18,14 @@ public class LookupSwitchInsnStencil extends AbstractInsnStencil {
   public IStencil<List<LabelNode>> labels;
 
   public LookupSwitchInsnStencil(IStencil<LabelNode> dflt, IStencil<List<Integer>> keys, IStencil<List<LabelNode>> labels) {
-    super(new ConstParameter<>(Opcodes.LOOKUPSWITCH));
+    super(new ConstStencil<>(Opcodes.LOOKUPSWITCH));
     this.dflt = dflt;
     this.keys = keys;
     this.labels = labels;
   }
 
   @Override
-  public boolean match(IParameterRegistry registry, AbstractInsnNode insn) {
+  public boolean match(IStencilRegistry registry, AbstractInsnNode insn) {
     return super.match(registry, insn)
         && insn instanceof LookupSwitchInsnNode
         && dflt.match(registry, ((LookupSwitchInsnNode) insn).dflt)
@@ -34,7 +34,7 @@ public class LookupSwitchInsnStencil extends AbstractInsnStencil {
   }
 
   @Override
-  public AbstractInsnNode instantiate(IParameterRegistry registry) throws ResolutionExeption {
+  public AbstractInsnNode instantiate(IStencilRegistry registry) throws ResolutionExeption {
     return new LookupSwitchInsnNode(
         this.dflt.instantiate(registry),
             ListHelper.toIntArray(this.keys.instantiate(registry)),

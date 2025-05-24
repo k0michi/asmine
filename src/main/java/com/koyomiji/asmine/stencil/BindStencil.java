@@ -1,21 +1,21 @@
 package com.koyomiji.asmine.stencil;
 
-public class BindParameter<T> implements IStencil<T> {
+public class BindStencil<T> implements IStencil<T> {
   public Object key;
   public IStencil<T> child;
 
-  public BindParameter(Object key) {
-    this(key, new AnyParameter<>());
+  public BindStencil(Object key) {
+    this(key, new AnyStencil<>());
   }
 
 
-  public BindParameter(Object key, IStencil<T> child) {
+  public BindStencil(Object key, IStencil<T> child) {
     this.key = key;
     this.child = child;
   }
 
   @Override
-  public boolean match(IParameterRegistry registry, T value) {
+  public boolean match(IStencilRegistry registry, T value) {
     if (child.match(registry, value)) {
       registry.bindParameter(key, value);
       return true;
@@ -25,7 +25,7 @@ public class BindParameter<T> implements IStencil<T> {
   }
 
   @Override
-  public T instantiate(IParameterRegistry registry) throws ResolutionExeption {
+  public T instantiate(IStencilRegistry registry) throws ResolutionExeption {
     throw new ResolutionExeption("BindParameter cannot be instantiated");
   }
 }

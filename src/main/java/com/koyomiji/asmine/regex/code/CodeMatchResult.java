@@ -1,12 +1,12 @@
 package com.koyomiji.asmine.regex.code;
 
 import com.koyomiji.asmine.regex.MatchResult;
-import com.koyomiji.asmine.stencil.IParameterRegistry;
+import com.koyomiji.asmine.stencil.IStencilRegistry;
 import com.koyomiji.asmine.stencil.ResolutionExeption;
 
 import java.util.Map;
 
-public class CodeMatchResult extends MatchResult implements IParameterRegistry {
+public class CodeMatchResult extends MatchResult implements IStencilRegistry {
   private final CodeRegexThread thread;
 
   public CodeMatchResult(CodeRegexThread thread) {

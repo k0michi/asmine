@@ -1,6 +1,6 @@
 package com.koyomiji.asmine.stencil;
 
-public interface IParameterRegistry {
+public interface IStencilRegistry {
   Object resolveParameter(Object key) throws ResolutionExeption;
 
   <T> void bindParameter(Object key, T value);

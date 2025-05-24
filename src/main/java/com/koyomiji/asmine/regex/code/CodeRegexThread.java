@@ -1,6 +1,6 @@
 package com.koyomiji.asmine.regex.code;
 
-import com.koyomiji.asmine.stencil.IParameterRegistry;
+import com.koyomiji.asmine.stencil.IStencilRegistry;
 import com.koyomiji.asmine.stencil.ResolutionExeption;
 import com.koyomiji.asmine.regex.RegexThread;
 
@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-public class CodeRegexThread extends RegexThread implements IParameterRegistry {
+public class CodeRegexThread extends RegexThread implements IStencilRegistry {
   protected HashMap<Object, Object> parameterBinds = new HashMap<>();
 
   public CodeRegexThread() {

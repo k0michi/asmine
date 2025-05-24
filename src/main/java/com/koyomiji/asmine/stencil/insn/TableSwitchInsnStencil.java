@@ -1,8 +1,8 @@
 package com.koyomiji.asmine.stencil.insn;
 
 import com.koyomiji.asmine.stencil.IStencil;
-import com.koyomiji.asmine.stencil.ConstParameter;
-import com.koyomiji.asmine.stencil.IParameterRegistry;
+import com.koyomiji.asmine.stencil.ConstStencil;
+import com.koyomiji.asmine.stencil.IStencilRegistry;
 import com.koyomiji.asmine.stencil.ResolutionExeption;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
@@ -18,7 +18,7 @@ public class TableSwitchInsnStencil extends AbstractInsnStencil {
   public IStencil<List<LabelNode>> labels;
 
   public TableSwitchInsnStencil(IStencil<Integer> min, IStencil<Integer> max, IStencil<LabelNode> dflt, IStencil<List<LabelNode>> labels) {
-    super(new ConstParameter<>(Opcodes.TABLESWITCH));
+    super(new ConstStencil<>(Opcodes.TABLESWITCH));
     this.min = min;
     this.max = max;
     this.dflt = dflt;
@@ -26,7 +26,7 @@ public class TableSwitchInsnStencil extends AbstractInsnStencil {
   }
 
   @Override
-  public boolean match(IParameterRegistry registry, AbstractInsnNode insn) {
+  public boolean match(IStencilRegistry registry, AbstractInsnNode insn) {
     return super.match(registry, insn)
         && insn instanceof TableSwitchInsnNode
         && min.match(registry, ((TableSwitchInsnNode) insn).min)
@@ -36,7 +36,7 @@ public class TableSwitchInsnStencil extends AbstractInsnStencil {
   }
 
   @Override
-  public AbstractInsnNode instantiate(IParameterRegistry registry) throws ResolutionExeption {
+  public AbstractInsnNode instantiate(IStencilRegistry registry) throws ResolutionExeption {
     return new TableSwitchInsnNode(
         this.min.instantiate(registry),
         this.max.instantiate(registry),

@@ -5,19 +5,19 @@ import com.koyomiji.asmine.common.ArrayListHelper;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ListParameter<T> implements IStencil<List<T>> {
+public class ListStencil<T> implements IStencil<List<T>> {
   public List<IStencil<T>> parameters;
 
-  public ListParameter(List<IStencil<T>> parameters) {
+  public ListStencil(List<IStencil<T>> parameters) {
     this.parameters = parameters;
   }
 
-  public ListParameter(IStencil<T>... parameters) {
+  public ListStencil(IStencil<T>... parameters) {
     this.parameters = ArrayListHelper.of(parameters);
   }
 
   @Override
-  public boolean match(IParameterRegistry registry, List<T> value) {
+  public boolean match(IStencilRegistry registry, List<T> value) {
     if (value.size() != parameters.size()) {
       return false;
     }
@@ -32,7 +32,7 @@ public class ListParameter<T> implements IStencil<List<T>> {
   }
 
   @Override
-  public List<T> instantiate(IParameterRegistry registry) throws ResolutionExeption {
+  public List<T> instantiate(IStencilRegistry registry) throws ResolutionExeption {
     ArrayList<T> values = new ArrayList<>(parameters.size());
 
     for (IStencil<T> parameter : parameters) {

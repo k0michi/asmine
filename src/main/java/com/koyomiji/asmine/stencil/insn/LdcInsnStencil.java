@@ -1,8 +1,8 @@
 package com.koyomiji.asmine.stencil.insn;
 
 import com.koyomiji.asmine.stencil.IStencil;
-import com.koyomiji.asmine.stencil.ConstParameter;
-import com.koyomiji.asmine.stencil.IParameterRegistry;
+import com.koyomiji.asmine.stencil.ConstStencil;
+import com.koyomiji.asmine.stencil.IStencilRegistry;
 import com.koyomiji.asmine.stencil.ResolutionExeption;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
@@ -12,19 +12,19 @@ public class LdcInsnStencil extends AbstractInsnStencil {
   public IStencil<Object> cst;
 
   public LdcInsnStencil(IStencil<Object> cst) {
-    super(new ConstParameter<>(Opcodes.LDC));
+    super(new ConstStencil<>(Opcodes.LDC));
     this.cst = cst;
   }
 
   @Override
-  public boolean match(IParameterRegistry registry, AbstractInsnNode insn) {
+  public boolean match(IStencilRegistry registry, AbstractInsnNode insn) {
     return super.match(registry, insn)
         && insn instanceof LdcInsnNode
         && cst.match(registry, ((LdcInsnNode) insn).cst);
   }
 
   @Override
-  public AbstractInsnNode instantiate(IParameterRegistry registry) throws ResolutionExeption {
+  public AbstractInsnNode instantiate(IStencilRegistry registry) throws ResolutionExeption {
     return new LdcInsnNode(
         this.cst.instantiate(registry)
     );

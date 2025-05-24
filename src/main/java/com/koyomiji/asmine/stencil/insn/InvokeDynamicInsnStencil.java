@@ -2,8 +2,8 @@ package com.koyomiji.asmine.stencil.insn;
 
 import com.koyomiji.asmine.common.ArrayHelper;
 import com.koyomiji.asmine.stencil.IStencil;
-import com.koyomiji.asmine.stencil.ConstParameter;
-import com.koyomiji.asmine.stencil.IParameterRegistry;
+import com.koyomiji.asmine.stencil.ConstStencil;
+import com.koyomiji.asmine.stencil.IStencilRegistry;
 import com.koyomiji.asmine.stencil.ResolutionExeption;
 import org.objectweb.asm.Handle;
 import org.objectweb.asm.Opcodes;
@@ -19,7 +19,7 @@ public class InvokeDynamicInsnStencil extends AbstractInsnStencil {
   public IStencil<List<Object>> bsmArgs;
 
   public InvokeDynamicInsnStencil(IStencil<String> name, IStencil<String> desc, IStencil<Handle> bsm, IStencil<List<Object>> bsmArgs) {
-    super(new ConstParameter<>(Opcodes.INVOKEDYNAMIC));
+    super(new ConstStencil<>(Opcodes.INVOKEDYNAMIC));
     this.name = name;
     this.desc = desc;
     this.bsm = bsm;
@@ -27,7 +27,7 @@ public class InvokeDynamicInsnStencil extends AbstractInsnStencil {
   }
 
   @Override
-  public boolean match(IParameterRegistry registry, AbstractInsnNode insn) {
+  public boolean match(IStencilRegistry registry, AbstractInsnNode insn) {
     return super.match(registry, insn)
         && insn instanceof InvokeDynamicInsnNode
         && name.match(registry, ((InvokeDynamicInsnNode) insn).name)
@@ -37,7 +37,7 @@ public class InvokeDynamicInsnStencil extends AbstractInsnStencil {
   }
 
   @Override
-  public AbstractInsnNode instantiate(IParameterRegistry registry) throws ResolutionExeption {
+  public AbstractInsnNode instantiate(IStencilRegistry registry) throws ResolutionExeption {
     return new InvokeDynamicInsnNode(
         this.name.instantiate(registry),
         this.desc.instantiate(registry),

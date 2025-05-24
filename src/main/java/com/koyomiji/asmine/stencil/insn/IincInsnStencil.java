@@ -1,8 +1,8 @@
 package com.koyomiji.asmine.stencil.insn;
 
 import com.koyomiji.asmine.stencil.IStencil;
-import com.koyomiji.asmine.stencil.IParameterRegistry;
-import com.koyomiji.asmine.stencil.ConstParameter;
+import com.koyomiji.asmine.stencil.IStencilRegistry;
+import com.koyomiji.asmine.stencil.ConstStencil;
 import com.koyomiji.asmine.stencil.ResolutionExeption;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
@@ -13,13 +13,13 @@ public class IincInsnStencil extends AbstractInsnStencil {
   public IStencil<Integer> incr;
 
   public IincInsnStencil(IStencil<Integer> var, IStencil<Integer> incr) {
-    super(new ConstParameter<>(Opcodes.IINC));
+    super(new ConstStencil<>(Opcodes.IINC));
     this.var = var;
     this.incr = incr;
   }
 
   @Override
-  public boolean match(IParameterRegistry registry, AbstractInsnNode insn) {
+  public boolean match(IStencilRegistry registry, AbstractInsnNode insn) {
     return super.match(registry, insn)
         && insn instanceof IincInsnNode
         && var.match(registry, ((IincInsnNode) insn).var)
@@ -27,7 +27,7 @@ public class IincInsnStencil extends AbstractInsnStencil {
   }
 
   @Override
-  public AbstractInsnNode instantiate(IParameterRegistry registry) throws ResolutionExeption {
+  public AbstractInsnNode instantiate(IStencilRegistry registry) throws ResolutionExeption {
     return new IincInsnNode(
         this.var.instantiate(registry),
         this.incr.instantiate(registry)
