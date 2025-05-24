@@ -2,7 +2,7 @@ package com.koyomiji.asmine.regex.code;
 
 import com.koyomiji.asmine.regex.MatchResult;
 import com.koyomiji.asmine.stencil.IStencilRegistry;
-import com.koyomiji.asmine.stencil.ResolutionException;
+import com.koyomiji.asmine.stencil.EvaluationException;
 
 import java.util.Map;
 
@@ -15,7 +15,7 @@ public class CodeMatchResult extends MatchResult implements IStencilRegistry {
   }
 
   @Override
-  public Object resolveParameter(Object key) throws ResolutionException {
+  public Object resolveParameter(Object key) throws EvaluationException {
     return thread.resolveParameter(key);
   }
 

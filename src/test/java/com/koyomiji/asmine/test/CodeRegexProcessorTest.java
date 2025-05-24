@@ -9,7 +9,7 @@ import com.koyomiji.asmine.regex.code.CodeRegexThread;
 import com.koyomiji.asmine.regex.compiler.*;
 import com.koyomiji.asmine.regex.compiler.code.CodeRegexes;
 import com.koyomiji.asmine.stencil.Stencils;
-import com.koyomiji.asmine.stencil.ResolutionException;
+import com.koyomiji.asmine.stencil.EvaluationException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.objectweb.asm.tree.AbstractInsnNode;
@@ -180,7 +180,7 @@ public class CodeRegexProcessorTest {
 
   // Label resolves to the final label
   @Test
-  void test_9() throws ResolutionException {
+  void test_9() throws EvaluationException {
     RegexModule regex= compile(
             Regexes.concatenate(
                     CodeRegexes.stencil(InsnStencils.label(Stencils.bind(p0))),
@@ -202,7 +202,7 @@ public class CodeRegexProcessorTest {
 
   // Line number and frame
   @Test
-  void test_10() throws ResolutionException {
+  void test_10() throws EvaluationException {
     RegexModule regex= compile(
             Regexes.concatenate(
                     CodeRegexes.stencil(InsnStencils.label(Stencils.bind(p0))),
@@ -224,7 +224,7 @@ public class CodeRegexProcessorTest {
 
   // Binding non-existent label
   @Test
-  void test_11() throws ResolutionException {
+  void test_11() throws EvaluationException {
     RegexModule regex= compile(
             Regexes.concatenate(
                     CodeRegexes.stencil(InsnStencils.label(Stencils.bind(p0))),
@@ -241,7 +241,7 @@ public class CodeRegexProcessorTest {
 
   // Only label
   @Test
-  void test_12() throws ResolutionException {
+  void test_12() throws EvaluationException {
     RegexModule regex= compile(
             Regexes.concatenate(
                     CodeRegexes.stencil(InsnStencils.label(Stencils.bind(p0)))
@@ -257,7 +257,7 @@ public class CodeRegexProcessorTest {
 
   // Label literal match
   @Test
-  void test_13() throws ResolutionException {
+  void test_13() throws EvaluationException {
     RegexModule regex= compile(
             Regexes.concatenate(
                     CodeRegexes.literal(l0 = Insns.label())

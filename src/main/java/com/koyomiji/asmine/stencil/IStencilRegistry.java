@@ -1,7 +1,7 @@
 package com.koyomiji.asmine.stencil;
 
 public interface IStencilRegistry {
-  Object resolveParameter(Object key) throws ResolutionException;
+  Object resolveParameter(Object key) throws EvaluationException;
 
   <T> void bindParameter(Object key, T value);
 

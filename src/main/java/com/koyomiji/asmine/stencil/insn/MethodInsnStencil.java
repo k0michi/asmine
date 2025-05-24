@@ -2,7 +2,7 @@ package com.koyomiji.asmine.stencil.insn;
 
 import com.koyomiji.asmine.stencil.IStencil;
 import com.koyomiji.asmine.stencil.IStencilRegistry;
-import com.koyomiji.asmine.stencil.ResolutionException;
+import com.koyomiji.asmine.stencil.EvaluationException;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 
@@ -30,13 +30,13 @@ public class MethodInsnStencil extends AbstractInsnStencil {
   }
 
   @Override
-  public AbstractInsnNode instantiate(IStencilRegistry registry) throws ResolutionException {
+  public AbstractInsnNode evaluate(IStencilRegistry registry) throws EvaluationException {
     return new MethodInsnNode(
-        this.opcode.instantiate(registry),
-        this.owner.instantiate(registry),
-        this.name.instantiate(registry),
-        this.desc.instantiate(registry),
-        this.itf.instantiate(registry)
+        this.opcode.evaluate(registry),
+        this.owner.evaluate(registry),
+        this.name.evaluate(registry),
+        this.desc.evaluate(registry),
+        this.itf.evaluate(registry)
     );
   }
 

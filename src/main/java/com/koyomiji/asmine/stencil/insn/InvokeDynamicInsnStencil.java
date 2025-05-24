@@ -4,7 +4,7 @@ import com.koyomiji.asmine.common.ArrayHelper;
 import com.koyomiji.asmine.stencil.IStencil;
 import com.koyomiji.asmine.stencil.ConstStencil;
 import com.koyomiji.asmine.stencil.IStencilRegistry;
-import com.koyomiji.asmine.stencil.ResolutionException;
+import com.koyomiji.asmine.stencil.EvaluationException;
 import org.objectweb.asm.Handle;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
@@ -37,12 +37,12 @@ public class InvokeDynamicInsnStencil extends AbstractInsnStencil {
   }
 
   @Override
-  public AbstractInsnNode instantiate(IStencilRegistry registry) throws ResolutionException {
+  public AbstractInsnNode evaluate(IStencilRegistry registry) throws EvaluationException {
     return new InvokeDynamicInsnNode(
-        this.name.instantiate(registry),
-        this.desc.instantiate(registry),
-        this.bsm.instantiate(registry),
-        this.bsmArgs.instantiate(registry)
+        this.name.evaluate(registry),
+        this.desc.evaluate(registry),
+        this.bsm.evaluate(registry),
+        this.bsmArgs.evaluate(registry)
     );
   }
 

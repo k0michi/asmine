@@ -25,7 +25,7 @@ public class BindStencil<T> implements IStencil<T> {
   }
 
   @Override
-  public T instantiate(IStencilRegistry registry) throws ResolutionException {
-    throw new ResolutionException("BindParameter cannot be instantiated");
+  public T evaluate(IStencilRegistry registry) throws EvaluationException {
+    throw new EvaluationException("BindParameter cannot be instantiated");
   }
 }

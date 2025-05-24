@@ -13,7 +13,7 @@ public class BoundStencil<T> implements IStencil<T> {
   }
 
   @Override
-  public T instantiate(IStencilRegistry registry) throws ResolutionException {
+  public T evaluate(IStencilRegistry registry) throws EvaluationException {
     // There is no way to check the type is T
     return (T) registry.resolveParameter(key);
   }

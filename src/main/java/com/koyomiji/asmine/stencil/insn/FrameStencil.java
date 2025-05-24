@@ -2,7 +2,7 @@ package com.koyomiji.asmine.stencil.insn;
 
 import com.koyomiji.asmine.stencil.IStencil;
 import com.koyomiji.asmine.stencil.IStencilRegistry;
-import com.koyomiji.asmine.stencil.ResolutionException;
+import com.koyomiji.asmine.stencil.EvaluationException;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.FrameNode;
 
@@ -36,13 +36,13 @@ public class FrameStencil extends AbstractInsnStencil {
   }
 
   @Override
-  public AbstractInsnNode instantiate(IStencilRegistry registry) throws ResolutionException {
+  public AbstractInsnNode evaluate(IStencilRegistry registry) throws EvaluationException {
     return new FrameNode(
-        this.type.instantiate(registry),
-        this.numLocal.instantiate(registry),
-        this.local.instantiate(registry).toArray(),
-        this.numStack.instantiate(registry),
-        this.stack.instantiate(registry).toArray()
+        this.type.evaluate(registry),
+        this.numLocal.evaluate(registry),
+        this.local.evaluate(registry).toArray(),
+        this.numStack.evaluate(registry),
+        this.stack.evaluate(registry).toArray()
     );
   }
 

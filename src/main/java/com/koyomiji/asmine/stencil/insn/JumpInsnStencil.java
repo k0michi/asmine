@@ -2,7 +2,7 @@ package com.koyomiji.asmine.stencil.insn;
 
 import com.koyomiji.asmine.stencil.IStencil;
 import com.koyomiji.asmine.stencil.IStencilRegistry;
-import com.koyomiji.asmine.stencil.ResolutionException;
+import com.koyomiji.asmine.stencil.EvaluationException;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.JumpInsnNode;
 import org.objectweb.asm.tree.LabelNode;
@@ -23,10 +23,10 @@ public class JumpInsnStencil extends AbstractInsnStencil {
   }
 
   @Override
-  public AbstractInsnNode instantiate(IStencilRegistry registry) throws ResolutionException {
+  public AbstractInsnNode evaluate(IStencilRegistry registry) throws EvaluationException {
     return new JumpInsnNode(
-        this.opcode.instantiate(registry),
-        this.label.instantiate(registry)
+        this.opcode.evaluate(registry),
+        this.label.evaluate(registry)
     );
   }
 

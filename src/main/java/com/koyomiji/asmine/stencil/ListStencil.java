@@ -32,11 +32,11 @@ public class ListStencil<T> implements IStencil<List<T>> {
   }
 
   @Override
-  public List<T> instantiate(IStencilRegistry registry) throws ResolutionException {
+  public List<T> evaluate(IStencilRegistry registry) throws EvaluationException {
     ArrayList<T> values = new ArrayList<>(parameters.size());
 
     for (IStencil<T> parameter : parameters) {
-      values.add(parameter.instantiate(registry));
+      values.add(parameter.evaluate(registry));
     }
 
     return values;

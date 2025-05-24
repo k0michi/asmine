@@ -3,7 +3,7 @@ package com.koyomiji.asmine.stencil.insn;
 import com.koyomiji.asmine.stencil.IStencil;
 import com.koyomiji.asmine.stencil.IStencilRegistry;
 import com.koyomiji.asmine.stencil.ConstStencil;
-import com.koyomiji.asmine.stencil.ResolutionException;
+import com.koyomiji.asmine.stencil.EvaluationException;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.MultiANewArrayInsnNode;
@@ -27,10 +27,10 @@ public class MultiANewArrayInsnStencil extends AbstractInsnStencil {
   }
 
   @Override
-  public AbstractInsnNode instantiate(IStencilRegistry registry) throws ResolutionException {
+  public AbstractInsnNode evaluate(IStencilRegistry registry) throws EvaluationException {
     return new MultiANewArrayInsnNode(
-            this.desc.instantiate(registry),
-            this.dims.instantiate(registry)
+            this.desc.evaluate(registry),
+            this.dims.evaluate(registry)
     );
   }
 
