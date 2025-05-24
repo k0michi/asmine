@@ -13,8 +13,8 @@ public class InvokeInsn extends AbstractRegexInsn {
 
   @Override
   public List<RegexThread> execute(RegexProcessor processor, RegexThread thread) {
-    thread.push(thread.getProgramCounter());
-    thread.push(thread.getFunctionPointer());
+    CallFrame callFrame = new CallFrame(thread.getFunctionPointer(), thread.getProgramCounter());
+    thread.pushCall(callFrame);
     thread.setFunctionPointer(functionPointer);
     thread.setProgramCounter(0);
     return ArrayListHelper.of(thread);

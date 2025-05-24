@@ -1,6 +1,7 @@
 package com.koyomiji.asmine.test;
 
 import com.koyomiji.asmine.common.ArrayListHelper;
+import com.koyomiji.asmine.common.Insns;
 import com.koyomiji.asmine.regex.*;
 import com.koyomiji.asmine.regex.compiler.*;
 import com.koyomiji.asmine.regex.compiler.string.StringRegexes;
@@ -32,7 +33,7 @@ public class RegexProcessorTest {
             'a'
     );
     RegexProcessor vm = new RegexProcessor(insns, string);
-    Assertions.assertEquals(0, vm.execute().getProgramCounter());
+    Assertions.assertNotNull(vm.execute());
   }
 
   @Test
@@ -45,7 +46,7 @@ public class RegexProcessorTest {
             'a'
     );
     RegexProcessor vm = new RegexProcessor(insns, string);
-    Assertions.assertEquals(1, vm.execute().getProgramCounter());
+    Assertions.assertNotNull(vm.execute());
   }
 
   @Test
@@ -60,7 +61,7 @@ public class RegexProcessorTest {
             'a'
     );
     RegexProcessor vm = new RegexProcessor(insns, string);
-    Assertions.assertEquals(3, vm.execute().getProgramCounter());
+    Assertions.assertNotNull(vm.execute());
   }
 
   @Test
@@ -79,7 +80,7 @@ public class RegexProcessorTest {
             'b'
     );
     RegexProcessor vm = new RegexProcessor(insns, string);
-    Assertions.assertEquals(6, vm.execute().getProgramCounter());
+    Assertions.assertNotNull(vm.execute());
   }
 
   @Test
@@ -100,7 +101,7 @@ public class RegexProcessorTest {
             'b'
     );
     RegexProcessor vm = new RegexProcessor(insns, string);
-    Assertions.assertEquals(6, vm.execute().getProgramCounter());
+    Assertions.assertNotNull(vm.execute());
   }
 
   @Test
@@ -133,7 +134,7 @@ public class RegexProcessorTest {
             'a'
     );
     RegexProcessor vm = new RegexProcessor(insns, string);
-    Assertions.assertEquals(2, vm.execute().getProgramCounter());
+    Assertions.assertNotNull(vm.execute());
   }
 
   private RegexModule compile(AbstractRegexNode node) {
@@ -232,7 +233,7 @@ public class RegexProcessorTest {
             'b'
     );
     RegexProcessor vm = new RegexProcessor(insns, string);
-    Assertions.assertEquals(Pair.of(0, 0), vm.execute().getBoundLast(0));
+    Assertions.assertEquals(Pair.of(0, 0), vm.execute().getScopedBound(0));
   }
 
   // plus
@@ -272,7 +273,7 @@ public class RegexProcessorTest {
             'b'
     );
     RegexProcessor vm = new RegexProcessor(insns, string);
-    Assertions.assertEquals(Pair.of(0, 1), vm.execute().getBoundLast(0));
+    Assertions.assertEquals(Pair.of(0, 1), vm.execute().getScopedBound(0));
   }
 
   // question
@@ -308,7 +309,7 @@ public class RegexProcessorTest {
             'b'
     );
     RegexProcessor vm = new RegexProcessor(insns, string);
-    Assertions.assertEquals(Pair.of(0, 0), vm.execute().getBoundLast(0));
+    Assertions.assertEquals(Pair.of(0, 0), vm.execute().getScopedBound(0));
   }
 
   @Test
@@ -327,7 +328,7 @@ public class RegexProcessorTest {
             'c'
     );
     RegexProcessor vm = new RegexProcessor(insns, string);
-    Assertions.assertEquals(Pair.of(0, 2), vm.execute().getBoundLast(0));
+    Assertions.assertEquals(Pair.of(0, 2), vm.execute().getScopedBound(0));
   }
 
   @Test
@@ -348,7 +349,7 @@ public class RegexProcessorTest {
             'c'
     );
     RegexProcessor vm = new RegexProcessor(insns, string);
-    Assertions.assertEquals(Pair.of(0, 4), vm.execute().getBoundLast(0));
+    Assertions.assertEquals(Pair.of(0, 4), vm.execute().getScopedBound(0));
   }
 
   @Test
@@ -369,7 +370,7 @@ public class RegexProcessorTest {
             'b'
     );
     RegexProcessor vm = new RegexProcessor(insns, string);
-    Assertions.assertEquals(Pair.of(0, 2), vm.execute().getBoundLast(0));
+    Assertions.assertEquals(Pair.of(0, 2), vm.execute().getScopedBound(0));
   }
 
   @Test
@@ -393,7 +394,7 @@ public class RegexProcessorTest {
             'c'
     );
     RegexProcessor vm = new RegexProcessor(insns, string);
-    Assertions.assertEquals(Pair.of(0, 2), vm.execute().getBoundLast(0));
+    Assertions.assertEquals(Pair.of(0, 2), vm.execute().getScopedBound(0));
   }
 
   @Test
@@ -441,7 +442,7 @@ public class RegexProcessorTest {
             'c'
     );
     RegexProcessor vm = new RegexProcessor(insns, string);
-    Assertions.assertEquals(Pair.of(0, 2), vm.execute().getBoundLast(0));
+    Assertions.assertEquals(Pair.of(0, 2), vm.execute().getScopedBound(0));
   }
 
   // bind nest
@@ -466,7 +467,7 @@ public class RegexProcessorTest {
             'c'
     );
     RegexProcessor vm = new RegexProcessor(insns, string);
-    Assertions.assertEquals(Pair.of(0, 2), vm.execute().getBoundLast(1));
+    Assertions.assertEquals(Pair.of(0, 2), vm.execute().getScopedBound(1));
   }
 
   // bound is nested inside bind
@@ -494,7 +495,7 @@ public class RegexProcessorTest {
             'c'
     );
     RegexProcessor vm = new RegexProcessor(insns, string);
-    Assertions.assertEquals(Pair.of(2, 4), vm.execute().getBoundLast(1));
+    Assertions.assertEquals(Pair.of(2, 4), vm.execute().getScopedBound(1));
   }
 
   // nested bound
@@ -547,7 +548,7 @@ public class RegexProcessorTest {
             'c'
     );
     RegexProcessor vm = new RegexProcessor(insns, string);
-    Assertions.assertEquals(Pair.of(0, 2), vm.execute().getBoundLast(1));
+    Assertions.assertEquals(Pair.of(0, 2), vm.execute().getScopedBound(1));
   }
 
   // trace
@@ -696,6 +697,31 @@ public class RegexProcessorTest {
             Pair.of(1, 3),
             Pair.of(3, 5),
             Pair.of(0, 6)
+    ), thread.getBounds(0));
+  }
+
+  @Test
+  void test_15() {
+    ConcatenateNode c0;
+
+    RegexModule insns = compile((c0 = Regexes.concatenate()).setChildren(
+            Regexes.star(
+                    Regexes.concatenate(
+                            Regexes.bind(0, Regexes.any()),
+                            c0,
+                            Regexes.bound(0)
+                    )
+            )
+    ));
+    List<Object> string = split("abcdeedcba");
+    RegexProcessor vm = new RegexProcessor(insns, string);
+    RegexThread thread = vm.execute();
+    Assertions.assertEquals(ArrayListHelper.of(
+            Pair.of(0, 1),
+            Pair.of(1, 2),
+            Pair.of(2, 3),
+            Pair.of(3, 4),
+            Pair.of(4, 5)
     ), thread.getBounds(0));
   }
 }

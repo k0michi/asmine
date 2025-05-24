@@ -9,10 +9,14 @@ public class RegexThread implements Cloneable {
   protected int functionPointer = 0;
   protected int programCounter = 0;
   protected Stack<Object> stack = new Stack<>();
+  protected Stack<CallFrame> callStack = new Stack<>();
   protected HashMap<Object, List<Pair<Integer, Integer>>> stringBinds = new HashMap<>();
   protected List<Object> trace = new ArrayList<>();
 
-  public RegexThread() {}
+  public RegexThread() {
+    callStack.push(new CallFrame());
+    callStack.push(new CallFrame());
+  }
 
   @Override
   protected Object clone() {
@@ -26,6 +30,10 @@ public class RegexThread implements Cloneable {
         clone.stringBinds.put(entry.getKey(), clonedList);
       }
 
+      clone.callStack = new Stack<>();
+      for (CallFrame callFrame : this.callStack) {
+        clone.callStack.push(callFrame.clone());
+      }
       return clone;
     } catch (CloneNotSupportedException e) {
       throw new RuntimeException(e);
@@ -64,6 +72,17 @@ public class RegexThread implements Cloneable {
     return stack.pop();
   }
 
+  public void pushCall(CallFrame callFrame) {
+    callStack.push(callFrame);
+  }
+
+  public CallFrame popCall() {
+    CallFrame popped = callStack.pop();
+    CallFrame top = callStack.peek();
+    top.merge(popped);
+    return popped;
+  }
+
   public void terminate() {
     this.terminated = true;
   }
@@ -80,20 +99,29 @@ public class RegexThread implements Cloneable {
     return stack.size();
   }
 
-  public void unbind(Object index) {
-    stringBinds.remove(index);
+  public int callStackSize() {
+    return callStack.size();
   }
 
-  public void bind(Object index, Pair<Integer, Integer> range) {
-    if (!stringBinds.containsKey(index)) {
-      stringBinds.put(index, new ArrayList<>());
+  public void bind(Object key, Pair<Integer, Integer> range) {
+    if (!stringBinds.containsKey(key)) {
+      stringBinds.put(key, new ArrayList<>());
     }
 
-    this.stringBinds.get(index).add(range);
+    this.stringBinds.get(key).add(range);
+    this.callStack.peek().bind(key, range);
   }
 
-  public Pair<Integer, Integer> getBoundLast(Object index) {
-    return stringBinds.get(index).get(stringBinds.get(index).size() - 1);
+  public Pair<Integer, Integer> getScopedBound(Object key) {
+    Pair<Integer, Integer> result = null;
+
+    for (CallFrame frame : callStack) {
+      if (frame.stringBinds.containsKey(key)) {
+        result = frame.stringBinds.get(key);
+      }
+    }
+
+    return result;
   }
 
   public List<Pair<Integer, Integer>> getBounds(Object index) {
