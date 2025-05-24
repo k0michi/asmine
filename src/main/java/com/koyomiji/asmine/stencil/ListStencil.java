@@ -6,25 +6,25 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ListStencil<T> implements IStencil<List<T>> {
-  public List<IStencil<T>> parameters;
+  public List<IStencil<T>> stencils;
 
-  public ListStencil(List<IStencil<T>> parameters) {
-    this.parameters = parameters;
+  public ListStencil(List<IStencil<T>> stencils) {
+    this.stencils = stencils;
   }
 
   @SafeVarargs
-  public ListStencil(IStencil<T>... parameters) {
-    this.parameters = ArrayListHelper.of(parameters);
+  public ListStencil(IStencil<T>... stencils) {
+    this.stencils = ArrayListHelper.of(stencils);
   }
 
   @Override
   public boolean match(IStencilRegistry registry, List<T> value) {
-    if (value.size() != parameters.size()) {
+    if (value.size() != stencils.size()) {
       return false;
     }
 
-    for (int i = 0; i < parameters.size(); i++) {
-      if (!parameters.get(i).match(registry, value.get(i))) {
+    for (int i = 0; i < stencils.size(); i++) {
+      if (!stencils.get(i).match(registry, value.get(i))) {
         return false;
       }
     }
@@ -34,10 +34,10 @@ public class ListStencil<T> implements IStencil<List<T>> {
 
   @Override
   public List<T> evaluate(IStencilRegistry registry) throws StencilEvaluationException {
-    ArrayList<T> values = new ArrayList<>(parameters.size());
+    ArrayList<T> values = new ArrayList<>(stencils.size());
 
-    for (IStencil<T> parameter : parameters) {
-      values.add(parameter.evaluate(registry));
+    for (IStencil<T> stencil : stencils) {
+      values.add(stencil.evaluate(registry));
     }
 
     return values;

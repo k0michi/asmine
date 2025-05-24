@@ -9,7 +9,7 @@ public class ConstStencil<T> implements IStencil<T> {
 
   @Override
   public boolean match(IStencilRegistry registry, T value) {
-    return registry.compareParameters(this.value, value);
+    return registry.compareValues(this.value, value);
   }
 
   @Override

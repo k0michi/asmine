@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.Objects;
 
 public class CodeRegexThread extends RegexThread implements IStencilRegistry {
-  protected HashMap<Object, Object> parameterBinds = new HashMap<>();
+  protected HashMap<Object, Object> stencilBinds = new HashMap<>();
 
   public CodeRegexThread() {
     super();
@@ -18,49 +18,49 @@ public class CodeRegexThread extends RegexThread implements IStencilRegistry {
   @Override
   protected Object clone() {
     CodeRegexThread clone = (CodeRegexThread) super.clone();
-    clone.parameterBinds = (HashMap<Object, Object>) this.parameterBinds.clone();
+    clone.stencilBinds = (HashMap<Object, Object>) this.stencilBinds.clone();
     return clone;
   }
 
   @Override
-  public Object resolveParameter(Object key) throws StencilEvaluationException {
-    if (!parameterBinds.containsKey(key)) {
-      throw new StencilEvaluationException("Parameter not found: " + key);
+  public Object resolveStencil(Object key) throws StencilEvaluationException {
+    if (!stencilBinds.containsKey(key)) {
+      throw new StencilEvaluationException("Stencil not found: " + key);
     }
 
-    return parameterBinds.get(key);
+    return stencilBinds.get(key);
   }
 
   @Override
-  public <T> void bindParameter(Object key, T value) {
-    parameterBinds.put(key, value);
+  public <T> void bindStencil(Object key, T value) {
+    stencilBinds.put(key, value);
   }
 
   @Override
-  public <T> boolean bindParameterIfAbsent(Object key, T value) {
-    if (parameterBinds.containsKey(key)) {
+  public <T> boolean bindStencilIfAbsent(Object key, T value) {
+    if (stencilBinds.containsKey(key)) {
       return false;
     }
 
-    parameterBinds.put(key, value);
+    stencilBinds.put(key, value);
     return true;
   }
 
   @Override
-  public <T> boolean compareParameters(T value1, T value2) {
+  public <T> boolean compareValues(T value1, T value2) {
     return Objects.equals(value1, value2);
   }
 
   @Override
-  public <T> boolean compareParameterToBound(Object key, T value) {
-    if (!parameterBinds.containsKey(key)) {
+  public <T> boolean compareBoundToValue(Object key, T value) {
+    if (!stencilBinds.containsKey(key)) {
       return false;
     }
 
-    return compareParameters(value, parameterBinds.get(key));
+    return compareValues(value, stencilBinds.get(key));
   }
 
-  public Map<Object, Object> getParameterBinds() {
-    return parameterBinds;
+  public Map<Object, Object> getStencilBounds() {
+    return stencilBinds;
   }
 }

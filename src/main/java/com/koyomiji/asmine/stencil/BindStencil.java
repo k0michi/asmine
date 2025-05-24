@@ -17,7 +17,7 @@ public class BindStencil<T> implements IStencil<T> {
   @Override
   public boolean match(IStencilRegistry registry, T value) {
     if (child.match(registry, value)) {
-      registry.bindParameter(key, value);
+      registry.bindStencil(key, value);
       return true;
     } else {
       return false;

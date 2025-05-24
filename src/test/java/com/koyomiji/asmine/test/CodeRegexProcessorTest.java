@@ -196,8 +196,8 @@ public class CodeRegexProcessorTest {
     CodeRegexProcessor vm = new CodeRegexProcessor(regex, string);
     CodeRegexThread thread = vm.execute();
     Assertions.assertNotNull(thread);
-    Assertions.assertSame(thread.resolveParameter(p0), l1);
-    Assertions.assertSame(thread.resolveParameter(p1), l1);
+    Assertions.assertSame(thread.resolveStencil(p0), l1);
+    Assertions.assertSame(thread.resolveStencil(p1), l1);
   }
 
   // Line number and frame
