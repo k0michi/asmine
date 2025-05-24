@@ -1,6 +1,6 @@
 package com.koyomiji.asmine.stencil;
 
-public class ConstParameter<T> extends AbstractParameter<T> {
+public class ConstParameter<T> implements IStencil<T> {
   public T value;
 
   public ConstParameter(T value) {

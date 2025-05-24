@@ -1,6 +1,6 @@
 package com.koyomiji.asmine.stencil;
 
-public class BoundParameter<T> extends AbstractParameter<T> {
+public class BoundParameter<T> implements IStencil<T> {
   public Object key;
 
   public BoundParameter(Object key) {

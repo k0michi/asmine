@@ -1,6 +1,6 @@
 package com.koyomiji.asmine.stencil.insn;
 
-import com.koyomiji.asmine.stencil.AbstractParameter;
+import com.koyomiji.asmine.stencil.IStencil;
 import com.koyomiji.asmine.stencil.IParameterRegistry;
 import com.koyomiji.asmine.stencil.ResolutionExeption;
 import org.objectweb.asm.tree.AbstractInsnNode;
@@ -9,13 +9,13 @@ import org.objectweb.asm.tree.FrameNode;
 import java.util.List;
 
 public class FrameStencil extends AbstractInsnStencil {
-  public AbstractParameter<Integer> type;
-  public AbstractParameter<Integer> numLocal;
-  public AbstractParameter<List<Object>> local;
-  public AbstractParameter<Integer> numStack;
-  public AbstractParameter<List<Object>> stack;
+  public IStencil<Integer> type;
+  public IStencil<Integer> numLocal;
+  public IStencil<List<Object>> local;
+  public IStencil<Integer> numStack;
+  public IStencil<List<Object>> stack;
   
-  public FrameStencil(AbstractParameter<Integer> type, AbstractParameter<Integer> numLocal, AbstractParameter<List<Object>> local, AbstractParameter<Integer> numStack, AbstractParameter<List<Object>> stack) {
+  public FrameStencil(IStencil<Integer> type, IStencil<Integer> numLocal, IStencil<List<Object>> local, IStencil<Integer> numStack, IStencil<List<Object>> stack) {
     super(type);
     this.type = type;
     this.numLocal = numLocal;

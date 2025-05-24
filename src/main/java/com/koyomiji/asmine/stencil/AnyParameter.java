@@ -1,6 +1,6 @@
 package com.koyomiji.asmine.stencil;
 
-public class AnyParameter<T> extends AbstractParameter<T> {
+public class AnyParameter<T> implements IStencil<T> {
   @Override
   public boolean match(IParameterRegistry registry, T value) {
     return true;

@@ -1,6 +1,6 @@
 package com.koyomiji.asmine.common;
 
-import com.koyomiji.asmine.stencil.AbstractParameter;
+import com.koyomiji.asmine.stencil.IStencil;
 import com.koyomiji.asmine.stencil.ConstParameter;
 import com.koyomiji.asmine.stencil.insn.*;
 import org.objectweb.asm.Handle;
@@ -10,67 +10,67 @@ import org.objectweb.asm.tree.*;
 import java.util.List;
 
 public class InsnStencils {
-  public static InsnStencil insn(AbstractParameter<Integer> opcode) {
+  public static InsnStencil insn(IStencil<Integer> opcode) {
     return new InsnStencil(opcode);
   }
 
-  public static IntInsnStencil intInsn(AbstractParameter<Integer> opcode, AbstractParameter<Integer> operand) {
+  public static IntInsnStencil intInsn(IStencil<Integer> opcode, IStencil<Integer> operand) {
     return new IntInsnStencil(opcode, operand);
   }
 
-  public static VarInsnStencil varInsn(AbstractParameter<Integer> opcode, AbstractParameter<Integer> varIndex) {
+  public static VarInsnStencil varInsn(IStencil<Integer> opcode, IStencil<Integer> varIndex) {
     return new VarInsnStencil(opcode, varIndex);
   }
 
-  public static TypeInsnStencil typeInsn(AbstractParameter<Integer> opcode, AbstractParameter<String> type) {
+  public static TypeInsnStencil typeInsn(IStencil<Integer> opcode, IStencil<String> type) {
     return new TypeInsnStencil(opcode, type);
   }
 
-  public static FieldInsnStencil fieldInsn(AbstractParameter<Integer> opcode, AbstractParameter<String> owner, AbstractParameter<String> name, AbstractParameter<String> desc) {
+  public static FieldInsnStencil fieldInsn(IStencil<Integer> opcode, IStencil<String> owner, IStencil<String> name, IStencil<String> desc) {
     return new FieldInsnStencil(opcode, owner, name, desc);
   }
 
-  public static MethodInsnStencil methodInsn(AbstractParameter<Integer> opcode, AbstractParameter<String> owner, AbstractParameter<String> name, AbstractParameter<String> desc, AbstractParameter<Boolean> itf) {
+  public static MethodInsnStencil methodInsn(IStencil<Integer> opcode, IStencil<String> owner, IStencil<String> name, IStencil<String> desc, IStencil<Boolean> itf) {
     return new MethodInsnStencil(opcode, owner, name, desc, itf);
   }
 
-  public static InvokeDynamicInsnStencil invokeDynamicInsn(AbstractParameter<String> name, AbstractParameter<String> desc, AbstractParameter<Handle> bsm, AbstractParameter<List<Object>> bsmArgs) {
+  public static InvokeDynamicInsnStencil invokeDynamicInsn(IStencil<String> name, IStencil<String> desc, IStencil<Handle> bsm, IStencil<List<Object>> bsmArgs) {
     return new InvokeDynamicInsnStencil(name, desc, bsm, bsmArgs);
   }
 
-  public static JumpInsnStencil jumpInsn(AbstractParameter<Integer> opcode, AbstractParameter<LabelNode> label) {
+  public static JumpInsnStencil jumpInsn(IStencil<Integer> opcode, IStencil<LabelNode> label) {
     return new JumpInsnStencil(opcode, label);
   }
 
-  public static LabelStencil label(AbstractParameter<LabelNode> label) {
+  public static LabelStencil label(IStencil<LabelNode> label) {
     return new LabelStencil(label);
   }
 
-  public static LdcInsnStencil ldcInsn(AbstractParameter<Object> cst) {
+  public static LdcInsnStencil ldcInsn(IStencil<Object> cst) {
     return new LdcInsnStencil(cst);
   }
 
-  public static IincInsnStencil iincInsn(AbstractParameter<Integer> varIndex, AbstractParameter<Integer> incr) {
+  public static IincInsnStencil iincInsn(IStencil<Integer> varIndex, IStencil<Integer> incr) {
     return new IincInsnStencil(varIndex, incr);
   }
 
-  public static TableSwitchInsnStencil tableSwitchInsn(AbstractParameter<Integer> min, AbstractParameter<Integer> max, AbstractParameter<LabelNode> dflt, AbstractParameter<List<LabelNode>> labels) {
+  public static TableSwitchInsnStencil tableSwitchInsn(IStencil<Integer> min, IStencil<Integer> max, IStencil<LabelNode> dflt, IStencil<List<LabelNode>> labels) {
     return new TableSwitchInsnStencil(min, max, dflt, labels);
   }
 
-  public static LookupSwitchInsnStencil lookupSwitchInsn(AbstractParameter<LabelNode> dflt, AbstractParameter<List<Integer>> keys, AbstractParameter<List<LabelNode>> labels) {
+  public static LookupSwitchInsnStencil lookupSwitchInsn(IStencil<LabelNode> dflt, IStencil<List<Integer>> keys, IStencil<List<LabelNode>> labels) {
     return new LookupSwitchInsnStencil(dflt, keys, labels);
   }
 
-  public static MultiANewArrayInsnStencil multiANewArrayInsn(AbstractParameter<String> desc, AbstractParameter<Integer> dims) {
+  public static MultiANewArrayInsnStencil multiANewArrayInsn(IStencil<String> desc, IStencil<Integer> dims) {
     return new MultiANewArrayInsnStencil(desc, dims);
   }
 
-  public static FrameStencil frame(AbstractParameter<Integer> type, AbstractParameter<Integer> numLocal, AbstractParameter<List<Object>> local, AbstractParameter<Integer> numStack, AbstractParameter<List<Object>> stack) {
+  public static FrameStencil frame(IStencil<Integer> type, IStencil<Integer> numLocal, IStencil<List<Object>> local, IStencil<Integer> numStack, IStencil<List<Object>> stack) {
     return new FrameStencil(type, numLocal, local, numStack, stack);
   }
 
-  public static LineNumberStencil lineNumber(AbstractParameter<Integer> line, AbstractParameter<LabelNode> start) {
+  public static LineNumberStencil lineNumber(IStencil<Integer> line, IStencil<LabelNode> start) {
     return new LineNumberStencil(line, start);
   }
 
@@ -138,35 +138,35 @@ public class InsnStencils {
     return insn(new ConstParameter<>(Opcodes.DCONST_1));
   }
 
-  public static IntInsnStencil bipush(AbstractParameter<Integer> operand) {
+  public static IntInsnStencil bipush(IStencil<Integer> operand) {
     return intInsn(new ConstParameter<>(Opcodes.BIPUSH), operand);
   }
 
-  public static IntInsnStencil sipush(AbstractParameter<Integer> operand) {
+  public static IntInsnStencil sipush(IStencil<Integer> operand) {
     return intInsn(new ConstParameter<>(Opcodes.SIPUSH), operand);
   }
 
-  public static LdcInsnStencil ldc(AbstractParameter<Object> cst) {
+  public static LdcInsnStencil ldc(IStencil<Object> cst) {
     return ldcInsn(cst);
   }
 
-  public static VarInsnStencil iload(AbstractParameter<Integer> varIndex) {
+  public static VarInsnStencil iload(IStencil<Integer> varIndex) {
     return varInsn(new ConstParameter<>(Opcodes.ILOAD), varIndex);
   }
 
-  public static VarInsnStencil lload(AbstractParameter<Integer> varIndex) {
+  public static VarInsnStencil lload(IStencil<Integer> varIndex) {
     return varInsn(new ConstParameter<>(Opcodes.LLOAD), varIndex);
   }
 
-  public static VarInsnStencil fload(AbstractParameter<Integer> varIndex) {
+  public static VarInsnStencil fload(IStencil<Integer> varIndex) {
     return varInsn(new ConstParameter<>(Opcodes.FLOAD), varIndex);
   }
 
-  public static VarInsnStencil dload(AbstractParameter<Integer> varIndex) {
+  public static VarInsnStencil dload(IStencil<Integer> varIndex) {
     return varInsn(new ConstParameter<>(Opcodes.DLOAD), varIndex);
   }
 
-  public static VarInsnStencil aload(AbstractParameter<Integer> varIndex) {
+  public static VarInsnStencil aload(IStencil<Integer> varIndex) {
     return varInsn(new ConstParameter<>(Opcodes.ALOAD), varIndex);
   }
 
@@ -202,23 +202,23 @@ public class InsnStencils {
     return insn(new ConstParameter<>(Opcodes.SALOAD));
   }
 
-  public static VarInsnStencil istore(AbstractParameter<Integer> varIndex) {
+  public static VarInsnStencil istore(IStencil<Integer> varIndex) {
     return varInsn(new ConstParameter<>(Opcodes.ISTORE), varIndex);
   }
 
-  public static VarInsnStencil lstore(AbstractParameter<Integer> varIndex) {
+  public static VarInsnStencil lstore(IStencil<Integer> varIndex) {
     return varInsn(new ConstParameter<>(Opcodes.LSTORE), varIndex);
   }
 
-  public static VarInsnStencil fstore(AbstractParameter<Integer> varIndex) {
+  public static VarInsnStencil fstore(IStencil<Integer> varIndex) {
     return varInsn(new ConstParameter<>(Opcodes.FSTORE), varIndex);
   }
 
-  public static VarInsnStencil dstore(AbstractParameter<Integer> varIndex) {
+  public static VarInsnStencil dstore(IStencil<Integer> varIndex) {
     return varInsn(new ConstParameter<>(Opcodes.DSTORE), varIndex);
   }
 
-  public static VarInsnStencil astore(AbstractParameter<Integer> varIndex) {
+  public static VarInsnStencil astore(IStencil<Integer> varIndex) {
     return varInsn(new ConstParameter<>(Opcodes.ASTORE), varIndex);
   }
 
@@ -434,7 +434,7 @@ public class InsnStencils {
     return insn(new ConstParameter<>(Opcodes.LXOR));
   }
 
-  public static IincInsnStencil iinc(AbstractParameter<Integer> varIndex, AbstractParameter<Integer> incr) {
+  public static IincInsnStencil iinc(IStencil<Integer> varIndex, IStencil<Integer> incr) {
     return iincInsn(varIndex, incr);
   }
 
@@ -518,79 +518,79 @@ public class InsnStencils {
     return insn(new ConstParameter<>(Opcodes.DCMPG));
   }
 
-  public static JumpInsnStencil ifeq(AbstractParameter<LabelNode> label) {
+  public static JumpInsnStencil ifeq(IStencil<LabelNode> label) {
     return jumpInsn(new ConstParameter<>(Opcodes.IFEQ), label);
   }
 
-  public static JumpInsnStencil ifne(AbstractParameter<LabelNode> label) {
+  public static JumpInsnStencil ifne(IStencil<LabelNode> label) {
     return jumpInsn(new ConstParameter<>(Opcodes.IFNE), label);
   }
 
-  public static JumpInsnStencil iflt(AbstractParameter<LabelNode> label) {
+  public static JumpInsnStencil iflt(IStencil<LabelNode> label) {
     return jumpInsn(new ConstParameter<>(Opcodes.IFLT), label);
   }
 
-  public static JumpInsnStencil ifge(AbstractParameter<LabelNode> label) {
+  public static JumpInsnStencil ifge(IStencil<LabelNode> label) {
     return jumpInsn(new ConstParameter<>(Opcodes.IFGE), label);
   }
 
-  public static JumpInsnStencil ifgt(AbstractParameter<LabelNode> label) {
+  public static JumpInsnStencil ifgt(IStencil<LabelNode> label) {
     return jumpInsn(new ConstParameter<>(Opcodes.IFGT), label);
   }
 
-  public static JumpInsnStencil ifle(AbstractParameter<LabelNode> label) {
+  public static JumpInsnStencil ifle(IStencil<LabelNode> label) {
     return jumpInsn(new ConstParameter<>(Opcodes.IFLE), label);
   }
 
-  public static JumpInsnStencil if_icmpeq(AbstractParameter<LabelNode> label) {
+  public static JumpInsnStencil if_icmpeq(IStencil<LabelNode> label) {
     return jumpInsn(new ConstParameter<>(Opcodes.IF_ICMPEQ), label);
   }
 
-  public static JumpInsnStencil if_icmpne(AbstractParameter<LabelNode> label) {
+  public static JumpInsnStencil if_icmpne(IStencil<LabelNode> label) {
     return jumpInsn(new ConstParameter<>(Opcodes.IF_ICMPNE), label);
   }
 
-  public static JumpInsnStencil if_icmplt(AbstractParameter<LabelNode> label) {
+  public static JumpInsnStencil if_icmplt(IStencil<LabelNode> label) {
     return jumpInsn(new ConstParameter<>(Opcodes.IF_ICMPLT), label);
   }
 
-  public static JumpInsnStencil if_icmpge(AbstractParameter<LabelNode> label) {
+  public static JumpInsnStencil if_icmpge(IStencil<LabelNode> label) {
     return jumpInsn(new ConstParameter<>(Opcodes.IF_ICMPGE), label);
   }
 
-  public static JumpInsnStencil if_icmpgt(AbstractParameter<LabelNode> label) {
+  public static JumpInsnStencil if_icmpgt(IStencil<LabelNode> label) {
     return jumpInsn(new ConstParameter<>(Opcodes.IF_ICMPGT), label);
   }
 
-  public static JumpInsnStencil if_icmple(AbstractParameter<LabelNode> label) {
+  public static JumpInsnStencil if_icmple(IStencil<LabelNode> label) {
     return jumpInsn(new ConstParameter<>(Opcodes.IF_ICMPLE), label);
   }
 
-  public static JumpInsnStencil if_acmpeq(AbstractParameter<LabelNode> label) {
+  public static JumpInsnStencil if_acmpeq(IStencil<LabelNode> label) {
     return jumpInsn(new ConstParameter<>(Opcodes.IF_ACMPEQ), label);
   }
 
-  public static JumpInsnStencil if_acmpne(AbstractParameter<LabelNode> label) {
+  public static JumpInsnStencil if_acmpne(IStencil<LabelNode> label) {
     return jumpInsn(new ConstParameter<>(Opcodes.IF_ACMPNE), label);
   }
 
-  public static JumpInsnStencil goto_(AbstractParameter<LabelNode> label) {
+  public static JumpInsnStencil goto_(IStencil<LabelNode> label) {
     return jumpInsn(new ConstParameter<>(Opcodes.GOTO), label);
   }
 
-  public static JumpInsnStencil jsr(AbstractParameter<LabelNode> label) {
+  public static JumpInsnStencil jsr(IStencil<LabelNode> label) {
     return jumpInsn(new ConstParameter<>(Opcodes.JSR), label);
   }
 
-  public static VarInsnStencil ret(AbstractParameter<Integer> varIndex) {
+  public static VarInsnStencil ret(IStencil<Integer> varIndex) {
     return varInsn(new ConstParameter<>(Opcodes.RET), varIndex);
   }
 
-  public static TableSwitchInsnStencil tableSwitch(AbstractParameter<Integer> min, AbstractParameter<Integer> max, AbstractParameter<LabelNode> dflt, AbstractParameter<List<LabelNode>> labels) {
+  public static TableSwitchInsnStencil tableSwitch(IStencil<Integer> min, IStencil<Integer> max, IStencil<LabelNode> dflt, IStencil<List<LabelNode>> labels) {
     return tableSwitchInsn(min, max, dflt, labels);
   }
 
-  public static LookupSwitchInsnStencil lookupSwitch(AbstractParameter<LabelNode> dflt, AbstractParameter<List<Integer>> keys, AbstractParameter<List<LabelNode>> labels) {
+  public static LookupSwitchInsnStencil lookupSwitch(IStencil<LabelNode> dflt, IStencil<List<Integer>> keys, IStencil<List<LabelNode>> labels) {
     return lookupSwitchInsn(dflt, keys, labels);
   }
 
@@ -618,51 +618,51 @@ public class InsnStencils {
     return insn(new ConstParameter<>(Opcodes.RETURN));
   }
 
-  public static FieldInsnStencil getstatic(AbstractParameter<String> owner, AbstractParameter<String> name, AbstractParameter<String> desc) {
+  public static FieldInsnStencil getstatic(IStencil<String> owner, IStencil<String> name, IStencil<String> desc) {
     return fieldInsn(new ConstParameter<>(Opcodes.GETSTATIC), owner, name, desc);
   }
 
-  public static FieldInsnStencil putstatic(AbstractParameter<String> owner, AbstractParameter<String> name, AbstractParameter<String> desc) {
+  public static FieldInsnStencil putstatic(IStencil<String> owner, IStencil<String> name, IStencil<String> desc) {
     return fieldInsn(new ConstParameter<>(Opcodes.PUTSTATIC), owner, name, desc);
   }
 
-  public static FieldInsnStencil getfield(AbstractParameter<String> owner, AbstractParameter<String> name, AbstractParameter<String> desc) {
+  public static FieldInsnStencil getfield(IStencil<String> owner, IStencil<String> name, IStencil<String> desc) {
     return fieldInsn(new ConstParameter<>(Opcodes.GETFIELD), owner, name, desc);
   }
 
-  public static FieldInsnStencil putfield(AbstractParameter<String> owner, AbstractParameter<String> name, AbstractParameter<String> desc) {
+  public static FieldInsnStencil putfield(IStencil<String> owner, IStencil<String> name, IStencil<String> desc) {
     return fieldInsn(new ConstParameter<>(Opcodes.PUTFIELD), owner, name, desc);
   }
 
-  public static MethodInsnStencil invokevirtual(AbstractParameter<String> owner, AbstractParameter<String> name, AbstractParameter<String> desc, AbstractParameter<Boolean> itf) {
+  public static MethodInsnStencil invokevirtual(IStencil<String> owner, IStencil<String> name, IStencil<String> desc, IStencil<Boolean> itf) {
     return methodInsn(new ConstParameter<>(Opcodes.INVOKEVIRTUAL), owner, name, desc, itf);
   }
 
-  public static MethodInsnStencil invokespecial(AbstractParameter<String> owner, AbstractParameter<String> name, AbstractParameter<String> desc, AbstractParameter<Boolean> itf) {
+  public static MethodInsnStencil invokespecial(IStencil<String> owner, IStencil<String> name, IStencil<String> desc, IStencil<Boolean> itf) {
     return methodInsn(new ConstParameter<>(Opcodes.INVOKESPECIAL), owner, name, desc, itf);
   }
 
-  public static MethodInsnStencil invokestatic(AbstractParameter<String> owner, AbstractParameter<String> name, AbstractParameter<String> desc, AbstractParameter<Boolean> itf) {
+  public static MethodInsnStencil invokestatic(IStencil<String> owner, IStencil<String> name, IStencil<String> desc, IStencil<Boolean> itf) {
     return methodInsn(new ConstParameter<>(Opcodes.INVOKESTATIC), owner, name, desc, itf);
   }
 
-  public static MethodInsnStencil invokeinterface(AbstractParameter<String> owner, AbstractParameter<String> name, AbstractParameter<String> desc, AbstractParameter<Boolean> itf) {
+  public static MethodInsnStencil invokeinterface(IStencil<String> owner, IStencil<String> name, IStencil<String> desc, IStencil<Boolean> itf) {
     return methodInsn(new ConstParameter<>(Opcodes.INVOKEINTERFACE), owner, name, desc, itf);
   }
 
-  public static InvokeDynamicInsnStencil invokedynamic(AbstractParameter<String> name, AbstractParameter<String> desc, AbstractParameter<Handle> bsm, AbstractParameter<List<Object>> bsmArgs) {
+  public static InvokeDynamicInsnStencil invokedynamic(IStencil<String> name, IStencil<String> desc, IStencil<Handle> bsm, IStencil<List<Object>> bsmArgs) {
     return invokeDynamicInsn(name, desc, bsm, bsmArgs);
   }
 
-  public static TypeInsnStencil new_(AbstractParameter<String> type) {
+  public static TypeInsnStencil new_(IStencil<String> type) {
     return typeInsn(new ConstParameter<>(Opcodes.NEW), type);
   }
 
-  public static IntInsnStencil newarray(AbstractParameter<Integer> type) {
+  public static IntInsnStencil newarray(IStencil<Integer> type) {
     return intInsn(new ConstParameter<>(Opcodes.NEWARRAY), type);
   }
 
-  public static TypeInsnStencil anewarray(AbstractParameter<String> type) {
+  public static TypeInsnStencil anewarray(IStencil<String> type) {
     return typeInsn(new ConstParameter<>(Opcodes.ANEWARRAY), type);
   }
 
@@ -674,11 +674,11 @@ public class InsnStencils {
     return insn(new ConstParameter<>(Opcodes.ATHROW));
   }
 
-  public static TypeInsnStencil checkcast(AbstractParameter<String> type) {
+  public static TypeInsnStencil checkcast(IStencil<String> type) {
     return typeInsn(new ConstParameter<>(Opcodes.CHECKCAST), type);
   }
 
-  public static TypeInsnStencil instanceof_(AbstractParameter<String> type) {
+  public static TypeInsnStencil instanceof_(IStencil<String> type) {
     return typeInsn(new ConstParameter<>(Opcodes.INSTANCEOF), type);
   }
 
@@ -690,15 +690,15 @@ public class InsnStencils {
     return insn(new ConstParameter<>(Opcodes.MONITOREXIT));
   }
 
-  public static MultiANewArrayInsnStencil multianewarray(AbstractParameter<String> desc, AbstractParameter<Integer> dims) {
+  public static MultiANewArrayInsnStencil multianewarray(IStencil<String> desc, IStencil<Integer> dims) {
     return multiANewArrayInsn(desc, dims);
   }
 
-  public static JumpInsnStencil ifnull(AbstractParameter<LabelNode> label) {
+  public static JumpInsnStencil ifnull(IStencil<LabelNode> label) {
     return jumpInsn(new ConstParameter<>(Opcodes.IFNULL), label);
   }
 
-  public static JumpInsnStencil ifnonnull(AbstractParameter<LabelNode> label) {
+  public static JumpInsnStencil ifnonnull(IStencil<LabelNode> label) {
     return jumpInsn(new ConstParameter<>(Opcodes.IFNONNULL), label);
   }
 }

@@ -1,6 +1,6 @@
 package com.koyomiji.asmine.stencil.insn;
 
-import com.koyomiji.asmine.stencil.AbstractParameter;
+import com.koyomiji.asmine.stencil.IStencil;
 import com.koyomiji.asmine.stencil.ConstParameter;
 import com.koyomiji.asmine.stencil.IParameterRegistry;
 import com.koyomiji.asmine.stencil.ResolutionExeption;
@@ -9,10 +9,10 @@ import org.objectweb.asm.tree.LabelNode;
 import org.objectweb.asm.tree.LineNumberNode;
 
 public class LineNumberStencil extends AbstractInsnStencil {
-  public AbstractParameter<Integer> line;
-  public AbstractParameter<LabelNode> start;
+  public IStencil<Integer> line;
+  public IStencil<LabelNode> start;
 
-  public LineNumberStencil(AbstractParameter<Integer> line, AbstractParameter<LabelNode> start) {
+  public LineNumberStencil(IStencil<Integer> line, IStencil<LabelNode> start) {
     super(new ConstParameter<>(-1));
     this.line = line;
     this.start = start;

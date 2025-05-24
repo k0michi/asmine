@@ -1,6 +1,6 @@
 package com.koyomiji.asmine.stencil.insn;
 
-import com.koyomiji.asmine.stencil.AbstractParameter;
+import com.koyomiji.asmine.stencil.IStencil;
 import com.koyomiji.asmine.stencil.ConstParameter;
 import com.koyomiji.asmine.stencil.IParameterRegistry;
 import com.koyomiji.asmine.stencil.ResolutionExeption;
@@ -12,12 +12,12 @@ import org.objectweb.asm.tree.TableSwitchInsnNode;
 import java.util.List;
 
 public class TableSwitchInsnStencil extends AbstractInsnStencil {
-  public AbstractParameter<Integer> min;
-  public AbstractParameter<Integer> max;
-  public AbstractParameter<LabelNode> dflt;
-  public AbstractParameter<List<LabelNode>> labels;
+  public IStencil<Integer> min;
+  public IStencil<Integer> max;
+  public IStencil<LabelNode> dflt;
+  public IStencil<List<LabelNode>> labels;
 
-  public TableSwitchInsnStencil(AbstractParameter<Integer> min, AbstractParameter<Integer> max, AbstractParameter<LabelNode> dflt, AbstractParameter<List<LabelNode>> labels) {
+  public TableSwitchInsnStencil(IStencil<Integer> min, IStencil<Integer> max, IStencil<LabelNode> dflt, IStencil<List<LabelNode>> labels) {
     super(new ConstParameter<>(Opcodes.TABLESWITCH));
     this.min = min;
     this.max = max;

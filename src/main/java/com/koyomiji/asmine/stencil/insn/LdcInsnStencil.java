@@ -1,6 +1,6 @@
 package com.koyomiji.asmine.stencil.insn;
 
-import com.koyomiji.asmine.stencil.AbstractParameter;
+import com.koyomiji.asmine.stencil.IStencil;
 import com.koyomiji.asmine.stencil.ConstParameter;
 import com.koyomiji.asmine.stencil.IParameterRegistry;
 import com.koyomiji.asmine.stencil.ResolutionExeption;
@@ -9,9 +9,9 @@ import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.LdcInsnNode;
 
 public class LdcInsnStencil extends AbstractInsnStencil {
-  public AbstractParameter<Object> cst;
+  public IStencil<Object> cst;
 
-  public LdcInsnStencil(AbstractParameter<Object> cst) {
+  public LdcInsnStencil(IStencil<Object> cst) {
     super(new ConstParameter<>(Opcodes.LDC));
     this.cst = cst;
   }

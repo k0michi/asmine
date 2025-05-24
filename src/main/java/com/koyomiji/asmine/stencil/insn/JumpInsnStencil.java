@@ -1,6 +1,6 @@
 package com.koyomiji.asmine.stencil.insn;
 
-import com.koyomiji.asmine.stencil.AbstractParameter;
+import com.koyomiji.asmine.stencil.IStencil;
 import com.koyomiji.asmine.stencil.IParameterRegistry;
 import com.koyomiji.asmine.stencil.ResolutionExeption;
 import org.objectweb.asm.tree.AbstractInsnNode;
@@ -8,9 +8,9 @@ import org.objectweb.asm.tree.JumpInsnNode;
 import org.objectweb.asm.tree.LabelNode;
 
 public class JumpInsnStencil extends AbstractInsnStencil {
-  public AbstractParameter<LabelNode> label;
+  public IStencil<LabelNode> label;
 
-  public JumpInsnStencil(AbstractParameter<Integer> opcode, AbstractParameter<LabelNode> label) {
+  public JumpInsnStencil(IStencil<Integer> opcode, IStencil<LabelNode> label) {
     super(opcode);
     this.label = label;
   }

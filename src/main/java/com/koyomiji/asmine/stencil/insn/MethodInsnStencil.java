@@ -1,18 +1,18 @@
 package com.koyomiji.asmine.stencil.insn;
 
-import com.koyomiji.asmine.stencil.AbstractParameter;
+import com.koyomiji.asmine.stencil.IStencil;
 import com.koyomiji.asmine.stencil.IParameterRegistry;
 import com.koyomiji.asmine.stencil.ResolutionExeption;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 
 public class MethodInsnStencil extends AbstractInsnStencil {
-  public AbstractParameter<String> owner;
-  public AbstractParameter<String> name;
-  public AbstractParameter<String> desc;
-  public AbstractParameter<Boolean> itf;
+  public IStencil<String> owner;
+  public IStencil<String> name;
+  public IStencil<String> desc;
+  public IStencil<Boolean> itf;
 
-  public MethodInsnStencil(AbstractParameter<Integer> opcode, AbstractParameter<String> owner, AbstractParameter<String> name, AbstractParameter<String> desc, AbstractParameter<Boolean> itf) {
+  public MethodInsnStencil(IStencil<Integer> opcode, IStencil<String> owner, IStencil<String> name, IStencil<String> desc, IStencil<Boolean> itf) {
     super(opcode);
     this.owner = owner;
     this.name = name;

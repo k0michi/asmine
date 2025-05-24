@@ -1,6 +1,6 @@
 package com.koyomiji.asmine.stencil.insn;
 
-import com.koyomiji.asmine.stencil.AbstractParameter;
+import com.koyomiji.asmine.stencil.IStencil;
 import com.koyomiji.asmine.stencil.IParameterRegistry;
 import com.koyomiji.asmine.stencil.ConstParameter;
 import com.koyomiji.asmine.stencil.ResolutionExeption;
@@ -9,10 +9,10 @@ import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.MultiANewArrayInsnNode;
 
 public class MultiANewArrayInsnStencil extends AbstractInsnStencil {
-  public AbstractParameter<String> desc;
-  public AbstractParameter<Integer> dims;
+  public IStencil<String> desc;
+  public IStencil<Integer> dims;
 
-  public MultiANewArrayInsnStencil(AbstractParameter<String> desc, AbstractParameter<Integer> dims) {
+  public MultiANewArrayInsnStencil(IStencil<String> desc, IStencil<Integer> dims) {
     super(new ConstParameter<>(Opcodes.MULTIANEWARRAY));
     this.desc = desc;
     this.dims = dims;

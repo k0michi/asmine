@@ -11,7 +11,7 @@ public class Parameters {
     return new BindParameter<>(key);
   }
 
-  public static <T> BindParameter<T> bind(Object key, AbstractParameter<T> child) {
+  public static <T> BindParameter<T> bind(Object key, IStencil<T> child) {
     return new BindParameter<>(key, child);
   }
 
@@ -23,11 +23,11 @@ public class Parameters {
     return new ConstParameter<>(value);
   }
 
-  public static <T> ListParameter<T> list(List<AbstractParameter<T>> children) {
+  public static <T> ListParameter<T> list(List<IStencil<T>> children) {
     return new ListParameter<>(children);
   }
 
-  public static <T> ListParameter<T> list(AbstractParameter<T>... children) {
+  public static <T> ListParameter<T> list(IStencil<T>... children) {
     return new ListParameter<>(children);
   }
 }

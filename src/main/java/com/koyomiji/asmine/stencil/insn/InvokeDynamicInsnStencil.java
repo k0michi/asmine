@@ -1,7 +1,7 @@
 package com.koyomiji.asmine.stencil.insn;
 
 import com.koyomiji.asmine.common.ArrayHelper;
-import com.koyomiji.asmine.stencil.AbstractParameter;
+import com.koyomiji.asmine.stencil.IStencil;
 import com.koyomiji.asmine.stencil.ConstParameter;
 import com.koyomiji.asmine.stencil.IParameterRegistry;
 import com.koyomiji.asmine.stencil.ResolutionExeption;
@@ -13,12 +13,12 @@ import org.objectweb.asm.tree.InvokeDynamicInsnNode;
 import java.util.List;
 
 public class InvokeDynamicInsnStencil extends AbstractInsnStencil {
-  public AbstractParameter<String> name;
-  public AbstractParameter<String> desc;
-  public AbstractParameter<Handle> bsm;
-  public AbstractParameter<List<Object>> bsmArgs;
+  public IStencil<String> name;
+  public IStencil<String> desc;
+  public IStencil<Handle> bsm;
+  public IStencil<List<Object>> bsmArgs;
 
-  public InvokeDynamicInsnStencil(AbstractParameter<String> name, AbstractParameter<String> desc, AbstractParameter<Handle> bsm, AbstractParameter<List<Object>> bsmArgs) {
+  public InvokeDynamicInsnStencil(IStencil<String> name, IStencil<String> desc, IStencil<Handle> bsm, IStencil<List<Object>> bsmArgs) {
     super(new ConstParameter<>(Opcodes.INVOKEDYNAMIC));
     this.name = name;
     this.desc = desc;

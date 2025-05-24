@@ -1,8 +1,7 @@
 package com.koyomiji.asmine.regex.code;
 
-import com.koyomiji.asmine.common.InsnListListAdapter;
 import com.koyomiji.asmine.regex.*;
-import com.koyomiji.asmine.stencil.AbstractStencil;
+import com.koyomiji.asmine.stencil.IStencil;
 import com.koyomiji.asmine.stencil.insn.AbstractInsnStencil;
 import com.koyomiji.asmine.tree.AbstractInsnNodeHelper;
 import org.objectweb.asm.tree.*;
@@ -71,7 +70,7 @@ public class CodeRegexProcessor extends RegexProcessor {
         && AbstractInsnNodeHelper.equals((AbstractInsnNode) actual, (AbstractInsnNode) expected);
   }
 
-  public boolean compareCharToStencil(RegexThread thread, Object actual, AbstractStencil<?> expected) {
+  public boolean compareCharToStencil(RegexThread thread, Object actual, IStencil<?> expected) {
     if (!(thread instanceof CodeRegexThread)) {
       throw new IllegalArgumentException("thread must be an instance of CodeRegexThread");
     }
@@ -88,7 +87,7 @@ public class CodeRegexProcessor extends RegexProcessor {
     return false;
   }
 
-  public boolean compareCurrentCharToStencil(RegexThread thread, AbstractStencil<?> expected) {
+  public boolean compareCurrentCharToStencil(RegexThread thread, IStencil<?> expected) {
     return compareCharToStencil(thread, getCurrentChar(), expected);
   }
 

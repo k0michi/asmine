@@ -1,15 +1,15 @@
 package com.koyomiji.asmine.stencil.insn;
 
-import com.koyomiji.asmine.stencil.AbstractParameter;
+import com.koyomiji.asmine.stencil.IStencil;
 import com.koyomiji.asmine.stencil.IParameterRegistry;
 import com.koyomiji.asmine.stencil.ResolutionExeption;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.IntInsnNode;
 
 public class IntInsnStencil extends AbstractInsnStencil {
-  public AbstractParameter<Integer> operand;
+  public IStencil<Integer> operand;
 
-  public IntInsnStencil(AbstractParameter<Integer> opcode, AbstractParameter<Integer> operand) {
+  public IntInsnStencil(IStencil<Integer> opcode, IStencil<Integer> operand) {
     super(opcode);
     this.operand = operand;
   }
