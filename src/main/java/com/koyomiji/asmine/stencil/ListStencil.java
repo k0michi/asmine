@@ -12,6 +12,7 @@ public class ListStencil<T> implements IStencil<List<T>> {
     this.parameters = parameters;
   }
 
+  @SafeVarargs
   public ListStencil(IStencil<T>... parameters) {
     this.parameters = ArrayListHelper.of(parameters);
   }
