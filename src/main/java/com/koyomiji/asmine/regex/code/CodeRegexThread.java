@@ -1,7 +1,7 @@
 package com.koyomiji.asmine.regex.code;
 
 import com.koyomiji.asmine.stencil.IStencilRegistry;
-import com.koyomiji.asmine.stencil.ResolutionExeption;
+import com.koyomiji.asmine.stencil.ResolutionException;
 import com.koyomiji.asmine.regex.RegexThread;
 
 import java.util.HashMap;
@@ -23,9 +23,9 @@ public class CodeRegexThread extends RegexThread implements IStencilRegistry {
   }
 
   @Override
-  public Object resolveParameter(Object key) throws ResolutionExeption {
+  public Object resolveParameter(Object key) throws ResolutionException {
     if (!parameterBinds.containsKey(key)) {
-      throw new ResolutionExeption("Parameter not found: " + key);
+      throw new ResolutionException("Parameter not found: " + key);
     }
 
     return parameterBinds.get(key);

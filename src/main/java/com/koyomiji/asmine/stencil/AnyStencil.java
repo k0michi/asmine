@@ -7,7 +7,7 @@ public class AnyStencil<T> implements IStencil<T> {
   }
 
   @Override
-  public T instantiate(IStencilRegistry registry) throws ResolutionExeption {
-    throw new ResolutionExeption("ParameterAny cannot be instantiated");
+  public T instantiate(IStencilRegistry registry) throws ResolutionException {
+    throw new ResolutionException("ParameterAny cannot be instantiated");
   }
 }

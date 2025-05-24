@@ -13,7 +13,7 @@ public class ConstStencil<T> implements IStencil<T> {
   }
 
   @Override
-  public T instantiate(IStencilRegistry registry) throws ResolutionExeption {
+  public T instantiate(IStencilRegistry registry) throws ResolutionException {
     return value;
   }
 }

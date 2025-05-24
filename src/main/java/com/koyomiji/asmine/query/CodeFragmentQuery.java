@@ -4,11 +4,10 @@ import com.koyomiji.asmine.common.ArrayHelper;
 import com.koyomiji.asmine.common.ArrayListHelper;
 import com.koyomiji.asmine.regex.RegexMatcher;
 import com.koyomiji.asmine.regex.code.CodeMatchResult;
-import com.koyomiji.asmine.stencil.ResolutionExeption;
+import com.koyomiji.asmine.stencil.ResolutionException;
 import com.koyomiji.asmine.stencil.insn.AbstractInsnStencil;
 import com.koyomiji.asmine.tree.AbstractInsnNodeHelper;
 import com.koyomiji.asmine.tuple.Pair;
-import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.InsnList;
 
 import java.util.ArrayList;
@@ -52,7 +51,7 @@ public class CodeFragmentQuery<T> extends AbstractQuery<T> {
     this.selected = selected;
   }
 
-  private InsnList instantiate(List<AbstractInsnStencil> insns) throws ResolutionExeption {
+  private InsnList instantiate(List<AbstractInsnStencil> insns) throws ResolutionException {
     InsnList insnList = new InsnList();
 
     for (AbstractInsnStencil insn : insns) {
@@ -98,7 +97,7 @@ public class CodeFragmentQuery<T> extends AbstractQuery<T> {
                 indices.first,
                 instantiate(insns)
         );
-      } catch (ResolutionExeption e) {
+      } catch (ResolutionException e) {
         throw new RuntimeException(e);
       }
     }
@@ -123,7 +122,7 @@ public class CodeFragmentQuery<T> extends AbstractQuery<T> {
                 indices.second - 1,
                 instantiate(insns)
         );
-      } catch (ResolutionExeption e) {
+      } catch (ResolutionException e) {
         throw new RuntimeException(e);
       }
     }
@@ -138,7 +137,7 @@ public class CodeFragmentQuery<T> extends AbstractQuery<T> {
   public CodeFragmentQuery<T> addFirst(List<AbstractInsnStencil> insns) {
     try {
       codeManipulator.addFirst(instantiate(insns));
-    } catch (ResolutionExeption e) {
+    } catch (ResolutionException e) {
       throw new RuntimeException(e);
     }
 
@@ -152,7 +151,7 @@ public class CodeFragmentQuery<T> extends AbstractQuery<T> {
   public CodeFragmentQuery<T> addLast(List<AbstractInsnStencil> insns) {
     try {
       codeManipulator.insertBefore(codeManipulator.getMethodNode().instructions.size(), instantiate(insns));
-    } catch (ResolutionExeption e) {
+    } catch (ResolutionException e) {
       throw new RuntimeException(e);
     }
 
@@ -177,7 +176,7 @@ public class CodeFragmentQuery<T> extends AbstractQuery<T> {
                 indices.second,
                 instantiate(insns)
         );
-      } catch (ResolutionExeption e) {
+      } catch (ResolutionException e) {
         throw new RuntimeException(e);
       }
     }

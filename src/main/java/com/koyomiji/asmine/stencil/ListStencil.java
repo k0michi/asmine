@@ -32,7 +32,7 @@ public class ListStencil<T> implements IStencil<List<T>> {
   }
 
   @Override
-  public List<T> instantiate(IStencilRegistry registry) throws ResolutionExeption {
+  public List<T> instantiate(IStencilRegistry registry) throws ResolutionException {
     ArrayList<T> values = new ArrayList<>(parameters.size());
 
     for (IStencil<T> parameter : parameters) {
