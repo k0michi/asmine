@@ -4,7 +4,7 @@ import com.koyomiji.asmine.common.ListHelper;
 import com.koyomiji.asmine.stencil.IStencil;
 import com.koyomiji.asmine.stencil.IStencilRegistry;
 import com.koyomiji.asmine.stencil.ConstStencil;
-import com.koyomiji.asmine.stencil.EvaluationException;
+import com.koyomiji.asmine.stencil.StencilEvaluationException;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.LabelNode;
@@ -34,7 +34,7 @@ public class LookupSwitchInsnStencil extends AbstractInsnStencil {
   }
 
   @Override
-  public AbstractInsnNode evaluate(IStencilRegistry registry) throws EvaluationException {
+  public AbstractInsnNode evaluate(IStencilRegistry registry) throws StencilEvaluationException {
     return new LookupSwitchInsnNode(
         this.dflt.evaluate(registry),
             ListHelper.toIntArray(this.keys.evaluate(registry)),

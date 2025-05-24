@@ -4,7 +4,7 @@ import com.koyomiji.asmine.common.ArrayHelper;
 import com.koyomiji.asmine.stencil.IStencil;
 import com.koyomiji.asmine.stencil.ConstStencil;
 import com.koyomiji.asmine.stencil.IStencilRegistry;
-import com.koyomiji.asmine.stencil.EvaluationException;
+import com.koyomiji.asmine.stencil.StencilEvaluationException;
 import org.objectweb.asm.Handle;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
@@ -37,7 +37,7 @@ public class InvokeDynamicInsnStencil extends AbstractInsnStencil {
   }
 
   @Override
-  public AbstractInsnNode evaluate(IStencilRegistry registry) throws EvaluationException {
+  public AbstractInsnNode evaluate(IStencilRegistry registry) throws StencilEvaluationException {
     return new InvokeDynamicInsnNode(
         this.name.evaluate(registry),
         this.desc.evaluate(registry),

@@ -33,7 +33,7 @@ public class ListStencil<T> implements IStencil<List<T>> {
   }
 
   @Override
-  public List<T> evaluate(IStencilRegistry registry) throws EvaluationException {
+  public List<T> evaluate(IStencilRegistry registry) throws StencilEvaluationException {
     ArrayList<T> values = new ArrayList<>(parameters.size());
 
     for (IStencil<T> parameter : parameters) {

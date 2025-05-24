@@ -2,7 +2,7 @@ package com.koyomiji.asmine.stencil.insn;
 
 import com.koyomiji.asmine.stencil.IStencil;
 import com.koyomiji.asmine.stencil.IStencilRegistry;
-import com.koyomiji.asmine.stencil.EvaluationException;
+import com.koyomiji.asmine.stencil.StencilEvaluationException;
 import org.objectweb.asm.tree.AbstractInsnNode;
 
 public abstract class AbstractInsnStencil implements IStencil<AbstractInsnNode> {
@@ -16,7 +16,7 @@ public abstract class AbstractInsnStencil implements IStencil<AbstractInsnNode> 
     return insn != null && opcode.match(registry, insn.getOpcode());
   }
 
-  public abstract AbstractInsnNode evaluate(IStencilRegistry registry) throws EvaluationException;
+  public abstract AbstractInsnNode evaluate(IStencilRegistry registry) throws StencilEvaluationException;
 
   public abstract boolean isReal();
 

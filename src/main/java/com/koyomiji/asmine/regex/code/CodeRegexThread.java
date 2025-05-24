@@ -1,7 +1,7 @@
 package com.koyomiji.asmine.regex.code;
 
 import com.koyomiji.asmine.stencil.IStencilRegistry;
-import com.koyomiji.asmine.stencil.EvaluationException;
+import com.koyomiji.asmine.stencil.StencilEvaluationException;
 import com.koyomiji.asmine.regex.RegexThread;
 
 import java.util.HashMap;
@@ -23,9 +23,9 @@ public class CodeRegexThread extends RegexThread implements IStencilRegistry {
   }
 
   @Override
-  public Object resolveParameter(Object key) throws EvaluationException {
+  public Object resolveParameter(Object key) throws StencilEvaluationException {
     if (!parameterBinds.containsKey(key)) {
-      throw new EvaluationException("Parameter not found: " + key);
+      throw new StencilEvaluationException("Parameter not found: " + key);
     }
 
     return parameterBinds.get(key);

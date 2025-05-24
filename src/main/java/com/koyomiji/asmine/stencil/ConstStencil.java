@@ -13,7 +13,7 @@ public class ConstStencil<T> implements IStencil<T> {
   }
 
   @Override
-  public T evaluate(IStencilRegistry registry) throws EvaluationException {
+  public T evaluate(IStencilRegistry registry) throws StencilEvaluationException {
     return value;
   }
 }
