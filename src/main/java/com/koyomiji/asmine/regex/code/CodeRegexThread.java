@@ -11,12 +11,12 @@ import java.util.Objects;
 public class CodeRegexThread extends RegexThread implements IStencilRegistry {
   protected HashMap<Object, Object> stencilBinds = new HashMap<>();
 
-  public CodeRegexThread() {
-    super();
+  public CodeRegexThread(int id) {
+    super(id);
   }
 
   @Override
-  protected Object clone() {
+  public CodeRegexThread clone() {
     CodeRegexThread clone = (CodeRegexThread) super.clone();
     clone.stencilBinds = (HashMap<Object, Object>) this.stencilBinds.clone();
     return clone;

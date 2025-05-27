@@ -22,8 +22,8 @@ public class CodeRegexProcessor extends RegexProcessor {
   }
 
   @Override
-  protected RegexThread newThread() {
-    return new CodeRegexThread();
+  protected RegexThread newThread(int id) {
+    return new CodeRegexThread(id);
   }
 
   @Override

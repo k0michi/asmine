@@ -5,6 +5,7 @@ import com.koyomiji.asmine.tuple.Pair;
 import java.util.*;
 
 public class RegexThread implements Cloneable {
+  protected int id;
   protected boolean terminated = false;
   protected int functionPointer = 0;
   protected int programCounter = 0;
@@ -14,14 +15,15 @@ public class RegexThread implements Cloneable {
   protected Stack<Integer> scopeStack = new Stack<>();
   protected List<Object> trace = new ArrayList<>();
 
-  public RegexThread() {
+  public RegexThread(int id) {
+    this.id = id;
     callStack.push(new CallFrame());
     callStack.push(new CallFrame());
     beginScope(-1);
   }
 
   @Override
-  protected Object clone() {
+  public RegexThread clone() {
     try {
       RegexThread clone = (RegexThread) super.clone();
       clone.stack = (Stack<Object>) this.stack.clone();
@@ -41,6 +43,12 @@ public class RegexThread implements Cloneable {
     } catch (CloneNotSupportedException e) {
       throw new RuntimeException(e);
     }
+  }
+
+  public RegexThread clone(int id) {
+    RegexThread clone = (RegexThread) this.clone();
+    clone.id = id;
+    return clone;
   }
 
   public int advanceProgramCounter() {
@@ -209,6 +217,10 @@ public class RegexThread implements Cloneable {
     }
 
     return bounds.get(bounds.size() - 1);
+  }
+
+  public int getID() {
+    return id;
   }
 
   public Stack<Object> getStack() {
