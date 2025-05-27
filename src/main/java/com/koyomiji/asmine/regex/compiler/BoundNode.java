@@ -14,10 +14,10 @@ public class BoundNode extends AbstractRegexNode {
 
   @Override
   public void compile(RegexCompilerContext context) {
-    context.emit(new BoundBeginInsn());
+    context.emit(new BoundBeginInsn(key));
     context.pushBound();
     context.getBindNode(key).compile(context);
     context.popBound();
-    context.emit(new BoundEndInsn(key));
+    context.emit(new BoundEndInsn());
   }
 }

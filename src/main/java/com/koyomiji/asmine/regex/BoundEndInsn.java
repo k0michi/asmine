@@ -6,12 +6,6 @@ import com.koyomiji.asmine.tuple.Pair;
 import java.util.List;
 
 public class BoundEndInsn extends AbstractRegexInsn {
-  public Object key;
-
-  public BoundEndInsn(Object key) {
-    this.key = key;
-  }
-
   @Override
   public List<RegexThread> execute(RegexProcessor processor, RegexThread thread) {
     if (thread.stackSize() == 0) {
@@ -19,6 +13,7 @@ public class BoundEndInsn extends AbstractRegexInsn {
     }
 
     Pair<Integer, Integer> range = Pair.of((Integer) thread.pop(), processor.getStringPointer());
+    Object key = thread.pop();
     Pair<Integer, Integer> bound = thread.getScopedBound(key);
 
     if(bound != null && processor.compareSubstrings(bound, range)) {

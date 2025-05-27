@@ -23,7 +23,7 @@ public class BindNode extends AbstractRegexNode {
     child.compile(context);
 
     if (!context.isInsideBound()) {
-      context.emit(new BindEndInsn(key));
+      context.emit(new BindEndInsn());
     }
   }
 }
