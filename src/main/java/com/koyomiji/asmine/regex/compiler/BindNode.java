@@ -17,7 +17,7 @@ public class BindNode extends AbstractRegexNode {
     if (!context.isInsideBound()) {
       context.setBindNode(key, this);
 
-      context.emit(new BindBeginInsn());
+      context.emit(new BindBeginInsn(key));
     }
 
     child.compile(context);

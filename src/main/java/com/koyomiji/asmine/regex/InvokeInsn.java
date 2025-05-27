@@ -14,7 +14,7 @@ public class InvokeInsn extends AbstractRegexInsn {
   @Override
   public List<RegexThread> execute(RegexProcessor processor, RegexThread thread) {
     CallFrame callFrame = new CallFrame(thread.getFunctionPointer(), thread.getProgramCounter());
-    thread.pushCall(callFrame);
+    thread.pushCall(callFrame, processor.getStringPointer());
     thread.setFunctionPointer(functionPointer);
     thread.setProgramCounter(0);
     return ArrayListHelper.of(thread);

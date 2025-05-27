@@ -8,7 +8,7 @@ import java.util.List;
 public class ReturnInsn extends AbstractRegexInsn {
   @Override
   public List<RegexThread> execute(RegexProcessor processor, RegexThread thread) {
-    CallFrame popped = thread.popCall();
+    CallFrame popped = thread.popCall(processor.getStringPointer());
     thread.setFunctionPointer(popped.returnFP);
     thread.setProgramCounter(popped.returnPC + 1);
 
