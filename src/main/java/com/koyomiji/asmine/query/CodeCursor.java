@@ -38,11 +38,19 @@ public class CodeCursor {
     this.firstIndex = this.lastIndex = -2;
   }
 
-  public CodeCursor before() {
+  public CodeCursor beforeFirst() {
     return parent.getCursor(firstIndex - 1);
   }
 
-  public CodeCursor after() {
+  public CodeCursor beforeLast() {
+    return parent.getCursor(lastIndex - 1);
+  }
+
+  public CodeCursor afterFirst() {
+    return parent.getCursor(firstIndex + 1);
+  }
+
+  public CodeCursor afterLast() {
     return parent.getCursor(lastIndex + 1);
   }
 

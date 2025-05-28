@@ -178,7 +178,7 @@ public class CodeManipulatorTest {
             Insns.iconst_0(),
             Insns.return_()
     );
-    Assertions.assertEquals(0, q.getCursor(-1).after().getFirstIndex());
-    Assertions.assertEquals(-1, q.getCursor(0).before().getFirstIndex());
+    Assertions.assertEquals(0, q.getCursor(-1).afterLast().getFirstIndex());
+    Assertions.assertEquals(-1, q.getCursor(0).beforeFirst().getFirstIndex());
   }
 }
