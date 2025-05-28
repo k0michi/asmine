@@ -18,8 +18,8 @@ import java.util.Map;
 public class CodeFragmentQuery<T> extends AbstractQuery<T> {
   protected CodeManipulator codeManipulator;
   protected CodeMatchResult matchResult;
-  protected Map<Object, List<Pair<Cursor, Cursor>>> stringBinds;
-  protected List<Pair<Cursor, Cursor>> selected;
+  protected Map<Object, List<Pair<CodeCursor, CodeCursor>>> stringBinds;
+  protected List<Pair<CodeCursor, CodeCursor>> selected;
 
   public CodeFragmentQuery(T parent, CodeManipulator codeManipulator, CodeMatchResult matchResult) {
     super(parent);
@@ -43,7 +43,7 @@ public class CodeFragmentQuery<T> extends AbstractQuery<T> {
     }
   }
 
-  public CodeFragmentQuery(T parent, CodeManipulator codeManipulator, CodeMatchResult matchResult, Map<Object, List<Pair<Cursor, Cursor>>> stringBinds, List<Pair<Cursor, Cursor>> selected) {
+  public CodeFragmentQuery(T parent, CodeManipulator codeManipulator, CodeMatchResult matchResult, Map<Object, List<Pair<CodeCursor, CodeCursor>>> stringBinds, List<Pair<CodeCursor, CodeCursor>> selected) {
     super(parent);
     this.codeManipulator = codeManipulator;
     this.matchResult = matchResult;
@@ -62,10 +62,10 @@ public class CodeFragmentQuery<T> extends AbstractQuery<T> {
   }
 
   public CodeFragmentQuery<CodeFragmentQuery<T>> selectBound(Object key) {
-    List<Pair<Cursor, Cursor>> newSelected = new ArrayList<>();
+    List<Pair<CodeCursor, CodeCursor>> newSelected = new ArrayList<>();
 
-    for (Pair<Cursor, Cursor> range : stringBinds.get(key)) {
-      for (Pair<Cursor, Cursor> selectedRange : selected) {
+    for (Pair<CodeCursor, CodeCursor> range : stringBinds.get(key)) {
+      for (Pair<CodeCursor, CodeCursor> selectedRange : selected) {
         int start = range.first.getFirstIndex();
         int end = range.second.getLastIndex();
         int selectedStart = selectedRange.first.getFirstIndex();
@@ -85,7 +85,7 @@ public class CodeFragmentQuery<T> extends AbstractQuery<T> {
   }
 
   public CodeFragmentQuery<T> insertBefore(List<AbstractInsnStencil> insns) {
-    for (Pair<Cursor, Cursor> range : selected) {
+    for (Pair<CodeCursor, CodeCursor> range : selected) {
       Pair<Integer, Integer> indices = codeManipulator.getIndicesForCursors(range);
 
       if (indices == null) {
@@ -110,7 +110,7 @@ public class CodeFragmentQuery<T> extends AbstractQuery<T> {
   }
 
   public CodeFragmentQuery<T> insertAfter(List<AbstractInsnStencil> insns) {
-    for (Pair<Cursor, Cursor> range : selected) {
+    for (Pair<CodeCursor, CodeCursor> range : selected) {
       Pair<Integer, Integer> indices = codeManipulator.getIndicesForCursors(range);
 
       if (indices == null) {
@@ -163,7 +163,7 @@ public class CodeFragmentQuery<T> extends AbstractQuery<T> {
   }
 
   public CodeFragmentQuery<T> replaceWith(List<AbstractInsnStencil> insns) {
-    for (Pair<Cursor, Cursor> range : selected) {
+    for (Pair<CodeCursor, CodeCursor> range : selected) {
       Pair<Integer, Integer> indices = codeManipulator.getIndicesForCursors(range);
 
       if (indices == null) {
@@ -185,7 +185,7 @@ public class CodeFragmentQuery<T> extends AbstractQuery<T> {
   }
 
   public CodeFragmentQuery<T> remove() {
-    for (Pair<Cursor, Cursor> range : selected) {
+    for (Pair<CodeCursor, CodeCursor> range : selected) {
       Pair<Integer, Integer> indices = codeManipulator.getIndicesForCursors(range);
 
       if (indices == null) {
@@ -202,9 +202,9 @@ public class CodeFragmentQuery<T> extends AbstractQuery<T> {
   }
 
   public CodeFragmentQuery<T> before() {
-    List<Pair<Cursor, Cursor>> newSelected = new ArrayList<>();
+    List<Pair<CodeCursor, CodeCursor>> newSelected = new ArrayList<>();
 
-    for (Pair<Cursor, Cursor> selectedRange : selected) {
+    for (Pair<CodeCursor, CodeCursor> selectedRange : selected) {
       int selectedStart = selectedRange.first.getFirstIndex();
 
       do {
@@ -218,9 +218,9 @@ public class CodeFragmentQuery<T> extends AbstractQuery<T> {
   }
 
   public CodeFragmentQuery<T> after() {
-    List<Pair<Cursor, Cursor>> newSelected = new ArrayList<>();
+    List<Pair<CodeCursor, CodeCursor>> newSelected = new ArrayList<>();
 
-    for (Pair<Cursor, Cursor> selectedRange : selected) {
+    for (Pair<CodeCursor, CodeCursor> selectedRange : selected) {
       int selectedEnd = selectedRange.second.getLastIndex();
 
       while (selectedEnd < codeManipulator.getMethodNode().instructions.size() && AbstractInsnNodeHelper.isPseudo(codeManipulator.getMethodNode().instructions.get(selectedEnd))) {

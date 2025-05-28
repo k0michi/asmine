@@ -1,17 +1,13 @@
 package com.koyomiji.asmine.query;
 
-public class Cursor {
-  // Physical indices
+public class CodeCursor {
+  private CodeManipulator parent;
   private int firstIndex;
   private int lastIndex;
 
-  public Cursor() {
-    this(-2);
-  }
-
-  public Cursor(int index) {
-    this.firstIndex = index;
-    this.lastIndex = index;
+  public CodeCursor(CodeManipulator parent) {
+    this.parent = parent;
+    reset();
   }
 
   public int getFirstIndex() {
@@ -40,5 +36,13 @@ public class Cursor {
 
   public void reset() {
     this.firstIndex = this.lastIndex = -2;
+  }
+
+  public CodeCursor before() {
+    return parent.getCursor(firstIndex - 1);
+  }
+
+  public CodeCursor after() {
+    return parent.getCursor(lastIndex + 1);
   }
 }

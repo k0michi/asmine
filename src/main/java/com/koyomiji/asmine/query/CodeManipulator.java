@@ -1,14 +1,12 @@
 package com.koyomiji.asmine.query;
 
 import com.koyomiji.asmine.common.*;
-import com.koyomiji.asmine.tree.AbstractInsnNodeHelper;
 import com.koyomiji.asmine.tuple.Pair;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.InsnList;
 import org.objectweb.asm.tree.MethodNode;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -20,19 +18,19 @@ import java.util.Set;
  */
 public class CodeManipulator {
   protected MethodNode methodNode;
-  protected List<Set<Cursor>> cursors = new ArrayList<>();
+  protected List<Set<CodeCursor>> cursors = new ArrayList<>();
 
   public CodeManipulator(MethodNode methodNode) {
     this.methodNode = methodNode;
 
-    cursors.add(HashSetHelper.of(new Cursor()));
+    cursors.add(HashSetHelper.of(new CodeCursor(this)));
 
     for (int i = 0; i < methodNode.instructions.size(); i++) {
-      cursors.add(HashSetHelper.of(new Cursor()));
+      cursors.add(HashSetHelper.of(new CodeCursor(this)));
     }
 
-    cursors.add(HashSetHelper.of(new Cursor()));
-    cursors.add(HashSetHelper.of(new Cursor()));
+    cursors.add(HashSetHelper.of(new CodeCursor(this)));
+    cursors.add(HashSetHelper.of(new CodeCursor(this)));
     recomputeCursors();
   }
 
@@ -40,31 +38,15 @@ public class CodeManipulator {
    * Indices
    */
 
-  public Cursor getCursor(int index) {
+  public CodeCursor getCursor(int index) {
+    if (index < -1 || index >= methodNode.instructions.size() + 2) {
+      throw new IndexOutOfBoundsException("Index out of bounds: " + index);
+    }
+
     return cursors.get(index + 1).iterator().next();
   }
 
-  public Cursor before(Cursor cursor) {
-    int index = cursor.getFirstIndex();
-
-    if (index == -2 || index == -1) {
-      return null;
-    }
-
-    return getCursor(index - 1);
-  }
-
-  public Cursor after(Cursor cursor) {
-    int index = cursor.getFirstIndex();
-
-    if (index == -2 || index == methodNode.instructions.size() + 1) {
-      return null;
-    }
-
-    return getCursor(index + 1);
-  }
-
-  public Pair<Integer, Integer> getIndicesForCursors(Pair<Cursor, Cursor> cursors) {
+  public Pair<Integer, Integer> getIndicesForCursors(Pair<CodeCursor, CodeCursor> cursors) {
     int begin = cursors.first.getFirstIndex();
     int end = cursors.second.getLastIndex();
 
@@ -101,7 +83,7 @@ public class CodeManipulator {
 
   public void insertAfter(int index, List<AbstractInsnNode> insns) {
     for (int i = 0; i < insns.size(); i++) {
-      cursors.add(index + 1 + 1, HashSetHelper.of(new Cursor()));
+      cursors.add(index + 1 + 1, HashSetHelper.of(new CodeCursor(this)));
     }
 
     InsnListHelper.insert(methodNode.instructions, InsnListHelper.getHeaded(methodNode.instructions, index), insns);
@@ -122,7 +104,7 @@ public class CodeManipulator {
 
   public void insertBefore(int index, List<AbstractInsnNode> insns) {
     for (int i = 0; i < insns.size(); i++) {
-      cursors.add(index + 1, HashSetHelper.of(new Cursor()));
+      cursors.add(index + 1, HashSetHelper.of(new CodeCursor(this)));
     }
 
     InsnListHelper.insertBefore(methodNode.instructions, InsnListHelper.getTailed(methodNode.instructions, index), insns);
@@ -186,7 +168,7 @@ public class CodeManipulator {
   }
 
   public void replace(int begin, int end, List<AbstractInsnNode> insns) {
-    Set<Cursor> endCursors = cursors.get(end + 1);
+    Set<CodeCursor> endCursors = cursors.get(end + 1);
     ListHelper.removeRange(cursors, begin + 1 + 1, end + 1 + 1);
     InsnListHelper.removeRange(methodNode.instructions, InsnListHelper.getTailed(methodNode.instructions, begin), InsnListHelper.getTailed(methodNode.instructions, end));
 
@@ -197,7 +179,7 @@ public class CodeManipulator {
     }
 
     for (int i = 0; i < insns.size() - 1; i++) {
-      cursors.add(begin + 1 + 1, HashSetHelper.of(new Cursor()));
+      cursors.add(begin + 1 + 1, HashSetHelper.of(new CodeCursor(this)));
     }
 
     InsnListHelper.insert(methodNode.instructions, InsnListHelper.getHeaded(methodNode.instructions, begin - 1), insns);
@@ -213,31 +195,31 @@ public class CodeManipulator {
   }
 
   private void recomputeCursors() {
-    for (Set<Cursor> cursorSet : cursors) {
-      for (Cursor cursor : cursorSet) {
+    for (Set<CodeCursor> cursorSet : cursors) {
+      for (CodeCursor cursor : cursorSet) {
         cursor.reset();
       }
     }
 
     int i = 0;
-    for (Cursor cursor : cursors.get(i)) {
+    for (CodeCursor cursor : cursors.get(i)) {
       cursor.setIndex(-1);
     }
 
     for (int j = 0; j < methodNode.instructions.size(); j++) {
       i++;
-      for (Cursor cursor : cursors.get(i)) {
+      for (CodeCursor cursor : cursors.get(i)) {
         cursor.setIndex(j);
       }
     }
 
     i++;
-    for (Cursor cursor : cursors.get(i)) {
+    for (CodeCursor cursor : cursors.get(i)) {
       cursor.setIndex(methodNode.instructions.size());
     }
 
     i++;
-    for (Cursor cursor : cursors.get(i)) {
+    for (CodeCursor cursor : cursors.get(i)) {
       cursor.setIndex(methodNode.instructions.size() + 1);
     }
   }

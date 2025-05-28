@@ -2,7 +2,7 @@ package com.koyomiji.asmine.test;
 
 import com.koyomiji.asmine.common.Insns;
 import com.koyomiji.asmine.query.CodeManipulator;
-import com.koyomiji.asmine.query.Cursor;
+import com.koyomiji.asmine.query.CodeCursor;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.objectweb.asm.tree.MethodNode;
@@ -16,8 +16,8 @@ public class CodeManipulatorTest {
             Insns.iconst_0(),
             Insns.return_()
     );
-    Cursor s0 = q.getCursor(0);
-    Cursor s1 = q.getCursor(1);
+    CodeCursor s0 = q.getCursor(0);
+    CodeCursor s1 = q.getCursor(1);
     q.replace(0, 0);
     Assertions.assertEquals(0, s0.getFirstIndex());
     Assertions.assertEquals(1, s1.getFirstIndex());
@@ -30,8 +30,8 @@ public class CodeManipulatorTest {
             Insns.iconst_0(),
             Insns.return_()
     );
-    Cursor s0 = q.getCursor(0);
-    Cursor s1 = q.getCursor(1);
+    CodeCursor s0 = q.getCursor(0);
+    CodeCursor s1 = q.getCursor(1);
     q.remove(0, 1);
     Assertions.assertEquals(0, s0.getFirstIndex());
     Assertions.assertEquals(0, s1.getFirstIndex());
@@ -44,8 +44,8 @@ public class CodeManipulatorTest {
             Insns.iconst_0(),
             Insns.return_()
     );
-    Cursor s0 = q.getCursor(0);
-    Cursor s1 = q.getCursor(1);
+    CodeCursor s0 = q.getCursor(0);
+    CodeCursor s1 = q.getCursor(1);
     q.insertAfter(0, Insns.iconst_1());
     Assertions.assertEquals(0, s0.getFirstIndex());
     Assertions.assertEquals(2, s1.getFirstIndex());
@@ -58,8 +58,8 @@ public class CodeManipulatorTest {
             Insns.iconst_0(),
             Insns.return_()
     );
-    Cursor s0 = q.getCursor(0);
-    Cursor s1 = q.getCursor(1);
+    CodeCursor s0 = q.getCursor(0);
+    CodeCursor s1 = q.getCursor(1);
     q.insertBefore(0, Insns.iconst_1());
     Assertions.assertEquals(1, s0.getFirstIndex());
     Assertions.assertEquals(2, s1.getFirstIndex());
@@ -72,8 +72,8 @@ public class CodeManipulatorTest {
             Insns.iconst_0(),
             Insns.return_()
     );
-    Cursor s0 = q.getCursor(0);
-    Cursor s1 = q.getCursor(1);
+    CodeCursor s0 = q.getCursor(0);
+    CodeCursor s1 = q.getCursor(1);
     q.insertAfter(-1, Insns.iconst_1());
     Assertions.assertEquals(1, s0.getFirstIndex());
     Assertions.assertEquals(2, s1.getFirstIndex());
@@ -86,8 +86,8 @@ public class CodeManipulatorTest {
             Insns.iconst_0(),
             Insns.return_()
     );
-    Cursor s0 = q.getCursor(0);
-    Cursor s1 = q.getCursor(1);
+    CodeCursor s0 = q.getCursor(0);
+    CodeCursor s1 = q.getCursor(1);
     q.replace(0, 1, Insns.iconst_1());
     Assertions.assertEquals(0, s0.getFirstIndex());
     Assertions.assertEquals(1, s1.getFirstIndex());
@@ -100,7 +100,7 @@ public class CodeManipulatorTest {
             Insns.iconst_0(),
             Insns.return_()
     );
-    Cursor s2 = q.getCursor(2);
+    CodeCursor s2 = q.getCursor(2);
     q.addLast(Insns.iconst_1());
     Assertions.assertEquals(3, s2.getFirstIndex());
   }
@@ -113,8 +113,8 @@ public class CodeManipulatorTest {
             Insns.iconst_0(),
             Insns.return_()
     );
-    Cursor s0 = q.getCursor(0);
-    Cursor s1 = q.getCursor(1);
+    CodeCursor s0 = q.getCursor(0);
+    CodeCursor s1 = q.getCursor(1);
     q.replace(0, 0, Insns.iconst_1());
     // s0 is now at 0 and 1
     Assertions.assertEquals(0, s0.getFirstIndex());
@@ -130,8 +130,8 @@ public class CodeManipulatorTest {
             Insns.iconst_0(),
             Insns.return_()
     );
-    Cursor s0 = q.getCursor(0);
-    Cursor s1 = q.getCursor(1);
+    CodeCursor s0 = q.getCursor(0);
+    CodeCursor s1 = q.getCursor(1);
     q.replace(0, 1);
     Assertions.assertEquals(0, s0.getFirstIndex());
     Assertions.assertEquals(0, s1.getFirstIndex());
@@ -144,9 +144,9 @@ public class CodeManipulatorTest {
             Insns.iconst_0(),
             Insns.return_()
     );
-    Cursor s0 = q.getCursor(0);
-    Cursor s1 = q.getCursor(1);
-    Cursor s2 = q.getCursor(2);
+    CodeCursor s0 = q.getCursor(0);
+    CodeCursor s1 = q.getCursor(1);
+    CodeCursor s2 = q.getCursor(2);
     q.insertAfter(1, Insns.iconst_1());
     Assertions.assertEquals(0, s0.getFirstIndex());
     Assertions.assertEquals(1, s1.getFirstIndex());
@@ -178,7 +178,7 @@ public class CodeManipulatorTest {
             Insns.iconst_0(),
             Insns.return_()
     );
-    Assertions.assertEquals(0, q.after(q.getCursor(-1)).getFirstIndex());
-    Assertions.assertEquals(-1, q.before(q.getCursor(0)).getFirstIndex());
+    Assertions.assertEquals(0, q.getCursor(-1).after().getFirstIndex());
+    Assertions.assertEquals(-1, q.getCursor(0).before().getFirstIndex());
   }
 }
