@@ -44,6 +44,26 @@ public class CodeManipulator {
     return cursors.get(index + 1).iterator().next();
   }
 
+  public Cursor before(Cursor cursor) {
+    int index = cursor.getFirstIndex();
+
+    if (index == -2 || index == -1) {
+      return null;
+    }
+
+    return getCursor(index - 1);
+  }
+
+  public Cursor after(Cursor cursor) {
+    int index = cursor.getFirstIndex();
+
+    if (index == -2 || index == methodNode.instructions.size() + 1) {
+      return null;
+    }
+
+    return getCursor(index + 1);
+  }
+
   public Pair<Integer, Integer> getIndicesForCursors(Pair<Cursor, Cursor> cursors) {
     int begin = cursors.first.getFirstIndex();
     int end = cursors.second.getLastIndex();

@@ -168,4 +168,17 @@ public class CodeManipulatorTest {
     Assertions.assertEquals(3, q.getCursor(3).getFirstIndex());
     Assertions.assertEquals(4, q.getCursor(4).getFirstIndex());
   }
+
+  // before/after
+  @Test
+  void test_1() {
+    CodeManipulator q = new CodeManipulator(new MethodNode());
+    q.addLast(
+            Insns.label(),
+            Insns.iconst_0(),
+            Insns.return_()
+    );
+    Assertions.assertEquals(0, q.after(q.getCursor(-1)).getFirstIndex());
+    Assertions.assertEquals(-1, q.before(q.getCursor(0)).getFirstIndex());
+  }
 }
