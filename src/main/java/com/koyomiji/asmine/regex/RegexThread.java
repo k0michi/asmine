@@ -13,6 +13,7 @@ public class RegexThread implements Cloneable {
   protected Stack<CallFrame> callStack = new Stack<>();
   protected List<RegexThreadScope> scopes = new ArrayList<>();
   protected Stack<Integer> scopeStack = new Stack<>();
+  protected HashMap<Object, Pair<Integer, Integer>> stringBinds = new HashMap<>();
   protected ArrayList<Object> trace = new ArrayList<>();
 
   public RegexThread(int id) {
@@ -34,6 +35,7 @@ public class RegexThread implements Cloneable {
       }
 
       clone.scopeStack = (Stack<Integer>) this.scopeStack.clone();
+      clone.stringBinds = (HashMap<Object, Pair<Integer, Integer>>) this.stringBinds.clone();
 
       clone.callStack = new Stack<>();
       for (CallFrame callFrame : this.callStack) {
@@ -121,6 +123,11 @@ public class RegexThread implements Cloneable {
     int index = scopeStack.pop();
     RegexThreadScope scope = scopes.get(index);
     scope.setEnd(stringPointer);
+
+    if (scope.key != null) {
+      stringBinds.put(scope.key, Pair.of(scope.begin, scope.end));
+    }
+
     return scope;
   }
 
@@ -156,32 +163,7 @@ public class RegexThread implements Cloneable {
 
   // Returns the bound range for the current scope and the given key
   public Pair<Integer, Integer> getScopedBound(Object key) {
-    Pair<Integer, Integer> result = null;
-
-    // Check ancestors
-    for (Integer index : scopeStack) {
-      RegexThreadScope scope = scopes.get(index);
-      List<Integer> children = scope.children;
-
-      for (Integer childIndex : children) {
-        RegexThreadScope childScope = scopes.get(childIndex);
-
-        if (childScope.isEnded() && Objects.equals(childScope.key, key)) {
-          result = Pair.of(childScope.begin, childScope.end);
-        }
-      }
-    }
-
-    // Check siblings' children
-    if (result == null) {
-      for (RegexThreadScope scope : scopes) {
-        if (scope.isEnded() && Objects.equals(scope.key, key)) {
-          result = Pair.of(scope.begin, scope.end);
-        }
-      }
-    }
-
-    return result;
+    return stringBinds.get(key);
   }
 
   // FIXME: This is a temporary method.

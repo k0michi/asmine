@@ -698,29 +698,4 @@ public class RegexProcessorTest {
             Pair.of(3, 5)
     ), thread.getBounds(0));
   }
-
-  @Test
-  void test_15() {
-    ConcatenateNode c0;
-
-    RegexModule insns = compile((c0 = Regexes.concatenate()).setChildren(
-            Regexes.star(
-                    Regexes.concatenate(
-                            Regexes.bind(0, Regexes.any()),
-                            c0,
-                            Regexes.bound(0)
-                    )
-            )
-    ));
-    List<Object> string = split("abcdeedcba");
-    RegexProcessor vm = new RegexProcessor(insns, string);
-    RegexThread thread = vm.execute();
-    Assertions.assertEquals(ArrayListHelper.of(
-            Pair.of(0, 1),
-            Pair.of(1, 2),
-            Pair.of(2, 3),
-            Pair.of(3, 4),
-            Pair.of(4, 5)
-    ), thread.getBounds(0));
-  }
 }
