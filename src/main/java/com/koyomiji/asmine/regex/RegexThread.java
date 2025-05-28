@@ -167,11 +167,11 @@ public class RegexThread implements Cloneable {
   }
 
   // FIXME: This is a temporary method.
-  public List<Pair<Integer, Integer>> getBounds(Object index) {
+  public List<Pair<Integer, Integer>> getBounds(Object key) {
     List<Pair<Integer, Integer>> stringBinds = new ArrayList<>();
 
     for (RegexThreadScope scope : scopes) {
-      if (Objects.equals(scope.key, index)) {
+      if (Objects.equals(scope.key, key)) {
         stringBinds.add(Pair.of(scope.begin, scope.end));
       }
     }
@@ -193,8 +193,8 @@ public class RegexThread implements Cloneable {
     return bounds;
   }
 
-  public Pair<Integer, Integer> getBoundLast(Object index) {
-    List<Pair<Integer, Integer>> bounds = getBounds(index);
+  public Pair<Integer, Integer> getBoundLast(Object key) {
+    List<Pair<Integer, Integer>> bounds = getBounds(key);
 
     if (bounds.isEmpty()) {
       return null;
