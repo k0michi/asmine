@@ -13,8 +13,7 @@ import java.util.List;
 import java.util.Set;
 
 /*
- * n is the number of real instructions in methodNode
- * | is the boundary between real instructions
+ * n is the number of instructions in methodNode
  *   -1  0   1   ...  n-1  n
  * |   | _ | _ | ... | _ |   |
  * -1  0   1   2     n-1 n   n+1
@@ -29,9 +28,7 @@ public class CodeManipulator {
     cursors.add(HashSetHelper.of(new Cursor()));
 
     for (int i = 0; i < methodNode.instructions.size(); i++) {
-      if (AbstractInsnNodeHelper.isReal(methodNode.instructions.get(i))) {
-        cursors.add(HashSetHelper.of(new Cursor()));
-      }
+      cursors.add(HashSetHelper.of(new Cursor()));
     }
 
     cursors.add(HashSetHelper.of(new Cursor()));
@@ -84,9 +81,7 @@ public class CodeManipulator {
 
   public void insertAfter(int index, List<AbstractInsnNode> insns) {
     for (int i = 0; i < insns.size(); i++) {
-      if (AbstractInsnNodeHelper.isReal(insns.get(i))) {
-        cursors.add(index + 1 + 1, HashSetHelper.of(new Cursor()));
-      }
+      cursors.add(index + 1 + 1, HashSetHelper.of(new Cursor()));
     }
 
     InsnListHelper.insert(methodNode.instructions, InsnListHelper.getHeaded(methodNode.instructions, index), insns);
@@ -107,9 +102,7 @@ public class CodeManipulator {
 
   public void insertBefore(int index, List<AbstractInsnNode> insns) {
     for (int i = 0; i < insns.size(); i++) {
-      if (AbstractInsnNodeHelper.isReal(insns.get(i))) {
-        cursors.add(index + 1, HashSetHelper.of(new Cursor()));
-      }
+      cursors.add(index + 1, HashSetHelper.of(new Cursor()));
     }
 
     InsnListHelper.insertBefore(methodNode.instructions, InsnListHelper.getTailed(methodNode.instructions, index), insns);
@@ -172,33 +165,19 @@ public class CodeManipulator {
     replace(begin, end, new InsnListListAdapter(insns));
   }
 
-  private int countRealInsns(List<AbstractInsnNode> insns) {
-    int count = 0;
-
-    for (int i = 0; i < insns.size(); i++) {
-      if (AbstractInsnNodeHelper.isReal(insns.get(i))) {
-        count++;
-      }
-    }
-
-    return count;
-  }
-
   public void replace(int begin, int end, List<AbstractInsnNode> insns) {
     Set<Cursor> endCursors = cursors.get(end + 1);
     ListHelper.removeRange(cursors, begin + 1 + 1, end + 1 + 1);
     InsnListHelper.removeRange(methodNode.instructions, InsnListHelper.getTailed(methodNode.instructions, begin), InsnListHelper.getTailed(methodNode.instructions, end));
 
-    if (countRealInsns(insns) == 0) {
+    if (insns.size() == 0) {
       cursors.get(begin + 1).addAll(endCursors);
     } else {
       cursors.add(begin + 1 + 1, endCursors);
     }
 
     for (int i = 0; i < insns.size() - 1; i++) {
-      if (AbstractInsnNodeHelper.isReal(insns.get(i))) {
-        cursors.add(begin + 1 + 1, HashSetHelper.of(new Cursor()));
-      }
+      cursors.add(begin + 1 + 1, HashSetHelper.of(new Cursor()));
     }
 
     InsnListHelper.insert(methodNode.instructions, InsnListHelper.getHeaded(methodNode.instructions, begin - 1), insns);
@@ -220,17 +199,12 @@ public class CodeManipulator {
       }
     }
 
-    // Logical index
     int i = 0;
     for (Cursor cursor : cursors.get(i)) {
       cursor.setIndex(-1);
     }
 
     for (int j = 0; j < methodNode.instructions.size(); j++) {
-      if (AbstractInsnNodeHelper.isPseudo(methodNode.instructions.get(j))) {
-        continue;
-      }
-
       i++;
       for (Cursor cursor : cursors.get(i)) {
         cursor.setIndex(j);

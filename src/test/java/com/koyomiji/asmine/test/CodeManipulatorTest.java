@@ -153,20 +153,19 @@ public class CodeManipulatorTest {
     Assertions.assertEquals(3, s2.getFirstIndex());
   }
 
-  // Ignores pseudo insns
   @Test
   void test_0() {
     CodeManipulator q = new CodeManipulator(new MethodNode());
     q.addLast(
             Insns.label(),
-            Insns.frame(0, 0, new Object[0], 0, new Object[0]),
-            // 0
             Insns.iconst_0(),
-            // 1
             Insns.return_()
-            // 2
     );
-    Assertions.assertEquals(2, q.getCursor(0).getFirstIndex());
-    Assertions.assertEquals(3, q.getCursor(1).getFirstIndex());
+    Assertions.assertEquals(-1, q.getCursor(-1).getFirstIndex());
+    Assertions.assertEquals(0, q.getCursor(0).getFirstIndex());
+    Assertions.assertEquals(1, q.getCursor(1).getFirstIndex());
+    Assertions.assertEquals(2, q.getCursor(2).getFirstIndex());
+    Assertions.assertEquals(3, q.getCursor(3).getFirstIndex());
+    Assertions.assertEquals(4, q.getCursor(4).getFirstIndex());
   }
 }
