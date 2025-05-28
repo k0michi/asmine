@@ -13,7 +13,7 @@ public class RegexThread implements Cloneable {
   protected Stack<CallFrame> callStack = new Stack<>();
   protected List<RegexThreadScope> scopes = new ArrayList<>();
   protected Stack<Integer> scopeStack = new Stack<>();
-  protected List<Object> trace = new ArrayList<>();
+  protected ArrayList<Object> trace = new ArrayList<>();
 
   public RegexThread(int id) {
     this.id = id;
@@ -39,6 +39,8 @@ public class RegexThread implements Cloneable {
       for (CallFrame callFrame : this.callStack) {
         clone.callStack.push(callFrame.clone());
       }
+
+      clone.trace = (ArrayList<Object>) this.trace.clone();
       return clone;
     } catch (CloneNotSupportedException e) {
       throw new RuntimeException(e);
