@@ -2,6 +2,7 @@ package com.koyomiji.asmine.test;
 
 import com.koyomiji.asmine.common.Insns;
 import com.koyomiji.asmine.query.CodeManipulator;
+import com.koyomiji.asmine.query.Cursor;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.objectweb.asm.tree.MethodNode;
@@ -9,146 +10,163 @@ import org.objectweb.asm.tree.MethodNode;
 public class CodeManipulatorTest {
   // Replace empty with empty
   @Test
-  void test_symbol_m1() {
+  void test_cursor_m1() {
     CodeManipulator q = new CodeManipulator(new MethodNode());
     q.addLast(
             Insns.iconst_0(),
             Insns.return_()
     );
-    Object s0 = q.getCursor(0);
-    Object s1 = q.getCursor(1);
+    Cursor s0 = q.getCursor(0);
+    Cursor s1 = q.getCursor(1);
     q.replace(0, 0);
-    Assertions.assertEquals(0, q.getIndexForCursor(s0));
-    Assertions.assertEquals(1, q.getIndexForCursor(s1));
+    Assertions.assertEquals(0, s0.getFirstIndex());
+    Assertions.assertEquals(1, s1.getFirstIndex());
   }
 
   @Test
-  void test_symbol_0() {
+  void test_cursor_0() {
     CodeManipulator q = new CodeManipulator(new MethodNode());
     q.addLast(
             Insns.iconst_0(),
             Insns.return_()
     );
-    Object s0 = q.getCursor(0);
-    Object s1 = q.getCursor(1);
+    Cursor s0 = q.getCursor(0);
+    Cursor s1 = q.getCursor(1);
     q.remove(0, 1);
-    Assertions.assertEquals(0, q.getIndexForCursor(s0));
-    Assertions.assertEquals(0, q.getIndexForCursor(s1));
+    Assertions.assertEquals(0, s0.getFirstIndex());
+    Assertions.assertEquals(0, s1.getFirstIndex());
   }
 
   @Test
-  void test_symbol_1() {
+  void test_cursor_1() {
     CodeManipulator q = new CodeManipulator(new MethodNode());
     q.addLast(
             Insns.iconst_0(),
             Insns.return_()
     );
-    Object s0 = q.getCursor(0);
-    Object s1 = q.getCursor(1);
+    Cursor s0 = q.getCursor(0);
+    Cursor s1 = q.getCursor(1);
     q.insertAfter(0, Insns.iconst_1());
-    Assertions.assertEquals(0, q.getIndexForCursor(s0));
-    Assertions.assertEquals(2, q.getIndexForCursor(s1));
+    Assertions.assertEquals(0, s0.getFirstIndex());
+    Assertions.assertEquals(2, s1.getFirstIndex());
   }
 
   @Test
-  void test_symbol_2() {
+  void test_cursor_2() {
     CodeManipulator q = new CodeManipulator(new MethodNode());
     q.addLast(
             Insns.iconst_0(),
             Insns.return_()
     );
-    Object s0 = q.getCursor(0);
-    Object s1 = q.getCursor(1);
+    Cursor s0 = q.getCursor(0);
+    Cursor s1 = q.getCursor(1);
     q.insertBefore(0, Insns.iconst_1());
-    Assertions.assertEquals(1, q.getIndexForCursor(s0));
-    Assertions.assertEquals(2, q.getIndexForCursor(s1));
+    Assertions.assertEquals(1, s0.getFirstIndex());
+    Assertions.assertEquals(2, s1.getFirstIndex());
   }
 
   @Test
-  void test_symbol_3() {
+  void test_cursor_3() {
     CodeManipulator q = new CodeManipulator(new MethodNode());
     q.addLast(
             Insns.iconst_0(),
             Insns.return_()
     );
-    Object s0 = q.getCursor(0);
-    Object s1 = q.getCursor(1);
+    Cursor s0 = q.getCursor(0);
+    Cursor s1 = q.getCursor(1);
     q.insertAfter(-1, Insns.iconst_1());
-    Assertions.assertEquals(1, q.getIndexForCursor(s0));
-    Assertions.assertEquals(2, q.getIndexForCursor(s1));
+    Assertions.assertEquals(1, s0.getFirstIndex());
+    Assertions.assertEquals(2, s1.getFirstIndex());
   }
 
   @Test
-  void test_symbol_4() {
+  void test_cursor_4() {
     CodeManipulator q = new CodeManipulator(new MethodNode());
     q.addLast(
             Insns.iconst_0(),
             Insns.return_()
     );
-    Object s0 = q.getCursor(0);
-    Object s1 = q.getCursor(1);
+    Cursor s0 = q.getCursor(0);
+    Cursor s1 = q.getCursor(1);
     q.replace(0, 1, Insns.iconst_1());
-    Assertions.assertEquals(0, q.getIndexForCursor(s0));
-    Assertions.assertEquals(1, q.getIndexForCursor(s1));
+    Assertions.assertEquals(0, s0.getFirstIndex());
+    Assertions.assertEquals(1, s1.getFirstIndex());
   }
 
   @Test
-  void test_symbol_5() {
+  void test_cursor_5() {
     CodeManipulator q = new CodeManipulator(new MethodNode());
     q.addLast(
             Insns.iconst_0(),
             Insns.return_()
     );
-    Object s2 = q.getCursor(2);
+    Cursor s2 = q.getCursor(2);
     q.addLast(Insns.iconst_1());
-    Assertions.assertEquals(3, q.getIndexForCursor(s2));
+    Assertions.assertEquals(3, s2.getFirstIndex());
   }
 
   // Replace empty range
   @Test
-  void test_symbol_6() {
+  void test_cursor_6() {
     CodeManipulator q = new CodeManipulator(new MethodNode());
     q.addLast(
             Insns.iconst_0(),
             Insns.return_()
     );
-    Object s0 = q.getCursor(0);
-    Object s1 = q.getCursor(1);
+    Cursor s0 = q.getCursor(0);
+    Cursor s1 = q.getCursor(1);
     q.replace(0, 0, Insns.iconst_1());
     // s0 is now at 0 and 1
-    Assertions.assertEquals(0, q.getIndexForCursor(s0));
-    Assertions.assertEquals(1, q.getLastIndexForCursor(s0));
-    Assertions.assertEquals(2, q.getIndexForCursor(s1));
+    Assertions.assertEquals(0, s0.getFirstIndex());
+    Assertions.assertEquals(1, s0.getLastIndex());
+    Assertions.assertEquals(2, s1.getFirstIndex());
   }
 
   // Replace with empty
   @Test
-  void test_symbol_7() {
+  void test_cursor_7() {
     CodeManipulator q = new CodeManipulator(new MethodNode());
     q.addLast(
             Insns.iconst_0(),
             Insns.return_()
     );
-    Object s0 = q.getCursor(0);
-    Object s1 = q.getCursor(1);
+    Cursor s0 = q.getCursor(0);
+    Cursor s1 = q.getCursor(1);
     q.replace(0, 1);
-    Assertions.assertEquals(0, q.getIndexForCursor(s0));
-    Assertions.assertEquals(0, q.getIndexForCursor(s1));
+    Assertions.assertEquals(0, s0.getFirstIndex());
+    Assertions.assertEquals(0, s1.getFirstIndex());
   }
 
   @Test
-  void test_symbol_8() {
+  void test_cursor_8() {
     CodeManipulator q = new CodeManipulator(new MethodNode());
     q.addLast(
             Insns.iconst_0(),
             Insns.return_()
     );
-    Object s0 = q.getCursor(0);
-    Object s1 = q.getCursor(1);
-    Object s2 = q.getCursor(2);
+    Cursor s0 = q.getCursor(0);
+    Cursor s1 = q.getCursor(1);
+    Cursor s2 = q.getCursor(2);
     q.insertAfter(1, Insns.iconst_1());
-    Assertions.assertEquals(0, q.getIndexForCursor(s0));
-    Assertions.assertEquals(1, q.getIndexForCursor(s1));
-    Assertions.assertEquals(3, q.getIndexForCursor(s2));
+    Assertions.assertEquals(0, s0.getFirstIndex());
+    Assertions.assertEquals(1, s1.getFirstIndex());
+    Assertions.assertEquals(3, s2.getFirstIndex());
+  }
+
+  // Ignores pseudo insns
+  @Test
+  void test_0() {
+    CodeManipulator q = new CodeManipulator(new MethodNode());
+    q.addLast(
+            Insns.label(),
+            Insns.frame(0, 0, new Object[0], 0, new Object[0]),
+            // 0
+            Insns.iconst_0(),
+            // 1
+            Insns.return_()
+            // 2
+    );
+    Assertions.assertEquals(2, q.getCursor(0).getFirstIndex());
+    Assertions.assertEquals(3, q.getCursor(1).getFirstIndex());
   }
 }
