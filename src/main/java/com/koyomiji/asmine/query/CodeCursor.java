@@ -45,4 +45,8 @@ public class CodeCursor {
   public CodeCursor after() {
     return parent.getCursor(lastIndex + 1);
   }
+
+  public CodeManipulator getManipulator() {
+    return parent;
+  }
 }
