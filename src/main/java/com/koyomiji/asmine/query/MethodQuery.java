@@ -110,6 +110,10 @@ public class MethodQuery<T> extends AbstractQuery<T> {
     return setExceptions(ArrayListHelper.of(exceptions));
   }
 
+  public MethodQuery<T> addException(String exception) {
+    return addExceptions(Collections.singletonList(exception));
+  }
+
   public MethodQuery<T> addExceptions(List<String> exceptions) {
     if (methodNode.exceptions == null) {
       methodNode.exceptions = new ArrayList<>();

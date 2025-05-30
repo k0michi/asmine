@@ -12,6 +12,7 @@ import org.objectweb.asm.util.Printer;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class ClassQuery extends AbstractQuery<ClassNode> {
@@ -113,6 +114,10 @@ public class ClassQuery extends AbstractQuery<ClassNode> {
     return setInterfaces(ArrayListHelper.of(interfaces));
   }
 
+  public ClassQuery addInterface(String interface_) {
+    return addInterfaces(Collections.singletonList(interface_));
+  }
+
   public ClassQuery addInterfaces(List<String> interfaces) {
     if (classNode.interfaces == null) {
       classNode.interfaces = new ArrayList<>();
@@ -124,6 +129,10 @@ public class ClassQuery extends AbstractQuery<ClassNode> {
 
   public ClassQuery addInterfaces(String... interfaces) {
     return addInterfaces(Arrays.asList(interfaces));
+  }
+
+  public ClassQuery removeInterface(String interface_) {
+    return removeInterfaces(Collections.singletonList(interface_));
   }
 
   public ClassQuery removeInterfaces(List<String> interfaces) {
@@ -282,6 +291,10 @@ public class ClassQuery extends AbstractQuery<ClassNode> {
     return setNestMembers(ArrayListHelper.of(nestMembers));
   }
 
+  public ClassQuery addNestMember(String nestMember) {
+    return addNestMembers(Collections.singletonList(nestMember));
+  }
+
   public ClassQuery addNestMembers(List<String> nestMembers) {
     if (classNode.nestMembers == null) {
       classNode.nestMembers = new ArrayList<>();
@@ -296,11 +309,7 @@ public class ClassQuery extends AbstractQuery<ClassNode> {
   }
 
   public ClassQuery removeNestMember(String nestMember) {
-    if (classNode.nestMembers != null) {
-      classNode.nestMembers.remove(nestMember);
-    }
-
-    return this;
+    return removeInterfaces(Collections.singletonList(nestMember));
   }
 
   public ClassQuery removeNestMembers(List<String> nestMembers) {
@@ -329,20 +338,24 @@ public class ClassQuery extends AbstractQuery<ClassNode> {
   }
 
   public ClassQuery addPermittedSubclass(String permittedSubclass) {
+    return addPermittedSubclasses(Collections.singletonList(permittedSubclass));
+  }
+
+  public ClassQuery addPermittedSubclasses(List<String> permittedSubclasses) {
     if (classNode.permittedSubclasses == null) {
       classNode.permittedSubclasses = new ArrayList<>();
     }
 
-    classNode.permittedSubclasses.add(permittedSubclass);
+    classNode.permittedSubclasses.addAll(permittedSubclasses);
     return this;
   }
 
-  public ClassQuery removePermittedSubclass(String permittedSubclass) {
-    if (classNode.permittedSubclasses != null) {
-      classNode.permittedSubclasses.remove(permittedSubclass);
-    }
+  public ClassQuery addPermittedSubclasses(String... permittedSubclasses) {
+    return addPermittedSubclasses(Arrays.asList(permittedSubclasses));
+  }
 
-    return this;
+  public ClassQuery removePermittedSubclass(String permittedSubclass) {
+    return removePermittedSubclasses(Collections.singletonList(permittedSubclass));
   }
 
   public ClassQuery removePermittedSubclasses(List<String> permittedSubclasses) {
