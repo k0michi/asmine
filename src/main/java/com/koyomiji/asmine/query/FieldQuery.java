@@ -18,6 +18,14 @@ public class FieldQuery<T> extends AbstractQuery<T> {
     return new FieldQuery<>(fieldNode, fieldNode);
   }
 
+  public static FieldQuery<FieldNode> ofNew() {
+    return ofNew(0, null, null, null, null);
+  }
+
+  public static FieldQuery<FieldNode> ofNew(int access, String name, String descriptor, String signature, Object value) {
+    return of(new FieldNode(access, name, descriptor, signature, value));
+  }
+
   public FieldNode getNode() {
     return fieldNode;
   }
