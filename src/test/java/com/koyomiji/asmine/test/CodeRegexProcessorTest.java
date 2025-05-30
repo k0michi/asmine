@@ -3,14 +3,13 @@ package com.koyomiji.asmine.test;
 import com.koyomiji.asmine.common.ArrayListHelper;
 import com.koyomiji.asmine.common.InsnStencils;
 import com.koyomiji.asmine.common.Insns;
-import com.koyomiji.asmine.regex.AbstractRegexInsn;
 import com.koyomiji.asmine.regex.RegexModule;
 import com.koyomiji.asmine.regex.code.CodeRegexProcessor;
 import com.koyomiji.asmine.regex.code.CodeRegexThread;
 import com.koyomiji.asmine.regex.compiler.*;
 import com.koyomiji.asmine.regex.compiler.code.CodeRegexes;
-import com.koyomiji.asmine.stencil.Parameters;
-import com.koyomiji.asmine.stencil.ResolutionExeption;
+import com.koyomiji.asmine.stencil.Stencils;
+import com.koyomiji.asmine.stencil.StencilEvaluationException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.objectweb.asm.tree.AbstractInsnNode;
@@ -131,7 +130,7 @@ public class CodeRegexProcessorTest {
   void test_6() {
     RegexModule regex= compile(
             Regexes.concatenate(
-                    CodeRegexes.stencil(InsnStencils.label(Parameters.any())),
+                    CodeRegexes.stencil(InsnStencils.label(Stencils.any())),
                     CodeRegexes.literal(Insns.iconst_0())
             )
     );
@@ -148,8 +147,8 @@ public class CodeRegexProcessorTest {
   void test_7() {
     RegexModule regex= compile(
             Regexes.concatenate(
-                    CodeRegexes.stencil(InsnStencils.goto_(Parameters.bind(p0))),
-                    CodeRegexes.stencil(InsnStencils.label(Parameters.bound(p0))),
+                    CodeRegexes.stencil(InsnStencils.goto_(Stencils.bind(p0))),
+                    CodeRegexes.stencil(InsnStencils.label(Stencils.bound(p0))),
                     CodeRegexes.literal(Insns.iconst_0())
             )
     );
@@ -168,7 +167,7 @@ public class CodeRegexProcessorTest {
     RegexModule regex= compile(
             Regexes.concatenate(
                     CodeRegexes.literal(Insns.iconst_0()),
-                    CodeRegexes.stencil(InsnStencils.label(Parameters.bind(p0)))
+                    CodeRegexes.stencil(InsnStencils.label(Stencils.bind(p0)))
             )
     );
     List<AbstractInsnNode> string = ArrayListHelper.of(
@@ -181,11 +180,11 @@ public class CodeRegexProcessorTest {
 
   // Label resolves to the final label
   @Test
-  void test_9() throws ResolutionExeption {
+  void test_9() throws StencilEvaluationException {
     RegexModule regex= compile(
             Regexes.concatenate(
-                    CodeRegexes.stencil(InsnStencils.label(Parameters.bind(p0))),
-                    CodeRegexes.stencil(InsnStencils.label(Parameters.bind(p1))),
+                    CodeRegexes.stencil(InsnStencils.label(Stencils.bind(p0))),
+                    CodeRegexes.stencil(InsnStencils.label(Stencils.bind(p1))),
                     CodeRegexes.literal(Insns.iconst_0())
             )
     );
@@ -197,18 +196,18 @@ public class CodeRegexProcessorTest {
     CodeRegexProcessor vm = new CodeRegexProcessor(regex, string);
     CodeRegexThread thread = vm.execute();
     Assertions.assertNotNull(thread);
-    Assertions.assertSame(thread.resolveParameter(p0), l1);
-    Assertions.assertSame(thread.resolveParameter(p1), l1);
+    Assertions.assertSame(thread.resolveStencil(p0), l1);
+    Assertions.assertSame(thread.resolveStencil(p1), l1);
   }
 
   // Line number and frame
   @Test
-  void test_10() throws ResolutionExeption {
+  void test_10() throws StencilEvaluationException {
     RegexModule regex= compile(
             Regexes.concatenate(
-                    CodeRegexes.stencil(InsnStencils.label(Parameters.bind(p0))),
-                    CodeRegexes.stencil(InsnStencils.lineNumber(Parameters.bind(p1), Parameters.bound(p0))),
-                    CodeRegexes.stencil(InsnStencils.frame(Parameters.any(), Parameters.any(), Parameters.any(), Parameters.any(), Parameters.any())),
+                    CodeRegexes.stencil(InsnStencils.label(Stencils.bind(p0))),
+                    CodeRegexes.stencil(InsnStencils.lineNumber(Stencils.bind(p1), Stencils.bound(p0))),
+                    CodeRegexes.stencil(InsnStencils.frame(Stencils.any(), Stencils.any(), Stencils.any(), Stencils.any(), Stencils.any())),
                     CodeRegexes.literal(Insns.iconst_0())
             )
     );
@@ -225,10 +224,10 @@ public class CodeRegexProcessorTest {
 
   // Binding non-existent label
   @Test
-  void test_11() throws ResolutionExeption {
+  void test_11() throws StencilEvaluationException {
     RegexModule regex= compile(
             Regexes.concatenate(
-                    CodeRegexes.stencil(InsnStencils.label(Parameters.bind(p0))),
+                    CodeRegexes.stencil(InsnStencils.label(Stencils.bind(p0))),
                     CodeRegexes.literal(Insns.iconst_0())
             )
     );
@@ -242,10 +241,10 @@ public class CodeRegexProcessorTest {
 
   // Only label
   @Test
-  void test_12() throws ResolutionExeption {
+  void test_12() throws StencilEvaluationException {
     RegexModule regex= compile(
             Regexes.concatenate(
-                    CodeRegexes.stencil(InsnStencils.label(Parameters.bind(p0)))
+                    CodeRegexes.stencil(InsnStencils.label(Stencils.bind(p0)))
             )
     );
     List<AbstractInsnNode> string = ArrayListHelper.of(
@@ -258,7 +257,7 @@ public class CodeRegexProcessorTest {
 
   // Label literal match
   @Test
-  void test_13() throws ResolutionExeption {
+  void test_13() throws StencilEvaluationException {
     RegexModule regex= compile(
             Regexes.concatenate(
                     CodeRegexes.literal(l0 = Insns.label())

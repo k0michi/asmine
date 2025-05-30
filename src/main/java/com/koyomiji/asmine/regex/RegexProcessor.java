@@ -11,6 +11,7 @@ public class RegexProcessor {
   protected List<?> string;
   protected List<RegexThread> threads;
   protected int stringPointer = 0;
+  protected int nextThreadID = 0;
 
   public RegexProcessor(RegexModule module, List<?> string) {
     this.module = module;
@@ -21,12 +22,16 @@ public class RegexProcessor {
     this(new RegexModule(ArrayListHelper.of(new RegexFunction(0, insns))), string);
   }
 
-  protected RegexThread newThread() {
-    return new RegexThread();
+  protected RegexThread newThread(int id) {
+    return new RegexThread(id);
   }
 
   protected MatchResult newMatchResult(RegexThread thread) {
     return new MatchResult(thread);
+  }
+
+  public RegexThread cloneThread(RegexThread thread) {
+    return thread.clone(nextThreadID++);
   }
 
   protected AbstractRegexInsn getInstruction(RegexThread thread) {
@@ -65,16 +70,21 @@ public class RegexProcessor {
     return intransitives;
   }
 
+  protected void visitChar(Object character) {
+  }
+
   public RegexThread execute() {
     return execute(0);
   }
 
   public RegexThread execute(int begin) {
     this.threads = new ArrayList<>();
-    this.threads.add(newThread());
+    this.threads.add(newThread(nextThreadID++));
     RegexThread terminated = null;
 
     for (stringPointer = begin; stringPointer <= string.size(); stringPointer++) {
+      visitChar(getCurrentChar());
+
       if (isTransitiveChar(getCurrentChar())) {
         continue;
       }

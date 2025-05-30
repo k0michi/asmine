@@ -22,7 +22,7 @@ public class ForkInsn extends AbstractRegexInsn {
     List<RegexThread> threads = new ArrayList<>();
 
     for(int i = 0; i < offsets.size(); i++) {
-      RegexThread cloned = (RegexThread)thread.clone();
+      RegexThread cloned = processor.cloneThread(thread);
       cloned.advanceProgramCounter(offsets.get(i));
       threads.add(cloned);
     }

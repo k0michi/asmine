@@ -4,11 +4,10 @@ import com.koyomiji.asmine.common.ArrayHelper;
 import com.koyomiji.asmine.common.ArrayListHelper;
 import com.koyomiji.asmine.regex.RegexMatcher;
 import com.koyomiji.asmine.regex.code.CodeMatchResult;
-import com.koyomiji.asmine.stencil.ResolutionExeption;
+import com.koyomiji.asmine.stencil.StencilEvaluationException;
 import com.koyomiji.asmine.stencil.insn.AbstractInsnStencil;
 import com.koyomiji.asmine.tree.AbstractInsnNodeHelper;
 import com.koyomiji.asmine.tuple.Pair;
-import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.InsnList;
 
 import java.util.ArrayList;
@@ -19,8 +18,8 @@ import java.util.Map;
 public class CodeFragmentQuery<T> extends AbstractQuery<T> {
   protected CodeManipulator codeManipulator;
   protected CodeMatchResult matchResult;
-  protected Map<Object, List<Pair<Object, Object>>> stringBinds;
-  protected List<Pair<Object, Object>> selected;
+  protected Map<Object, List<Pair<CodeCursor, CodeCursor>>> stringBinds;
+  protected List<Pair<CodeCursor, CodeCursor>> selected;
 
   public CodeFragmentQuery(T parent, CodeManipulator codeManipulator, CodeMatchResult matchResult) {
     super(parent);
@@ -44,7 +43,7 @@ public class CodeFragmentQuery<T> extends AbstractQuery<T> {
     }
   }
 
-  public CodeFragmentQuery(T parent, CodeManipulator codeManipulator, CodeMatchResult matchResult, Map<Object, List<Pair<Object, Object>>> stringBinds, List<Pair<Object, Object>> selected) {
+  public CodeFragmentQuery(T parent, CodeManipulator codeManipulator, CodeMatchResult matchResult, Map<Object, List<Pair<CodeCursor, CodeCursor>>> stringBinds, List<Pair<CodeCursor, CodeCursor>> selected) {
     super(parent);
     this.codeManipulator = codeManipulator;
     this.matchResult = matchResult;
@@ -52,25 +51,25 @@ public class CodeFragmentQuery<T> extends AbstractQuery<T> {
     this.selected = selected;
   }
 
-  private InsnList instantiate(List<AbstractInsnStencil> insns) throws ResolutionExeption {
+  private InsnList instantiate(List<AbstractInsnStencil> insns) throws StencilEvaluationException {
     InsnList insnList = new InsnList();
 
     for (AbstractInsnStencil insn : insns) {
-      insnList.add(insn.instantiate(matchResult));
+      insnList.add(insn.evaluate(matchResult));
     }
 
     return insnList;
   }
 
   public CodeFragmentQuery<CodeFragmentQuery<T>> selectBound(Object key) {
-    List<Pair<Object, Object>> newSelected = new ArrayList<>();
+    List<Pair<CodeCursor, CodeCursor>> newSelected = new ArrayList<>();
 
-    for (Pair<Object, Object> range : stringBinds.get(key)) {
-      for (Pair<Object, Object> selectedRange : selected) {
-        int start = codeManipulator.getIndexForCursor(range.first);
-        int end = codeManipulator.getLastIndexForCursor(range.second);
-        int selectedStart = codeManipulator.getIndexForCursor(selectedRange.first);
-        int selectedEnd = codeManipulator.getLastIndexForCursor(selectedRange.second);
+    for (Pair<CodeCursor, CodeCursor> range : stringBinds.get(key)) {
+      for (Pair<CodeCursor, CodeCursor> selectedRange : selected) {
+        int start = range.first.getFirstIndex();
+        int end = range.second.getLastIndex();
+        int selectedStart = selectedRange.first.getFirstIndex();
+        int selectedEnd = selectedRange.second.getLastIndex();
 
         if (start >= selectedStart && end <= selectedEnd) {
           newSelected.add(Pair.of(range.first, range.second));
@@ -86,7 +85,7 @@ public class CodeFragmentQuery<T> extends AbstractQuery<T> {
   }
 
   public CodeFragmentQuery<T> insertBefore(List<AbstractInsnStencil> insns) {
-    for (Pair<Object, Object> range : selected) {
+    for (Pair<CodeCursor, CodeCursor> range : selected) {
       Pair<Integer, Integer> indices = codeManipulator.getIndicesForCursors(range);
 
       if (indices == null) {
@@ -98,7 +97,7 @@ public class CodeFragmentQuery<T> extends AbstractQuery<T> {
                 indices.first,
                 instantiate(insns)
         );
-      } catch (ResolutionExeption e) {
+      } catch (StencilEvaluationException e) {
         throw new RuntimeException(e);
       }
     }
@@ -111,7 +110,7 @@ public class CodeFragmentQuery<T> extends AbstractQuery<T> {
   }
 
   public CodeFragmentQuery<T> insertAfter(List<AbstractInsnStencil> insns) {
-    for (Pair<Object, Object> range : selected) {
+    for (Pair<CodeCursor, CodeCursor> range : selected) {
       Pair<Integer, Integer> indices = codeManipulator.getIndicesForCursors(range);
 
       if (indices == null) {
@@ -123,7 +122,7 @@ public class CodeFragmentQuery<T> extends AbstractQuery<T> {
                 indices.second - 1,
                 instantiate(insns)
         );
-      } catch (ResolutionExeption e) {
+      } catch (StencilEvaluationException e) {
         throw new RuntimeException(e);
       }
     }
@@ -138,7 +137,7 @@ public class CodeFragmentQuery<T> extends AbstractQuery<T> {
   public CodeFragmentQuery<T> addFirst(List<AbstractInsnStencil> insns) {
     try {
       codeManipulator.addFirst(instantiate(insns));
-    } catch (ResolutionExeption e) {
+    } catch (StencilEvaluationException e) {
       throw new RuntimeException(e);
     }
 
@@ -152,7 +151,7 @@ public class CodeFragmentQuery<T> extends AbstractQuery<T> {
   public CodeFragmentQuery<T> addLast(List<AbstractInsnStencil> insns) {
     try {
       codeManipulator.insertBefore(codeManipulator.getMethodNode().instructions.size(), instantiate(insns));
-    } catch (ResolutionExeption e) {
+    } catch (StencilEvaluationException e) {
       throw new RuntimeException(e);
     }
 
@@ -164,7 +163,7 @@ public class CodeFragmentQuery<T> extends AbstractQuery<T> {
   }
 
   public CodeFragmentQuery<T> replaceWith(List<AbstractInsnStencil> insns) {
-    for (Pair<Object, Object> range : selected) {
+    for (Pair<CodeCursor, CodeCursor> range : selected) {
       Pair<Integer, Integer> indices = codeManipulator.getIndicesForCursors(range);
 
       if (indices == null) {
@@ -177,7 +176,7 @@ public class CodeFragmentQuery<T> extends AbstractQuery<T> {
                 indices.second,
                 instantiate(insns)
         );
-      } catch (ResolutionExeption e) {
+      } catch (StencilEvaluationException e) {
         throw new RuntimeException(e);
       }
     }
@@ -186,7 +185,7 @@ public class CodeFragmentQuery<T> extends AbstractQuery<T> {
   }
 
   public CodeFragmentQuery<T> remove() {
-    for (Pair<Object, Object> range : selected) {
+    for (Pair<CodeCursor, CodeCursor> range : selected) {
       Pair<Integer, Integer> indices = codeManipulator.getIndicesForCursors(range);
 
       if (indices == null) {
@@ -203,10 +202,10 @@ public class CodeFragmentQuery<T> extends AbstractQuery<T> {
   }
 
   public CodeFragmentQuery<T> before() {
-    List<Pair<Object, Object>> newSelected = new ArrayList<>();
+    List<Pair<CodeCursor, CodeCursor>> newSelected = new ArrayList<>();
 
-    for (Pair<Object, Object> selectedRange : selected) {
-      int selectedStart = codeManipulator.getIndexForCursor(selectedRange.first);
+    for (Pair<CodeCursor, CodeCursor> selectedRange : selected) {
+      int selectedStart = selectedRange.first.getFirstIndex();
 
       do {
         selectedStart--;
@@ -219,10 +218,10 @@ public class CodeFragmentQuery<T> extends AbstractQuery<T> {
   }
 
   public CodeFragmentQuery<T> after() {
-    List<Pair<Object, Object>> newSelected = new ArrayList<>();
+    List<Pair<CodeCursor, CodeCursor>> newSelected = new ArrayList<>();
 
-    for (Pair<Object, Object> selectedRange : selected) {
-      int selectedEnd = codeManipulator.getLastIndexForCursor(selectedRange.second);
+    for (Pair<CodeCursor, CodeCursor> selectedRange : selected) {
+      int selectedEnd = selectedRange.second.getLastIndex();
 
       while (selectedEnd < codeManipulator.getMethodNode().instructions.size() && AbstractInsnNodeHelper.isPseudo(codeManipulator.getMethodNode().instructions.get(selectedEnd))) {
         selectedEnd++;

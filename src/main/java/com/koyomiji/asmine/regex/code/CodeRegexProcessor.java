@@ -1,8 +1,7 @@
 package com.koyomiji.asmine.regex.code;
 
-import com.koyomiji.asmine.common.InsnListListAdapter;
 import com.koyomiji.asmine.regex.*;
-import com.koyomiji.asmine.stencil.AbstractStencil;
+import com.koyomiji.asmine.stencil.IStencil;
 import com.koyomiji.asmine.stencil.insn.AbstractInsnStencil;
 import com.koyomiji.asmine.tree.AbstractInsnNodeHelper;
 import org.objectweb.asm.tree.*;
@@ -10,6 +9,10 @@ import org.objectweb.asm.tree.*;
 import java.util.List;
 
 public class CodeRegexProcessor extends RegexProcessor {
+  private LineNumberNode lineNumberNode;
+  private FrameNode frameNode;
+  private LabelNode labelNode;
+
   public CodeRegexProcessor(RegexModule module, List<?> string) {
     super(module, string);
   }
@@ -19,14 +22,31 @@ public class CodeRegexProcessor extends RegexProcessor {
   }
 
   @Override
-  protected RegexThread newThread() {
-    return new CodeRegexThread();
+  protected RegexThread newThread(int id) {
+    return new CodeRegexThread(id);
   }
 
   @Override
   protected MatchResult newMatchResult(RegexThread thread) {
     CodeRegexThread codeThread = (CodeRegexThread) thread;
     return new CodeMatchResult(codeThread);
+  }
+
+  @Override
+  protected void visitChar(Object character) {
+    if (character instanceof AbstractInsnNode) {
+      AbstractInsnNode insn = (AbstractInsnNode) character;
+
+      if (insn instanceof LineNumberNode) {
+        lineNumberNode = (LineNumberNode) insn;
+      } else if (insn instanceof FrameNode) {
+        frameNode = (FrameNode) insn;
+      } else if (insn instanceof LabelNode) {
+        labelNode = (LabelNode) insn;
+      }
+    }
+
+    super.visitChar(character);
   }
 
   @Override
@@ -50,7 +70,7 @@ public class CodeRegexProcessor extends RegexProcessor {
         && AbstractInsnNodeHelper.equals((AbstractInsnNode) actual, (AbstractInsnNode) expected);
   }
 
-  public boolean compareCharToStencil(RegexThread thread, Object actual, AbstractStencil<?> expected) {
+  public boolean compareCharToStencil(RegexThread thread, Object actual, IStencil<?> expected) {
     if (!(thread instanceof CodeRegexThread)) {
       throw new IllegalArgumentException("thread must be an instance of CodeRegexThread");
     }
@@ -67,49 +87,19 @@ public class CodeRegexProcessor extends RegexProcessor {
     return false;
   }
 
-  public boolean compareCurrentCharToStencil(RegexThread thread, AbstractStencil<?> expected) {
+  public boolean compareCurrentCharToStencil(RegexThread thread, IStencil<?> expected) {
     return compareCharToStencil(thread, getCurrentChar(), expected);
   }
 
-  private LabelNode getLabel(List<?> list, int insn) {
-    for (int i = insn - 1; i >= 0; i--) {
-      if (list.get(i) instanceof LabelNode) {
-        return (LabelNode) list.get(i);
-      }
-    }
-
-    return null;
-  }
-
   public LabelNode getCurrentLabel() {
-    return getLabel(getString(), getStringPointer());
-  }
-
-  private LineNumberNode getLineNumber(List<?> list, int insn) {
-    for (int i = insn - 1; i >= 0; i--) {
-      if (list.get(i) instanceof LineNumberNode) {
-        return (LineNumberNode) list.get(i);
-      }
-    }
-
-    return null;
+    return labelNode;
   }
 
   public LineNumberNode getCurrentLineNumber() {
-    return getLineNumber(getString(), getStringPointer());
-  }
-
-  private FrameNode getFrame(List<?> list, int insn) {
-    for (int i = insn - 1; i >= 0; i--) {
-      if (list.get(i) instanceof FrameNode) {
-        return (FrameNode) list.get(i);
-      }
-    }
-
-    return null;
+    return lineNumberNode;
   }
 
   public FrameNode getCurrentFrame() {
-    return getFrame(getString(), getStringPointer());
+    return frameNode;
   }
 }

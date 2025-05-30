@@ -189,12 +189,6 @@ public class InsnListListAdapter implements List<AbstractInsnNode> {
 
   @Override
   public List<AbstractInsnNode> subList(int fromIndex, int toIndex) {
-    ArrayList<AbstractInsnNode> subList = new ArrayList<>();
-
-    for (int i = fromIndex; i < toIndex; i++) {
-      subList.add(insnList.get(i));
-    }
-
-    return subList;
+    throw new UnsupportedOperationException();
   }
 }
