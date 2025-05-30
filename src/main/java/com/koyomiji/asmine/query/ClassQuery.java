@@ -166,15 +166,15 @@ public class ClassQuery extends AbstractQuery<ClassNode> {
     return this;
   }
 
-  public ClassQuery setModule(String moduleName, int access, String version) {
-    classNode.module = new ModuleNode(moduleName, access, version);
-    return this;
-  }
-
-  public ClassQuery removeModule() {
-    classNode.module = null;
-    return this;
-  }
+//  public ClassQuery setModule(String moduleName, int access, String version) {
+//    classNode.module = new ModuleNode(moduleName, access, version);
+//    return this;
+//  }
+//
+//  public ClassQuery removeModule() {
+//    classNode.module = null;
+//    return this;
+//  }
 
   // TODO: selectModule
 
@@ -269,115 +269,115 @@ public class ClassQuery extends AbstractQuery<ClassNode> {
 
   // TODO: selectInnerClass
 
-  public String getNestHostClass() {
-    return classNode.nestHostClass;
-  }
-
-  public ClassQuery setNestHostClass(String nestHostClass) {
-    classNode.nestHostClass = nestHostClass;
-    return this;
-  }
-
-  public List<String> getNestMembers() {
-    return classNode.nestMembers;
-  }
-
-  public ClassQuery setNestMembers(List<String> nestMembers) {
-    classNode.nestMembers = nestMembers;
-    return this;
-  }
-
-  public ClassQuery setNestMembers(String... nestMembers) {
-    return setNestMembers(ArrayListHelper.of(nestMembers));
-  }
-
-  public ClassQuery addNestMember(String nestMember) {
-    return addNestMembers(Collections.singletonList(nestMember));
-  }
-
-  public ClassQuery addNestMembers(List<String> nestMembers) {
-    if (classNode.nestMembers == null) {
-      classNode.nestMembers = new ArrayList<>();
-    }
-
-    classNode.nestMembers.addAll(nestMembers);
-    return this;
-  }
-
-  public ClassQuery addNestMembers(String... nestMembers) {
-    return addNestMembers(Arrays.asList(nestMembers));
-  }
-
-  public ClassQuery removeNestMember(String nestMember) {
-    return removeInterfaces(Collections.singletonList(nestMember));
-  }
-
-  public ClassQuery removeNestMembers(List<String> nestMembers) {
-    if (classNode.nestMembers != null) {
-      classNode.nestMembers.removeAll(nestMembers);
-    }
-
-    return this;
-  }
-
-  public ClassQuery removeNestMembers(String... nestMembers) {
-    return removeNestMembers(Arrays.asList(nestMembers));
-  }
-
-  public List<String> getPermittedSubclasses() {
-    return classNode.permittedSubclasses;
-  }
-
-  public ClassQuery setPermittedSubclasses(List<String> permittedSubclasses) {
-    classNode.permittedSubclasses = permittedSubclasses;
-    return this;
-  }
-
-  public ClassQuery setPermittedSubclasses(String... permittedSubclasses) {
-    return setPermittedSubclasses(ArrayListHelper.of(permittedSubclasses));
-  }
-
-  public ClassQuery addPermittedSubclass(String permittedSubclass) {
-    return addPermittedSubclasses(Collections.singletonList(permittedSubclass));
-  }
-
-  public ClassQuery addPermittedSubclasses(List<String> permittedSubclasses) {
-    if (classNode.permittedSubclasses == null) {
-      classNode.permittedSubclasses = new ArrayList<>();
-    }
-
-    classNode.permittedSubclasses.addAll(permittedSubclasses);
-    return this;
-  }
-
-  public ClassQuery addPermittedSubclasses(String... permittedSubclasses) {
-    return addPermittedSubclasses(Arrays.asList(permittedSubclasses));
-  }
-
-  public ClassQuery removePermittedSubclass(String permittedSubclass) {
-    return removePermittedSubclasses(Collections.singletonList(permittedSubclass));
-  }
-
-  public ClassQuery removePermittedSubclasses(List<String> permittedSubclasses) {
-    if (classNode.permittedSubclasses != null) {
-      classNode.permittedSubclasses.removeAll(permittedSubclasses);
-    }
-
-    return this;
-  }
-
-  public ClassQuery removePermittedSubclasses(String... permittedSubclasses) {
-    return removePermittedSubclasses(Arrays.asList(permittedSubclasses));
-  }
-
-  public ClassQuery addRecordComponent(String name, String desc, String signature) {
-    if (classNode.recordComponents == null) {
-      classNode.recordComponents = new ArrayList<>();
-    }
-
-    classNode.recordComponents.add(new RecordComponentNode(name, desc, signature));
-    return this;
-  }
+//  public String getNestHostClass() {
+//    return classNode.nestHostClass;
+//  }
+//
+//  public ClassQuery setNestHostClass(String nestHostClass) {
+//    classNode.nestHostClass = nestHostClass;
+//    return this;
+//  }
+//
+//  public List<String> getNestMembers() {
+//    return classNode.nestMembers;
+//  }
+//
+//  public ClassQuery setNestMembers(List<String> nestMembers) {
+//    classNode.nestMembers = nestMembers;
+//    return this;
+//  }
+//
+//  public ClassQuery setNestMembers(String... nestMembers) {
+//    return setNestMembers(ArrayListHelper.of(nestMembers));
+//  }
+//
+//  public ClassQuery addNestMember(String nestMember) {
+//    return addNestMembers(Collections.singletonList(nestMember));
+//  }
+//
+//  public ClassQuery addNestMembers(List<String> nestMembers) {
+//    if (classNode.nestMembers == null) {
+//      classNode.nestMembers = new ArrayList<>();
+//    }
+//
+//    classNode.nestMembers.addAll(nestMembers);
+//    return this;
+//  }
+//
+//  public ClassQuery addNestMembers(String... nestMembers) {
+//    return addNestMembers(Arrays.asList(nestMembers));
+//  }
+//
+//  public ClassQuery removeNestMember(String nestMember) {
+//    return removeInterfaces(Collections.singletonList(nestMember));
+//  }
+//
+//  public ClassQuery removeNestMembers(List<String> nestMembers) {
+//    if (classNode.nestMembers != null) {
+//      classNode.nestMembers.removeAll(nestMembers);
+//    }
+//
+//    return this;
+//  }
+//
+//  public ClassQuery removeNestMembers(String... nestMembers) {
+//    return removeNestMembers(Arrays.asList(nestMembers));
+//  }
+//
+//  public List<String> getPermittedSubclasses() {
+//    return classNode.permittedSubclasses;
+//  }
+//
+//  public ClassQuery setPermittedSubclasses(List<String> permittedSubclasses) {
+//    classNode.permittedSubclasses = permittedSubclasses;
+//    return this;
+//  }
+//
+//  public ClassQuery setPermittedSubclasses(String... permittedSubclasses) {
+//    return setPermittedSubclasses(ArrayListHelper.of(permittedSubclasses));
+//  }
+//
+//  public ClassQuery addPermittedSubclass(String permittedSubclass) {
+//    return addPermittedSubclasses(Collections.singletonList(permittedSubclass));
+//  }
+//
+//  public ClassQuery addPermittedSubclasses(List<String> permittedSubclasses) {
+//    if (classNode.permittedSubclasses == null) {
+//      classNode.permittedSubclasses = new ArrayList<>();
+//    }
+//
+//    classNode.permittedSubclasses.addAll(permittedSubclasses);
+//    return this;
+//  }
+//
+//  public ClassQuery addPermittedSubclasses(String... permittedSubclasses) {
+//    return addPermittedSubclasses(Arrays.asList(permittedSubclasses));
+//  }
+//
+//  public ClassQuery removePermittedSubclass(String permittedSubclass) {
+//    return removePermittedSubclasses(Collections.singletonList(permittedSubclass));
+//  }
+//
+//  public ClassQuery removePermittedSubclasses(List<String> permittedSubclasses) {
+//    if (classNode.permittedSubclasses != null) {
+//      classNode.permittedSubclasses.removeAll(permittedSubclasses);
+//    }
+//
+//    return this;
+//  }
+//
+//  public ClassQuery removePermittedSubclasses(String... permittedSubclasses) {
+//    return removePermittedSubclasses(Arrays.asList(permittedSubclasses));
+//  }
+//
+//  public ClassQuery addRecordComponent(String name, String desc, String signature) {
+//    if (classNode.recordComponents == null) {
+//      classNode.recordComponents = new ArrayList<>();
+//    }
+//
+//    classNode.recordComponents.add(new RecordComponentNode(name, desc, signature));
+//    return this;
+//  }
 
   // TODO: selectRecordComponent
 

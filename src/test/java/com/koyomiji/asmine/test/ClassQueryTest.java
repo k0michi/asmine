@@ -120,41 +120,41 @@ public class ClassQueryTest {
     Assertions.assertEquals("()V", result);
   }
 
-  @Test
-  void test_12() {
-    Object result = ClassQuery.ofNew()
-            .setNestHostClass("java/lang/Object")
-            .getNestHostClass();
-    Assertions.assertEquals("java/lang/Object", result);
-  }
-
-  @Test
-  void test_13() {
-    Object result = ClassQuery.ofNew()
-            .setNestMembers()
-            .addNestMembers("java/lang/Object")
-            .addNestMembers("java/lang/String")
-            .removeNestMembers("java/lang/String")
-            .getNestMembers();
-    Assertions.assertEquals(
-            ArrayListHelper.of("java/lang/Object"),
-            result
-    );
-  }
-
-  @Test
-  void test_14() {
-    Object result = ClassQuery.ofNew()
-            .setPermittedSubclasses()
-            .addPermittedSubclass("java/lang/Object")
-            .addPermittedSubclass("java/lang/String")
-            .removePermittedSubclass("java/lang/String")
-            .getPermittedSubclasses();
-    Assertions.assertEquals(
-            ArrayListHelper.of("java/lang/Object"),
-            result
-    );
-  }
+//  @Test
+//  void test_12() {
+//    Object result = ClassQuery.ofNew()
+//            .setNestHostClass("java/lang/Object")
+//            .getNestHostClass();
+//    Assertions.assertEquals("java/lang/Object", result);
+//  }
+//
+//  @Test
+//  void test_13() {
+//    Object result = ClassQuery.ofNew()
+//            .setNestMembers()
+//            .addNestMembers("java/lang/Object")
+//            .addNestMembers("java/lang/String")
+//            .removeNestMembers("java/lang/String")
+//            .getNestMembers();
+//    Assertions.assertEquals(
+//            ArrayListHelper.of("java/lang/Object"),
+//            result
+//    );
+//  }
+//
+//  @Test
+//  void test_14() {
+//    Object result = ClassQuery.ofNew()
+//            .setPermittedSubclasses()
+//            .addPermittedSubclass("java/lang/Object")
+//            .addPermittedSubclass("java/lang/String")
+//            .removePermittedSubclass("java/lang/String")
+//            .getPermittedSubclasses();
+//    Assertions.assertEquals(
+//            ArrayListHelper.of("java/lang/Object"),
+//            result
+//    );
+//  }
 
   @Test
   void test_15() {

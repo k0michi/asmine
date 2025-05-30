@@ -156,25 +156,25 @@ public class MethodQuery<T> extends AbstractQuery<T> {
     return this;
   }
 
-  public int getVisibleAnnotableParameterCount() {
-    return methodNode.visibleAnnotableParameterCount;
-  }
-
-  public MethodQuery<T> setVisibleAnnotableParameterCount(int count) {
-    methodNode.visibleAnnotableParameterCount = count;
-    return this;
-  }
+//  public int getVisibleAnnotableParameterCount() {
+//    return methodNode.visibleAnnotableParameterCount;
+//  }
+//
+//  public MethodQuery<T> setVisibleAnnotableParameterCount(int count) {
+//    methodNode.visibleAnnotableParameterCount = count;
+//    return this;
+//  }
 
   // TODO: Attributes
 
-  public int getInvisibleAnnotableParameterCount() {
-    return methodNode.invisibleAnnotableParameterCount;
-  }
-
-  public MethodQuery<T> setInvisibleAnnotableParameterCount(int count) {
-    methodNode.invisibleAnnotableParameterCount = count;
-    return this;
-  }
+//  public int getInvisibleAnnotableParameterCount() {
+//    return methodNode.invisibleAnnotableParameterCount;
+//  }
+//
+//  public MethodQuery<T> setInvisibleAnnotableParameterCount(int count) {
+//    methodNode.invisibleAnnotableParameterCount = count;
+//    return this;
+//  }
 
   // TODO: Attributes
 

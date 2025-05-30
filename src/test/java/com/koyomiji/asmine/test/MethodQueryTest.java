@@ -729,21 +729,21 @@ public class MethodQueryTest {
     Assertions.assertEquals(1, result);
   }
 
-  @Test
-  void test_10() {
-    Object result = MethodQuery.ofNew()
-            .setVisibleAnnotableParameterCount(1)
-            .getVisibleAnnotableParameterCount();
-    Assertions.assertEquals(1, result);
-  }
-
-  @Test
-  void test_11() {
-    Object result = MethodQuery.ofNew()
-            .setInvisibleAnnotableParameterCount(1)
-            .getInvisibleAnnotableParameterCount();
-    Assertions.assertEquals(1, result);
-  }
+//  @Test
+//  void test_10() {
+//    Object result = MethodQuery.ofNew()
+//            .setVisibleAnnotableParameterCount(1)
+//            .getVisibleAnnotableParameterCount();
+//    Assertions.assertEquals(1, result);
+//  }
+//
+//  @Test
+//  void test_11() {
+//    Object result = MethodQuery.ofNew()
+//            .setInvisibleAnnotableParameterCount(1)
+//            .getInvisibleAnnotableParameterCount();
+//    Assertions.assertEquals(1, result);
+//  }
 
   @Test
   void test_12() {
