@@ -1,6 +1,5 @@
 package com.koyomiji.asmine.sexpr;
 
-import com.koyomiji.asmine.common.ModifiedUTF8;
 import com.koyomiji.asmine.common.StringHelper;
 
 import java.util.ArrayList;
@@ -113,7 +112,7 @@ public class SExprWriter extends SExprVisitor implements IFormattable {
         }
       }
     } else {
-      appendDataString(sb, ModifiedUTF8.encode(string));
+      appendDataString(sb, StringHelper.encodeModifiedUTF8(string));
     }
   }
 

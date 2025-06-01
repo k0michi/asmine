@@ -6,9 +6,15 @@ import com.koyomiji.asmine.tuple.Pair;
 import java.util.List;
 
 public class BindBeginInsn extends AbstractRegexInsn {
+  public Object key;
+
+  public BindBeginInsn(Object key) {
+    this.key = key;
+  }
+
   @Override
   public List<RegexThread> execute(RegexProcessor processor, RegexThread thread) {
-    thread.push(processor.getStringPointer());
+    thread.beginBind(key, processor.getStringPointer());
     thread.advanceProgramCounter();
     return ArrayListHelper.of(thread);
   }

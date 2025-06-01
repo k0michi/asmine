@@ -118,7 +118,7 @@ public class SExprReader {
 
   private void readUntil(List<Byte> bytes, String regex) throws IOException {
     while (reader.peek() != -1 && !testRegex(reader.peek(), regex)) {
-      byte[] charBytes = ModifiedUTF8.encode((char) read());
+      byte[] charBytes = StringHelper.encodeModifiedUTF8((char) read());
       bytes.addAll(ArrayHelper.toList(charBytes));
     }
   }
@@ -474,7 +474,7 @@ public class SExprReader {
           readUntil(unicode, "}");
           expect('}');
           int codePoint = Integer.parseInt(unicode.toString(), 16);
-          bytes.addAll(ArrayHelper.toList(ModifiedUTF8.encode(Character.toChars(codePoint))));
+          bytes.addAll(ArrayHelper.toList(StringHelper.encodeModifiedUTF8(Character.toChars(codePoint))));
         } else {
           Optional<Byte> hexDigit = consumeHexDigit();
 
@@ -492,12 +492,12 @@ public class SExprReader {
           }
         }
       } else {
-        bytes.addAll(ArrayHelper.toList(ModifiedUTF8.encode((char) read())));
+        bytes.addAll(ArrayHelper.toList(StringHelper.encodeModifiedUTF8((char) read())));
       }
     }
 
     byte[] byteArray = ListHelper.toByteArray(bytes);
-    Optional<String> decoded = ModifiedUTF8.decode(byteArray);
+    Optional<String> decoded = StringHelper.decodeModifiedUTF8(byteArray);
 
     if (decoded.isPresent()) {
       visitor.visitString(decoded.get());

@@ -1,9 +1,6 @@
 package com.koyomiji.asmine.sexpr.reader;
 
-import com.koyomiji.asmine.common.AccessFlagTarget;
-import com.koyomiji.asmine.common.DoubleHelper;
-import com.koyomiji.asmine.common.LongHelper;
-import com.koyomiji.asmine.common.ModifiedUTF8;
+import com.koyomiji.asmine.common.*;
 import com.koyomiji.asmine.sexpr.*;
 import com.koyomiji.asmine.sexpr.map.AccessFlagMap;
 import com.koyomiji.asmine.sexpr.map.ReferenceKindMap;
@@ -104,7 +101,7 @@ public class SExprClassTraverser {
     if (isNextDataString()) {
       return ((SExprDataStringNode) nextNode()).value;
     } else if (isNextString()) {
-      return ModifiedUTF8.encode(nextString(null));
+      return StringHelper.encodeModifiedUTF8(nextString(null));
     } else if (name != null && isNextList(name)) {
       SExprClassTraverser next = nextListTraverser();
       next.skip();
@@ -120,7 +117,7 @@ public class SExprClassTraverser {
     if (isNextDataString()) {
       return ((SExprDataStringNode) nextNode()).value;
     } else if (isNextString()) {
-      return ModifiedUTF8.encode(nextString(null));
+      return StringHelper.encodeModifiedUTF8(nextString(null));
     } else if (name != null && isNextList(name)) {
       SExprClassTraverser next = nextListTraverser();
       next.skip();

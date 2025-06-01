@@ -1,21 +1,21 @@
 package com.koyomiji.asmine.stencil.insn;
 
-import com.koyomiji.asmine.stencil.AbstractParameter;
-import com.koyomiji.asmine.stencil.IParameterRegistry;
-import com.koyomiji.asmine.stencil.ResolutionExeption;
+import com.koyomiji.asmine.stencil.IStencil;
+import com.koyomiji.asmine.stencil.IStencilRegistry;
+import com.koyomiji.asmine.stencil.StencilEvaluationException;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.FrameNode;
 
 import java.util.List;
 
 public class FrameStencil extends AbstractInsnStencil {
-  public AbstractParameter<Integer> type;
-  public AbstractParameter<Integer> numLocal;
-  public AbstractParameter<List<Object>> local;
-  public AbstractParameter<Integer> numStack;
-  public AbstractParameter<List<Object>> stack;
+  public IStencil<Integer> type;
+  public IStencil<Integer> numLocal;
+  public IStencil<List<Object>> local;
+  public IStencil<Integer> numStack;
+  public IStencil<List<Object>> stack;
   
-  public FrameStencil(AbstractParameter<Integer> type, AbstractParameter<Integer> numLocal, AbstractParameter<List<Object>> local, AbstractParameter<Integer> numStack, AbstractParameter<List<Object>> stack) {
+  public FrameStencil(IStencil<Integer> type, IStencil<Integer> numLocal, IStencil<List<Object>> local, IStencil<Integer> numStack, IStencil<List<Object>> stack) {
     super(type);
     this.type = type;
     this.numLocal = numLocal;
@@ -25,7 +25,7 @@ public class FrameStencil extends AbstractInsnStencil {
   }
 
   @Override
-  public boolean match(IParameterRegistry registry, AbstractInsnNode insn) {
+  public boolean match(IStencilRegistry registry, AbstractInsnNode insn) {
     return super.match(registry, insn)
         && insn instanceof FrameNode
         && type.match(registry, ((FrameNode) insn).type)
@@ -36,13 +36,13 @@ public class FrameStencil extends AbstractInsnStencil {
   }
 
   @Override
-  public AbstractInsnNode instantiate(IParameterRegistry registry) throws ResolutionExeption {
+  public AbstractInsnNode evaluate(IStencilRegistry registry) throws StencilEvaluationException {
     return new FrameNode(
-        this.type.instantiate(registry),
-        this.numLocal.instantiate(registry),
-        this.local.instantiate(registry).toArray(),
-        this.numStack.instantiate(registry),
-        this.stack.instantiate(registry).toArray()
+        this.type.evaluate(registry),
+        this.numLocal.evaluate(registry),
+        this.local.evaluate(registry).toArray(),
+        this.numStack.evaluate(registry),
+        this.stack.evaluate(registry).toArray()
     );
   }
 
