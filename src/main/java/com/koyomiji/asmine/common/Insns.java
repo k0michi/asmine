@@ -581,11 +581,11 @@ public class Insns {
     return varInsn(Opcodes.RET, varIndex);
   }
 
-  public static TableSwitchInsnNode tableSwitch(int min, int max, LabelNode dflt, LabelNode... labels) {
+  public static TableSwitchInsnNode tableswitch(int min, int max, LabelNode dflt, LabelNode... labels) {
     return tableSwitchInsn(min, max, dflt, labels);
   }
 
-  public static LookupSwitchInsnNode lookupSwitch(LabelNode dflt, int[] keys, LabelNode[] labels) {
+  public static LookupSwitchInsnNode lookupswitch(LabelNode dflt, int[] keys, LabelNode[] labels) {
     return lookupSwitchInsn(dflt, keys, labels);
   }
 

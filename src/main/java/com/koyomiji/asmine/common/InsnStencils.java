@@ -774,19 +774,19 @@ public class InsnStencils {
     return ret(new ConstStencil<>(varIndex));
   }
 
-  public static TableSwitchInsnStencil tableSwitch(IStencil<Integer> min, IStencil<Integer> max, IStencil<LabelNode> dflt, IStencil<List<LabelNode>> labels) {
+  public static TableSwitchInsnStencil tableswitch(IStencil<Integer> min, IStencil<Integer> max, IStencil<LabelNode> dflt, IStencil<List<LabelNode>> labels) {
     return tableSwitchInsn(min, max, dflt, labels);
   }
 
-  public static TableSwitchInsnStencil tableSwitch(int min, int max, LabelNode dflt, List<LabelNode> labels) {
+  public static TableSwitchInsnStencil tableswitch(int min, int max, LabelNode dflt, List<LabelNode> labels) {
     return tableSwitchInsn(new ConstStencil<>(min), new ConstStencil<>(max), new ConstStencil<>(dflt), new ConstStencil<>(labels));
   }
 
-  public static LookupSwitchInsnStencil lookupSwitch(IStencil<LabelNode> dflt, IStencil<List<Integer>> keys, IStencil<List<LabelNode>> labels) {
+  public static LookupSwitchInsnStencil lookupswitch(IStencil<LabelNode> dflt, IStencil<List<Integer>> keys, IStencil<List<LabelNode>> labels) {
     return lookupSwitchInsn(dflt, keys, labels);
   }
 
-  public static LookupSwitchInsnStencil lookupSwitch(LabelNode dflt, List<Integer> keys, List<LabelNode> labels) {
+  public static LookupSwitchInsnStencil lookupswitch(LabelNode dflt, List<Integer> keys, List<LabelNode> labels) {
     return lookupSwitchInsn(new ConstStencil<>(dflt), new ConstStencil<>(keys), new ConstStencil<>(labels));
   }
 
