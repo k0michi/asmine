@@ -4,17 +4,12 @@ import com.koyomiji.asmine.common.ArrayListHelper;
 import com.koyomiji.asmine.common.InsnStencils;
 import com.koyomiji.asmine.stencil.IStencilRegistry;
 import com.koyomiji.asmine.stencil.StencilEvaluationException;
-import com.koyomiji.asmine.stencil.insn.AbstractInsnStencil;
-import com.koyomiji.asmine.stencil.insn.InsnStencil;
-import com.koyomiji.asmine.stencil.insn.IntInsnStencil;
-import com.koyomiji.asmine.stencil.insn.VarInsnStencil;
+import com.koyomiji.asmine.stencil.insn.*;
 import com.koyomiji.asmine.tuple.Pair;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.tree.InsnNode;
-import org.objectweb.asm.tree.IntInsnNode;
-import org.objectweb.asm.tree.VarInsnNode;
+import org.objectweb.asm.tree.*;
 
 import java.util.List;
 import java.util.Objects;
@@ -211,6 +206,71 @@ public class InsnStencilTest {
       VarInsnNode insnNode = (VarInsnNode) stencil.evaluate(new TestStencilRegistry());
       Assertions.assertEquals(opcode.intValue(), insnNode.getOpcode());
       Assertions.assertEquals(1, insnNode.var);
+    }
+  }
+
+  // TypeInsnStencil
+  @Test
+  void test_3() throws StencilEvaluationException {
+    List<Pair<TypeInsnStencil, Integer>> stencils = ArrayListHelper.of(
+            Pair.of(InsnStencils.new_("A"), Opcodes.NEW),
+            Pair.of(InsnStencils.anewarray("A"), Opcodes.ANEWARRAY),
+            Pair.of(InsnStencils.checkcast("A"), Opcodes.CHECKCAST),
+            Pair.of(InsnStencils.instanceof_("A"), Opcodes.INSTANCEOF)
+
+    );
+
+    for (Pair<TypeInsnStencil, Integer> pair : stencils) {
+      TypeInsnStencil stencil = pair.first;
+      Integer opcode = pair.second;
+      Assertions.assertInstanceOf(TypeInsnNode.class, stencil.evaluate(new TestStencilRegistry()));
+      TypeInsnNode insnNode = (TypeInsnNode) stencil.evaluate(new TestStencilRegistry());
+      Assertions.assertEquals(opcode.intValue(), insnNode.getOpcode());
+      Assertions.assertEquals("A", insnNode.desc);
+    }
+  }
+
+  // FieldInsnStencil
+  @Test
+  void test_4() throws StencilEvaluationException {
+    List<Pair<FieldInsnStencil, Integer>> stencils = ArrayListHelper.of(
+            Pair.of(InsnStencils.getfield("A", "B", "C"), Opcodes.GETFIELD),
+            Pair.of(InsnStencils.putfield("A", "B", "C"), Opcodes.PUTFIELD),
+            Pair.of(InsnStencils.getstatic("A", "B", "C"), Opcodes.GETSTATIC),
+            Pair.of(InsnStencils.putstatic("A", "B", "C"), Opcodes.PUTSTATIC)
+    );
+
+    for (Pair<FieldInsnStencil, Integer> pair : stencils) {
+      FieldInsnStencil stencil = pair.first;
+      Integer opcode = pair.second;
+      Assertions.assertInstanceOf(FieldInsnNode.class, stencil.evaluate(new TestStencilRegistry()));
+      FieldInsnNode insnNode = (FieldInsnNode) stencil.evaluate(new TestStencilRegistry());
+      Assertions.assertEquals(opcode.intValue(), insnNode.getOpcode());
+      Assertions.assertEquals("A", insnNode.owner);
+      Assertions.assertEquals("B", insnNode.name);
+      Assertions.assertEquals("C", insnNode.desc);
+    }
+  }
+
+  // MethodInsnStencil
+  @Test
+  void test_5() throws StencilEvaluationException {
+    List<Pair<MethodInsnStencil, Integer>> stencils = ArrayListHelper.of(
+            Pair.of(InsnStencils.invokestatic("A", "B", "C", false), Opcodes.INVOKESTATIC),
+            Pair.of(InsnStencils.invokevirtual("A", "B", "C", false), Opcodes.INVOKEVIRTUAL),
+            Pair.of(InsnStencils.invokespecial("A", "B", "C", false), Opcodes.INVOKESPECIAL),
+            Pair.of(InsnStencils.invokeinterface("A", "B", "C", false), Opcodes.INVOKEINTERFACE)
+    );
+
+    for (Pair<MethodInsnStencil, Integer> pair : stencils) {
+      MethodInsnStencil stencil = pair.first;
+      Integer opcode = pair.second;
+      Assertions.assertInstanceOf(MethodInsnNode.class, stencil.evaluate(new TestStencilRegistry()));
+      MethodInsnNode insnNode = (MethodInsnNode) stencil.evaluate(new TestStencilRegistry());
+      Assertions.assertEquals(opcode.intValue(), insnNode.getOpcode());
+      Assertions.assertEquals("A", insnNode.owner);
+      Assertions.assertEquals("B", insnNode.name);
+      Assertions.assertEquals("C", insnNode.desc);
     }
   }
 }

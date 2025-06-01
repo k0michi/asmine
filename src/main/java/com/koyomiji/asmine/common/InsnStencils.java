@@ -7,6 +7,7 @@ import org.objectweb.asm.Handle;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.*;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class InsnStencils {
@@ -62,8 +63,8 @@ public class InsnStencils {
     return new InvokeDynamicInsnStencil(name, desc, bsm, bsmArgs);
   }
 
-  public static InvokeDynamicInsnStencil invokeDynamicInsn(String name, String desc, Handle bsm, List<Object> bsmArgs) {
-    return invokeDynamicInsn(new ConstStencil<>(name), new ConstStencil<>(desc), new ConstStencil<>(bsm), new ConstStencil<>(bsmArgs));
+  public static InvokeDynamicInsnStencil invokeDynamicInsn(String name, String desc, Handle bsm, Object... bsmArgs) {
+    return invokeDynamicInsn(new ConstStencil<>(name), new ConstStencil<>(desc), new ConstStencil<>(bsm), new ConstStencil<>(Arrays.asList(bsmArgs)));
   }
 
   public static JumpInsnStencil jumpInsn(IStencil<Integer> opcode, IStencil<LabelNode> label) {
@@ -102,16 +103,16 @@ public class InsnStencils {
     return new TableSwitchInsnStencil(min, max, dflt, labels);
   }
 
-  public static TableSwitchInsnStencil tableSwitchInsn(int min, int max, LabelNode dflt, List<LabelNode> labels) {
-    return tableSwitchInsn(new ConstStencil<>(min), new ConstStencil<>(max), new ConstStencil<>(dflt), new ConstStencil<>(labels));
+  public static TableSwitchInsnStencil tableSwitchInsn(int min, int max, LabelNode dflt, LabelNode... labels) {
+    return tableSwitchInsn(new ConstStencil<>(min), new ConstStencil<>(max), new ConstStencil<>(dflt), new ConstStencil<>(ArrayHelper.toList(labels)));
   }
 
   public static LookupSwitchInsnStencil lookupSwitchInsn(IStencil<LabelNode> dflt, IStencil<List<Integer>> keys, IStencil<List<LabelNode>> labels) {
     return new LookupSwitchInsnStencil(dflt, keys, labels);
   }
 
-  public static LookupSwitchInsnStencil lookupSwitchInsn(LabelNode dflt, List<Integer> keys, List<LabelNode> labels) {
-    return lookupSwitchInsn(new ConstStencil<>(dflt), new ConstStencil<>(keys), new ConstStencil<>(labels));
+  public static LookupSwitchInsnStencil lookupSwitchInsn(LabelNode dflt, int[] keys, LabelNode[] labels) {
+    return lookupSwitchInsn(new ConstStencil<>(dflt), new ConstStencil<>(ArrayHelper.toList(keys)), new ConstStencil<>(ArrayHelper.toList(labels)));
   }
 
   public static MultiANewArrayInsnStencil multiANewArrayInsn(IStencil<String> desc, IStencil<Integer> dims) {
@@ -126,8 +127,8 @@ public class InsnStencils {
     return new FrameStencil(type, numLocal, local, numStack, stack);
   }
 
-  public static FrameStencil frame(int type, int numLocal, List<Object> local, int numStack, List<Object> stack) {
-    return frame(new ConstStencil<>(type), new ConstStencil<>(numLocal), new ConstStencil<>(local), new ConstStencil<>(numStack), new ConstStencil<>(stack));
+  public static FrameStencil frame(int type, int numLocal, Object[] local, int numStack, Object[] stack) {
+    return frame(new ConstStencil<>(type), new ConstStencil<>(numLocal), new ConstStencil<>(ArrayHelper.toList(local)), new ConstStencil<>(numStack), new ConstStencil<>(ArrayHelper.toList(stack)));
   }
 
   public static LineNumberStencil lineNumber(IStencil<Integer> line, IStencil<LabelNode> start) {
@@ -778,16 +779,16 @@ public class InsnStencils {
     return tableSwitchInsn(min, max, dflt, labels);
   }
 
-  public static TableSwitchInsnStencil tableswitch(int min, int max, LabelNode dflt, List<LabelNode> labels) {
-    return tableSwitchInsn(new ConstStencil<>(min), new ConstStencil<>(max), new ConstStencil<>(dflt), new ConstStencil<>(labels));
+  public static TableSwitchInsnStencil tableswitch(int min, int max, LabelNode dflt, LabelNode... labels) {
+    return tableSwitchInsn(new ConstStencil<>(min), new ConstStencil<>(max), new ConstStencil<>(dflt), new ConstStencil<>(ArrayHelper.toList(labels)));
   }
 
   public static LookupSwitchInsnStencil lookupswitch(IStencil<LabelNode> dflt, IStencil<List<Integer>> keys, IStencil<List<LabelNode>> labels) {
     return lookupSwitchInsn(dflt, keys, labels);
   }
 
-  public static LookupSwitchInsnStencil lookupswitch(LabelNode dflt, List<Integer> keys, List<LabelNode> labels) {
-    return lookupSwitchInsn(new ConstStencil<>(dflt), new ConstStencil<>(keys), new ConstStencil<>(labels));
+  public static LookupSwitchInsnStencil lookupswitch(LabelNode dflt, int[] keys, LabelNode[] labels) {
+    return lookupSwitchInsn(new ConstStencil<>(dflt), new ConstStencil<>(ArrayHelper.toList(keys)), new ConstStencil<>(ArrayHelper.toList(labels)));
   }
 
   public static InsnStencil ireturn() {
@@ -882,8 +883,8 @@ public class InsnStencils {
     return invokeDynamicInsn(name, desc, bsm, bsmArgs);
   }
 
-  public static InvokeDynamicInsnStencil invokedynamic(String name, String desc, Handle bsm, List<Object> bsmArgs) {
-    return invokeDynamicInsn(new ConstStencil<>(name), new ConstStencil<>(desc), new ConstStencil<>(bsm), new ConstStencil<>(bsmArgs));
+  public static InvokeDynamicInsnStencil invokedynamic(String name, String desc, Handle bsm, Object... bsmArgs) {
+    return invokeDynamicInsn(new ConstStencil<>(name), new ConstStencil<>(desc), new ConstStencil<>(bsm), new ConstStencil<>(Arrays.asList(bsmArgs)));
   }
 
   public static TypeInsnStencil new_(IStencil<String> type) {
