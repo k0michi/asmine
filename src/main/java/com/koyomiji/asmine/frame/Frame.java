@@ -11,6 +11,7 @@ import java.util.*;
 
 public class Frame implements Cloneable {
   public static final Object UNKNOWN = new Object();
+  public static final Object AUTO = new Object();
 
   private ArrayList<Object> locals = new ArrayList<>();
   private LinkedList<Object> stack = new LinkedList<>();
@@ -18,9 +19,14 @@ public class Frame implements Cloneable {
   public Frame() {
   }
 
+  public Frame(Object[] locals, Object[] stack) {
+    this.stack.addAll(Arrays.asList(stack));
+    this.locals.addAll(Arrays.asList(locals));
+  }
+
   public Frame(String className, MethodNode methodNode) {
     if ((methodNode.access & Opcodes.ACC_STATIC) == 0) {
-      if (methodNode.name.equals("<init>")) {
+      if (Objects.equals(methodNode.name, "<init>")) {
         locals.add(Opcodes.UNINITIALIZED_THIS);
       } else {
         locals.add(className);
@@ -28,6 +34,24 @@ public class Frame implements Cloneable {
     }
 
     addArgumentLocals(methodNode.desc);
+  }
+
+  public Frame(FrameNode frameNode) {
+    for (Object local : frameNode.local) {
+      locals.add(local);
+
+      if (getSize(local) == 2) {
+        locals.add(Opcodes.TOP);
+      }
+    }
+
+    for (Object stackItem : frameNode.stack) {
+      stack.add(stackItem);
+
+      if (getSize(stackItem) == 2) {
+        stack.add(Opcodes.TOP);
+      }
+    }
   }
 
   public List<Object> getLocals() {
@@ -45,6 +69,10 @@ public class Frame implements Cloneable {
     }
 
     return results;
+  }
+
+  public List<Object> getLocalsRaw() {
+    return locals;
   }
 
   public int getLocalsSize() {
@@ -66,6 +94,10 @@ public class Frame implements Cloneable {
     }
 
     return results;
+  }
+
+  public List<Object> getStackRaw() {
+    return stack;
   }
 
   public int getStackSize() {
@@ -107,6 +139,12 @@ public class Frame implements Cloneable {
     }
   }
 
+  private void allocateStack(int index) {
+    while (index >= stack.size()) {
+      stack.add(Opcodes.TOP);
+    }
+  }
+
   private void shrinkLocals() {
     while (locals.size() >= 1 && ListHelper.at(locals, -1) == Opcodes.TOP &&
             (locals.size() == 1 || (locals.size() >= 2 && getSize(ListHelper.at(locals, -2)) == 1))) {
@@ -133,6 +171,11 @@ public class Frame implements Cloneable {
     locals.set(index + 1, Opcodes.TOP);
     modifyPreIndex(index - 1);
     shrinkLocals();
+  }
+
+  public void setStack(int index, Object value) {
+    allocateStack(index);
+    stack.set(index, value);
   }
 
   public void addArgumentLocals(String methodDescriptor) {
@@ -174,8 +217,12 @@ public class Frame implements Cloneable {
     }
   }
 
-  public void setStackTop(Object verificationType) {
-    stack.set(stack.size() - 1, verificationType);
+  public void setStackTops(List<Object> verificationTypes) {
+    int begin = stack.size() - verificationTypes.size();
+
+    for (int i = 0; i < verificationTypes.size(); i++) {
+      stack.set(begin + i, verificationTypes.get(i));
+    }
   }
 
   private List<Object> getVerificationTypesForType(Type type) {
@@ -210,7 +257,7 @@ public class Frame implements Cloneable {
       throw new IllegalStateException("Stack is empty");
     }
 
-    return stack.pop();
+    return stack.removeLast();
   }
 
   public void popDescriptor(String descriptor) {
@@ -236,8 +283,8 @@ public class Frame implements Cloneable {
       throw new IllegalStateException("Stack does not have enough elements to pop two");
     }
 
-    Object value2 = stack.pop();
-    Object value1 = stack.pop();
+    Object value2 = stack.removeLast();
+    Object value1 = stack.removeLast();
     return Arrays.asList(value1, value2);
   }
 
@@ -348,8 +395,8 @@ public class Frame implements Cloneable {
       }
       case Opcodes.LSTORE:
       case Opcodes.DSTORE: {
-        Object value = pop2();
-        setLocal2(((VarInsnNode) insn).var, value);
+        List<Object> value = pop2();
+        setLocal2(((VarInsnNode) insn).var, value.get(0));
         break;
       }
       case Opcodes.IASTORE:
@@ -654,7 +701,7 @@ public class Frame implements Cloneable {
       // Both are class types, but we don't know the common type
       return UNKNOWN;
     } else {
-      return UNKNOWN;
+      return Opcodes.TOP;
     }
   }
 
@@ -680,20 +727,60 @@ public class Frame implements Cloneable {
       Object type2 = i < other.stack.size() ? other.stack.get(i) : Opcodes.TOP;
       this.stack.set(i, getCommonType(type1, type2));
     }
+
+    shrinkLocals();
   }
 
-  public void replaceUnknowns(FrameNode other) {
-    for (int i = 0; i < Math.min(locals.size(), other.local.size()); i++) {
-      if (locals.get(i) == UNKNOWN) {
-        locals.set(i, other.local.get(i));
+  // Returns this - other
+  public FrameNode compareWith(Frame other) {
+    List<Object> locals = new ArrayList<>();
+    List<Object> stack = new ArrayList<>();
+
+    for (int i = 0; i < Math.max(this.locals.size(), other.locals.size()); i++) {
+      Object type1 = i < this.locals.size() ? this.locals.get(i) : Opcodes.TOP;
+      Object type2 = i < other.locals.size() ? other.locals.get(i) : Opcodes.TOP;
+
+      if (!Objects.equals(type1, type2)) {
+        locals.add(type1);
+      } else {
+        locals.add(AUTO);
       }
     }
 
-    for (int i = 0; i < Math.min(stack.size(), other.stack.size()); i++) {
-      if (stack.get(i) == UNKNOWN) {
+    for(int i = 0; i < Math.max(this.stack.size(), other.stack.size()); i++) {
+      Object type1 = i < this.stack.size() ? this.stack.get(i) : Opcodes.TOP;
+      Object type2 = i < other.stack.size() ? other.stack.get(i) : Opcodes.TOP;
+
+      if (!Objects.equals(type1, type2)) {
+        stack.add(type1);
+      } else {
+        stack.add(AUTO);
+      }
+    }
+
+    return new FrameNode(
+        Opcodes.F_NEW,
+        locals.size(),
+        locals.toArray(new Object[0]),
+        stack.size(),
+        stack.toArray(new Object[0])
+    );
+  }
+
+  public void overwriteWith(Frame other) {
+    for (int i = 0; i < Math.min(locals.size(), other.locals.size());) {
+      if (locals.get(i) == Opcodes.TOP) {
+        locals.set(i, other.locals.get(i));
+      }
+    }
+
+    for (int i = 0; i < Math.min(stack.size(), other.stack.size());) {
+      if (stack.get(i) == Opcodes.TOP) {
         stack.set(i, other.stack.get(i));
       }
     }
+
+    shrinkLocals();
   }
 
   @Override

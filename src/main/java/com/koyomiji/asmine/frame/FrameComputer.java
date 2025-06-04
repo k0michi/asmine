@@ -1,6 +1,7 @@
 package com.koyomiji.asmine.frame;
 
 import com.koyomiji.asmine.tree.AbstractInsnNodeHelper;
+import com.koyomiji.asmine.tuple.Pair;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.*;
 
@@ -11,6 +12,7 @@ public class FrameComputer {
   private MethodNode methodNode;
   private Map<LabelNode, Integer> labelIndices = new HashMap<>();
   private Map<AbstractInsnNode, Set<AbstractInsnNode>> predecessors = new HashMap<>();
+  private Map<AbstractInsnNode, Set<String>> predecessorExceptions = new HashMap<>();
   private AbstractInsnNode firstInsn;
 
   public FrameComputer(String className, MethodNode methodNode) {
@@ -81,13 +83,19 @@ public class FrameComputer {
       results.add(skipPseudo(switchInsn.dflt));
     }
 
+    return results;
+  }
+
+  private List<Pair<AbstractInsnNode, String>> getExceptionSuccessors(AbstractInsnNode insn) {
+    List<Pair<AbstractInsnNode, String>> results = new ArrayList<>();
+
     for (TryCatchBlockNode tryCatch : methodNode.tryCatchBlocks) {
       int beginIndex = labelIndices.get(tryCatch.start);
       int endIndex = labelIndices.get(tryCatch.end);
       int insnIndex = methodNode.instructions.indexOf(insn);
 
       if (insnIndex >= beginIndex && insnIndex < endIndex) {
-        results.add(skipPseudo(tryCatch.handler));
+        results.add(Pair.of(skipPseudo(tryCatch.handler), tryCatch.type));
       }
     }
 
@@ -131,8 +139,6 @@ public class FrameComputer {
         newFrame = getInitialFrame();
       }
 
-      // FIXME: Exception stack
-
       for (AbstractInsnNode pred : predecessors.getOrDefault(insn, new HashSet<>())) {
         Frame predFrame = frames.get(pred).clone();
         predFrame.execute(labelNode, pred);
@@ -144,14 +150,18 @@ public class FrameComputer {
         }
       }
 
-      if (existingFrameNode != null) {
-        newFrame.replaceUnknowns(existingFrameNode);
+      for (String e : predecessorExceptions.getOrDefault(insn, new HashSet<>())) {
+        Frame frame = new Frame(new Object[]{e}, new Object[0]);
+
+        if (newFrame == null) {
+          newFrame = frame.clone();
+        } else {
+          newFrame.mergeWith(frame);
+        }
       }
 
-      for (AbstractInsnNode manip : manips) {
-        if (manip instanceof FrameManipInsnNode) {
-          ((FrameManipInsnNode) manip).apply(newFrame);
-        }
+      if (existingFrameNode != null) {
+        newFrame.overwriteWith(new Frame(existingFrameNode));
       }
 
       if (!Objects.equals(newFrame, frames.get(insn))) {
@@ -160,10 +170,18 @@ public class FrameComputer {
         for (AbstractInsnNode successor : successors) {
           predecessors.putIfAbsent(successor, new HashSet<>());
           predecessors.get(successor).add(insn);
+          stack.push(successor);
+        }
+
+        List<Pair<AbstractInsnNode, String>> exceptionSuccessors = getExceptionSuccessors(insn);
+
+        for (Pair<AbstractInsnNode, String> exceptionSuccessor : exceptionSuccessors) {
+          predecessorExceptions.putIfAbsent(exceptionSuccessor.first, new HashSet<>());
+          predecessorExceptions.get(exceptionSuccessor.first).add(exceptionSuccessor.second);
+          stack.push(exceptionSuccessor.first);
         }
 
         frames.put(insn, newFrame);
-        stack.addAll(successors);
       }
     }
 
