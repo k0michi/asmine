@@ -3,6 +3,7 @@ package com.koyomiji.asmine.query;
 import com.koyomiji.asmine.common.ListHelper;
 import com.koyomiji.asmine.common.PrinterHelper;
 import com.koyomiji.asmine.tree.ExternalizedMethodNode;
+import com.koyomiji.asmine.tree.NormalizedMethodNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.FieldNode;
 import org.objectweb.asm.tree.MethodNode;
@@ -28,16 +29,17 @@ public class ClassQuery extends AbstractQuery<ClassNode> {
     return classNode;
   }
 
-  private ExternalizedMethodNode externalizeMethod(MethodNode methodNode) {
-    ExternalizedMethodNode externalizedMethodNode = new ExternalizedMethodNode(
+  private NormalizedMethodNode externalizeMethod(MethodNode methodNode) {
+    NormalizedMethodNode normalized = new NormalizedMethodNode(
+            classNode.name,
             methodNode.access,
             methodNode.name,
             methodNode.desc,
             methodNode.signature,
             methodNode.exceptions != null ? methodNode.exceptions.toArray(new String[0]) : null
     );
-    methodNode.accept(externalizedMethodNode);
-    return externalizedMethodNode;
+    methodNode.accept(normalized);
+    return normalized;
   }
 
   private ExternalizedMethodNode getMethodNode(int index) {
