@@ -88,6 +88,7 @@ public class NormalizedInsnList extends InsnList {
             }
           }
 
+          inferred.compactLocals(Opcodes.TOP);
           intFrames.put(frameNode, inferred.toFrameNode());
         }
 
@@ -104,7 +105,7 @@ public class NormalizedInsnList extends InsnList {
         }
 
         for (Pair<AbstractInsnNode, String> suc : analyzer.getExceptionSuccessors(insn)) {
-          Frame exceptionFrame = new Frame(new Object[]{suc.second}, new Object[0]);
+          Frame exceptionFrame = new Frame(new Object[0], new Object[]{suc.second});
           stack.push(Triplet.of(suc.first, labelNode, exceptionFrame));
         }
       }

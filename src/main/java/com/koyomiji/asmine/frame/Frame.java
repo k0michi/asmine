@@ -145,8 +145,8 @@ public class Frame implements Cloneable {
     }
   }
 
-  private void shrinkLocals() {
-    while (locals.size() >= 1 && ListHelper.at(locals, -1) == Opcodes.TOP &&
+  public void compactLocals(Object defaultValue) {
+    while (locals.size() >= 1 && ListHelper.at(locals, -1) == defaultValue &&
             (locals.size() == 1 || (locals.size() >= 2 && getSize(ListHelper.at(locals, -2)) == 1))) {
       locals.remove(locals.size() - 1);
     }
@@ -162,7 +162,7 @@ public class Frame implements Cloneable {
     allocateLocals(index);
     locals.set(index, value);
     modifyPreIndex(index - 1);
-    shrinkLocals();
+//    shrinkLocals();
   }
 
   public void setLocal2(int index, Object value) {
@@ -170,7 +170,7 @@ public class Frame implements Cloneable {
     locals.set(index, value);
     locals.set(index + 1, Opcodes.TOP);
     modifyPreIndex(index - 1);
-    shrinkLocals();
+//    shrinkLocals();
   }
 
   public void setStack(int index, Object value) {
@@ -194,7 +194,7 @@ public class Frame implements Cloneable {
       modifyPreIndex(firstIndex - 1);
     }
 
-    shrinkLocals();
+//    shrinkLocals();
   }
 
   public void push(Object value) {
@@ -727,8 +727,6 @@ public class Frame implements Cloneable {
       Object type2 = i < other.stack.size() ? other.stack.get(i) : Opcodes.TOP;
       this.stack.set(i, getCommonType(type1, type2));
     }
-
-    shrinkLocals();
   }
 
   // Returns this - other
@@ -779,8 +777,6 @@ public class Frame implements Cloneable {
         stack.set(i, other.stack.get(i));
       }
     }
-
-    shrinkLocals();
   }
 
   @Override

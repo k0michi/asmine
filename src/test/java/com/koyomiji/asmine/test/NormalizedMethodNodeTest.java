@@ -9,6 +9,7 @@ import org.objectweb.asm.Label;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.FrameNode;
 import org.objectweb.asm.tree.MethodNode;
+import org.objectweb.asm.tree.TryCatchBlockNode;
 
 public class NormalizedMethodNodeTest {
   @Test
@@ -24,6 +25,8 @@ public class NormalizedMethodNodeTest {
 
   Label l0 = new Label();
   Label l1 = new Label();
+  Label l2 = new Label();
+  Label l3 = new Label();
 
   @Test
   void test_1() {
@@ -245,5 +248,73 @@ public class NormalizedMethodNodeTest {
     nMethodNode.accept(methodNode);
     Assertions.assertEquals(ArrayListHelper.of(), ((FrameNode)methodNode.instructions.get(12)).local);
     Assertions.assertEquals(ArrayListHelper.of("A"), ((FrameNode)methodNode.instructions.get(12)).stack);
+  }
+
+  // TableSwitch
+  @Test
+  void test_roundtrip_7() {
+    NormalizedMethodNode nMethodNode = new NormalizedMethodNode("Test", Opcodes.ACC_STATIC, "test", "()V", null, null);
+    nMethodNode.visitInsn(Opcodes.ICONST_0);
+    nMethodNode.visitTableSwitchInsn(0, 1, l0, l0, l1);
+    nMethodNode.visitFieldInsn(Opcodes.GETSTATIC, "X", "Y", "LA;");
+    nMethodNode.visitJumpInsn(Opcodes.GOTO, l1);
+    nMethodNode.visitLabel(l0);
+    nMethodNode.visitFrame(Opcodes.F_NEW, 0, new Object[]{}, 0, new Object[]{});
+    nMethodNode.visitFieldInsn(Opcodes.GETSTATIC, "X", "Y", "LA;");
+    nMethodNode.visitLabel(l1);
+    nMethodNode.visitFrame(Opcodes.F_NEW, 0, new Object[]{}, 1, new Object[]{"A"});
+    nMethodNode.visitInsn(Opcodes.POP);
+    nMethodNode.visitInsn(Opcodes.RETURN);
+    nMethodNode.visitMaxs(1, 0);
+    nMethodNode.visitEnd();
+    MethodNode methodNode = new MethodNode(Opcodes.ACC_STATIC, "test", "()V", null, null);
+    nMethodNode.accept(methodNode);
+    Assertions.assertEquals(ArrayListHelper.of(), ((FrameNode)methodNode.instructions.get(12)).local);
+    Assertions.assertEquals(ArrayListHelper.of("A"), ((FrameNode)methodNode.instructions.get(12)).stack);
+  }
+
+  // LookupSwitch
+  @Test
+  void test_roundtrip_8() {
+    NormalizedMethodNode nMethodNode = new NormalizedMethodNode("Test", Opcodes.ACC_STATIC, "test", "()V", null, null);
+    nMethodNode.visitInsn(Opcodes.ICONST_0);
+    nMethodNode.visitLookupSwitchInsn(l0, new int[]{0, 1}, new Label[]{l0, l1});
+    nMethodNode.visitFieldInsn(Opcodes.GETSTATIC, "X", "Y", "LA;");
+    nMethodNode.visitJumpInsn(Opcodes.GOTO, l1);
+    nMethodNode.visitLabel(l0);
+    nMethodNode.visitFrame(Opcodes.F_NEW, 0, new Object[]{}, 0, new Object[]{});
+    nMethodNode.visitFieldInsn(Opcodes.GETSTATIC, "X", "Y", "LA;");
+    nMethodNode.visitLabel(l1);
+    nMethodNode.visitFrame(Opcodes.F_NEW, 0, new Object[]{}, 1, new Object[]{"A"});
+    nMethodNode.visitInsn(Opcodes.POP);
+    nMethodNode.visitInsn(Opcodes.RETURN);
+    nMethodNode.visitMaxs(1, 0);
+    nMethodNode.visitEnd();
+    MethodNode methodNode = new MethodNode(Opcodes.ACC_STATIC, "test", "()V", null, null);
+    nMethodNode.accept(methodNode);
+    Assertions.assertEquals(ArrayListHelper.of(), ((FrameNode)methodNode.instructions.get(12)).local);
+    Assertions.assertEquals(ArrayListHelper.of("A"), ((FrameNode)methodNode.instructions.get(12)).stack);
+  }
+
+  @Test
+  void test_roundtrip_9() {
+    NormalizedMethodNode nMethodNode = new NormalizedMethodNode("Test", Opcodes.ACC_STATIC, "test", "()V", null, null);
+    nMethodNode.visitLabel(l0);
+    nMethodNode.visitInsn(Opcodes.NOP);
+    nMethodNode.visitLabel(l1);
+    nMethodNode.visitJumpInsn(Opcodes.GOTO, l3);
+    nMethodNode.visitLabel(l2);
+    nMethodNode.visitFrame(Opcodes.F_NEW, 0, new Object[]{}, 1, new Object[]{"A"});
+    nMethodNode.visitInsn(Opcodes.POP);
+    nMethodNode.visitLabel(l3);
+    nMethodNode.visitFrame(Opcodes.F_NEW, 0, new Object[]{}, 0, new Object[]{});
+    nMethodNode.visitInsn(Opcodes.RETURN);
+    nMethodNode.visitTryCatchBlock(l0,l1,l2,"A");
+    nMethodNode.visitMaxs(1, 0);
+    nMethodNode.visitEnd();
+    MethodNode methodNode = new MethodNode(Opcodes.ACC_STATIC, "test", "()V", null, null);
+    nMethodNode.accept(methodNode);
+    Assertions.assertEquals(ArrayListHelper.of(), ((FrameNode)methodNode.instructions.get(5)).local);
+    Assertions.assertEquals(ArrayListHelper.of("A"), ((FrameNode)methodNode.instructions.get(5)).stack);
   }
 }

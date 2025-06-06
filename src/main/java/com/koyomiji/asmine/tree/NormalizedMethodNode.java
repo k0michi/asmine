@@ -246,8 +246,7 @@ public class NormalizedMethodNode extends MethodNode {
             Object actualLocal = i < actualFrame.getLocalsRaw().size() ? actualFrame.getLocalsRaw().get(i) : Opcodes.TOP;
 
             if (!Objects.equals(actualLocal, inferredLocal)) {
-              // FIXME
-              diffFrame.getLocalsRaw().set(i, actualLocal);
+              diffFrame.setLocal(i, actualLocal);
             }
           }
 
@@ -267,7 +266,7 @@ public class NormalizedMethodNode extends MethodNode {
         }
 
         for (Pair<AbstractInsnNode, String> suc : analyzer.getExceptionSuccessors(insn)) {
-          Frame exceptionFrame = new Frame(new Object[]{suc.second}, new Object[0]);
+          Frame exceptionFrame = new Frame(new Object[0], new Object[]{suc.second});
           stack.push(Triplet.of(suc.first, labelNode, exceptionFrame));
         }
       }
