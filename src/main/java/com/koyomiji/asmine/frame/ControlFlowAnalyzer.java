@@ -1,5 +1,6 @@
 package com.koyomiji.asmine.frame;
 
+import com.koyomiji.asmine.tree.AbstractInsnNodeHelper;
 import com.koyomiji.asmine.tuple.Pair;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.*;
@@ -16,23 +17,10 @@ public class ControlFlowAnalyzer {
     this.methodNode = methodNode;
   }
 
-  private boolean isUnconditionalJump(AbstractInsnNode insn) {
-    return insn.getOpcode() == Opcodes.ARETURN ||
-            insn.getOpcode() == Opcodes.ATHROW ||
-            insn.getOpcode() == Opcodes.DRETURN ||
-            insn.getOpcode() == Opcodes.FRETURN ||
-            insn.getOpcode() == Opcodes.GOTO ||
-            insn.getOpcode() == Opcodes.IRETURN ||
-            insn.getOpcode() == Opcodes.LOOKUPSWITCH ||
-            insn.getOpcode() == Opcodes.LRETURN ||
-            insn.getOpcode() == Opcodes.RETURN ||
-            insn.getOpcode() == Opcodes.TABLESWITCH;
-  }
-
   public List<AbstractInsnNode> getSuccessors(AbstractInsnNode insn) {
     List<AbstractInsnNode> results = new ArrayList<>();
 
-    if (!isUnconditionalJump(insn)) {
+    if (!AbstractInsnNodeHelper.isUnconditionalJump(insn)) {
       results.add(insn.getNext());
     }
 
