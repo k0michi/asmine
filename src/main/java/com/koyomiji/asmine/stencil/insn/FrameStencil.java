@@ -16,7 +16,7 @@ public class FrameStencil extends AbstractInsnStencil {
   public IStencil<List<Object>> stack;
   
   public FrameStencil(IStencil<Integer> type, IStencil<Integer> numLocal, IStencil<List<Object>> local, IStencil<Integer> numStack, IStencil<List<Object>> stack) {
-    super(type);
+    super(new ConstStencil<>(-1));
     this.type = type;
     this.numLocal = numLocal;
     this.local = local;
