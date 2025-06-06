@@ -1,5 +1,6 @@
 package com.koyomiji.asmine.frame;
 
+import com.koyomiji.asmine.common.FrameHelper;
 import com.koyomiji.asmine.common.ListHelper;
 import org.objectweb.asm.ConstantDynamic;
 import org.objectweb.asm.Handle;
@@ -40,7 +41,7 @@ public class Frame implements Cloneable {
     for (Object local : frameNode.local) {
       locals.add(local);
 
-      if (getSize(local) == 2) {
+      if (FrameHelper.getSize(local) == 2) {
         locals.add(Opcodes.TOP);
       }
     }
@@ -48,7 +49,7 @@ public class Frame implements Cloneable {
     for (Object stackItem : frameNode.stack) {
       stack.add(stackItem);
 
-      if (getSize(stackItem) == 2) {
+      if (FrameHelper.getSize(stackItem) == 2) {
         stack.add(Opcodes.TOP);
       }
     }
@@ -65,7 +66,7 @@ public class Frame implements Cloneable {
       }
 
       results.add(local);
-      i += getSize(local);
+      i += FrameHelper.getSize(local);
     }
 
     return results;
@@ -90,7 +91,7 @@ public class Frame implements Cloneable {
       }
 
       results.add(stackItem);
-      i += getSize(stackItem);
+      i += FrameHelper.getSize(stackItem);
     }
 
     return results;
@@ -117,14 +118,6 @@ public class Frame implements Cloneable {
     );
   }
 
-  private int getSize(Object verificationType) {
-    if (verificationType == Opcodes.LONG || verificationType == Opcodes.DOUBLE) {
-      return 2;
-    }
-
-    return 1;
-  }
-
   private Object getLocal(int index) {
     if (index < 0 || index >= locals.size()) {
       throw new IndexOutOfBoundsException("Local variable index out of bounds: " + index);
@@ -147,13 +140,13 @@ public class Frame implements Cloneable {
 
   public void compactLocals(Object defaultValue) {
     while (locals.size() >= 1 && ListHelper.at(locals, -1) == defaultValue &&
-            (locals.size() == 1 || (locals.size() >= 2 && getSize(ListHelper.at(locals, -2)) == 1))) {
+            (locals.size() == 1 || (locals.size() >= 2 && FrameHelper.getSize(ListHelper.at(locals, -2)) == 1))) {
       locals.remove(locals.size() - 1);
     }
   }
 
   private void modifyPreIndex(int index) {
-    if (index >= 0 && getSize(getLocal(index)) == 2) {
+    if (index >= 0 && FrameHelper.getSize(getLocal(index)) == 2) {
       locals.set(index, Opcodes.TOP);
     }
   }

@@ -66,8 +66,8 @@ public class InsnStencils {
     return new MultiANewArrayInsnStencil(desc, dims);
   }
 
-  public static FrameStencil frame(IStencil<Integer> type, IStencil<Integer> numLocal, IStencil<List<Object>> local, IStencil<Integer> numStack, IStencil<List<Object>> stack) {
-    return new FrameStencil(type, numLocal, local, numStack, stack);
+  public static FrameStencil frame(IStencil<List<Object>> local, IStencil<List<Object>> stack) {
+    return new FrameStencil(local, stack);
   }
 
   public static LineNumberStencil lineNumber(IStencil<Integer> line, IStencil<LabelNode> start) {
