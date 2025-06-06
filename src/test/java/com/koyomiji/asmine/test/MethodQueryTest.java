@@ -1,5 +1,6 @@
 package com.koyomiji.asmine.test;
 
+import com.koyomiji.asmine.common.ArrayListHelper;
 import com.koyomiji.asmine.common.InsnStencils;
 import com.koyomiji.asmine.common.Insns;
 import com.koyomiji.asmine.compat.OpcodesCompat;
@@ -574,14 +575,14 @@ public class MethodQueryTest {
             )
             .selectCodeFragments(
                     Regexes.concatenate(
-                            Regexes.bind(0,
-                                    Regexes.concatenate(
-                                            CodeRegexes.stencil(InsnStencils.nop())
-                                    )
-                            ),
-                            Regexes.bind(1,
-                                    Regexes.any()
+                    Regexes.bind(0,
+                            Regexes.concatenate(
+                                    CodeRegexes.stencil(InsnStencils.nop())
                             )
+                    ),
+                    Regexes.bind(1,
+                            Regexes.any()
+                    )
                     )
             )
             .selectBound(0)
@@ -671,5 +672,92 @@ public class MethodQueryTest {
             .isPresent();
 
     Assertions.assertTrue(present);
+  }
+
+  @Test
+  void test_4() {
+    Object result = MethodQuery.ofNew()
+            .setAccess(1)
+            .addAccess(2)
+            .removeAccess(2)
+            .getAccess();
+    Assertions.assertEquals(1, result);
+  }
+
+  @Test
+  void test_5() {
+    Object result = MethodQuery.ofNew()
+            .setName("A")
+            .getName();
+    Assertions.assertEquals("A", result);
+  }
+
+  @Test
+  void test_6() {
+    Object result = MethodQuery.ofNew()
+            .setDescriptor("()V")
+            .getDescriptor();
+    Assertions.assertEquals("()V", result);
+  }
+
+  @Test
+  void test_7() {
+    Object result = MethodQuery.ofNew()
+            .setSignature("()V")
+            .getSignature();
+    Assertions.assertEquals("()V", result);
+  }
+
+  @Test
+  void test_8() {
+    Object result = MethodQuery.ofNew()
+            .setExceptions("java/lang/Exception")
+            .addExceptions("java/lang/Throwable")
+            .removeExceptions("java/lang/Exception")
+            .getExceptions();
+    Assertions.assertEquals(
+            ArrayListHelper.of("java/lang/Throwable"),
+            result
+    );
+  }
+
+  @Test
+  void test_9() {
+    Object result = MethodQuery.ofNew()
+            .setAnnotationDefault(1)
+            .getAnnotationDefault();
+    Assertions.assertEquals(1, result);
+  }
+
+  @Test
+  void test_10() {
+    Object result = MethodQuery.ofNew()
+            .setVisibleAnnotableParameterCount(1)
+            .getVisibleAnnotableParameterCount();
+    Assertions.assertEquals(1, result);
+  }
+
+  @Test
+  void test_11() {
+    Object result = MethodQuery.ofNew()
+            .setInvisibleAnnotableParameterCount(1)
+            .getInvisibleAnnotableParameterCount();
+    Assertions.assertEquals(1, result);
+  }
+
+  @Test
+  void test_12() {
+    Object result = MethodQuery.ofNew()
+            .setMaxStack(1)
+            .getMaxStack();
+    Assertions.assertEquals(1, result);
+  }
+
+  @Test
+  void test_13() {
+    Object result = MethodQuery.ofNew()
+            .setMaxLocals(1)
+            .getMaxLocals();
+    Assertions.assertEquals(1, result);
   }
 }

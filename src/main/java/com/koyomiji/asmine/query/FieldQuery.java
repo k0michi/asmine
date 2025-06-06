@@ -18,6 +18,14 @@ public class FieldQuery<T> extends AbstractQuery<T> {
     return new FieldQuery<>(fieldNode, fieldNode);
   }
 
+  public static FieldQuery<FieldNode> ofNew() {
+    return ofNew(0, null, null, null, null);
+  }
+
+  public static FieldQuery<FieldNode> ofNew(int access, String name, String descriptor, String signature, Object value) {
+    return of(new FieldNode(access, name, descriptor, signature, value));
+  }
+
   public FieldNode getNode() {
     return fieldNode;
   }
@@ -29,6 +37,64 @@ public class FieldQuery<T> extends AbstractQuery<T> {
 
     return this;
   }
+
+  public int getAccess() {
+    return fieldNode.access;
+  }
+
+  public FieldQuery<T> setAccess(int access) {
+    fieldNode.access = access;
+    return this;
+  }
+
+  public FieldQuery<T> addAccess(int access) {
+    fieldNode.access |= access;
+    return this;
+  }
+
+  public FieldQuery<T> removeAccess(int access) {
+    fieldNode.access &= ~access;
+    return this;
+  }
+
+  public String getName() {
+    return fieldNode.name;
+  }
+
+  public FieldQuery<T> setName(String name) {
+    fieldNode.name = name;
+    return this;
+  }
+
+  public String getDescriptor() {
+    return fieldNode.desc;
+  }
+
+  public FieldQuery<T> setDescriptor(String descriptor) {
+    fieldNode.desc = descriptor;
+    return this;
+  }
+
+  public String getSignature() {
+    return fieldNode.signature;
+  }
+
+  public FieldQuery<T> setSignature(String signature) {
+    fieldNode.signature = signature;
+    return this;
+  }
+
+  public Object getValue() {
+    return fieldNode.value;
+  }
+
+  public FieldQuery<T> setValue(Object value) {
+    fieldNode.value = value;
+    return this;
+  }
+
+  // TODO: Annotations
+  // TODO: Attributes
 
   public FieldQuery<T> print(Printer printer) {
     return print(printer, new PrintWriter(System.out));
