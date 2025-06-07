@@ -1,10 +1,10 @@
 package com.koyomiji.asmine.tree;
 
 import com.koyomiji.asmine.common.FrameHelper;
+import com.koyomiji.asmine.common.OpcodesHelper;
 import com.koyomiji.asmine.compat.OpcodesCompat;
 import com.koyomiji.asmine.analysis.FlowAnalyzer;
 import com.koyomiji.asmine.analysis.FlowAnalyzerThread;
-import com.koyomiji.asmine.analysis.Frame;
 import org.objectweb.asm.*;
 import org.objectweb.asm.tree.*;
 
@@ -185,7 +185,7 @@ public class NormalizedMethodNode extends MethodNode {
         List<Object> local = new ArrayList<>();
 
         for (int i = 0; i < maxLocals; i++) {
-          local.add(Frame.AUTO);
+          local.add(OpcodesHelper.AUTO);
         }
 
         List<Object> stackItems = new ArrayList<>();

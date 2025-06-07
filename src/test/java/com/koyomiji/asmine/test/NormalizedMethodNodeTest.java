@@ -1,7 +1,7 @@
 package com.koyomiji.asmine.test;
 
 import com.koyomiji.asmine.common.ArrayListHelper;
-import com.koyomiji.asmine.analysis.Frame;
+import com.koyomiji.asmine.common.OpcodesHelper;
 import com.koyomiji.asmine.tree.NormalizedMethodNode;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -42,7 +42,7 @@ public class NormalizedMethodNodeTest {
     Assertions.assertEquals(Opcodes.ISTORE, nMethodNode.instructions.get(3).getOpcode());
     Assertions.assertEquals(Opcodes.GOTO, nMethodNode.instructions.get(5).getOpcode());
     Assertions.assertEquals(-1, nMethodNode.instructions.get(7).getOpcode());
-    Assertions.assertEquals(ArrayListHelper.of(Frame.AUTO), ((FrameNode)nMethodNode.instructions.get(7)).local);
+    Assertions.assertEquals(ArrayListHelper.of(OpcodesHelper.AUTO), ((FrameNode)nMethodNode.instructions.get(7)).local);
     Assertions.assertEquals(ArrayListHelper.of(), ((FrameNode)nMethodNode.instructions.get(7)).stack);
     Assertions.assertEquals(Opcodes.RETURN, nMethodNode.instructions.get(8).getOpcode());
   }
@@ -61,7 +61,7 @@ public class NormalizedMethodNodeTest {
     nMethodNode.visitInsn(Opcodes.RETURN);
     nMethodNode.visitMaxs(1, 1);
     nMethodNode.visitEnd();
-    Assertions.assertEquals(ArrayListHelper.of(Frame.AUTO), ((FrameNode)nMethodNode.instructions.get(13)).local);
+    Assertions.assertEquals(ArrayListHelper.of(OpcodesHelper.AUTO), ((FrameNode)nMethodNode.instructions.get(13)).local);
     Assertions.assertEquals(ArrayListHelper.of(), ((FrameNode)nMethodNode.instructions.get(13)).stack);
   }
 

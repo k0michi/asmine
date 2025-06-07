@@ -3,7 +3,7 @@ package com.koyomiji.asmine.tree;
 import com.koyomiji.asmine.common.FrameHelper;
 import com.koyomiji.asmine.analysis.FlowAnalyzer;
 import com.koyomiji.asmine.analysis.FlowAnalyzerThread;
-import com.koyomiji.asmine.analysis.Frame;
+import com.koyomiji.asmine.common.OpcodesHelper;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.*;
@@ -57,13 +57,13 @@ public class NormalizedInsnList extends InsnList {
         List<Object> stackItems = FrameHelper.toPhysicalForm(frameNode.stack);
 
         for (int i = 0; i < locals.size(); i++) {
-          if (locals.get(i) != Frame.AUTO) {
+          if (locals.get(i) != OpcodesHelper.AUTO) {
             thread.setLocal(i, locals.get(i));
           }
         }
 
         for (int i = 0; i < stackItems.size(); i++) {
-          if (stackItems.get(i) != Frame.AUTO) {
+          if (stackItems.get(i) != OpcodesHelper.AUTO) {
             thread.setStack(i, stackItems.get(i));
           }
         }

@@ -11,8 +11,6 @@ import org.objectweb.asm.tree.*;
 import java.util.*;
 
 public class Frame implements Cloneable {
-  public static final Object AUTO = new Object();
-
   private ArrayList<Object> locals = new ArrayList<>();
   private LinkedList<Object> stack = new LinkedList<>();
 
