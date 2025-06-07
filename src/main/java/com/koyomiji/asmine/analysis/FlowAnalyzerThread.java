@@ -55,6 +55,14 @@ public class FlowAnalyzerThread implements Cloneable {
     return stack.size();
   }
 
+  public List<Object> getLocals() {
+    return FrameHelper.toLogicalForm(locals);
+  }
+
+  public List<Object> getStack() {
+    return FrameHelper.toLogicalForm(stack);
+  }
+
   public Object getLocal(int index) {
     if (index < 0) {
       throw new IndexOutOfBoundsException("Local variable index out of bounds: " + index);
