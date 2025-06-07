@@ -580,11 +580,7 @@ public class FlowAnalyzer {
         thread.push(((MultiANewArrayInsnNode) insn).desc);
         break;
       default:
-        if (insn.getOpcode() < 0) {
-          // Ignore
-        } else {
-          throw new IllegalArgumentException("Unknown opcode: " + insn.getOpcode());
-        }
+        throw new IllegalArgumentException("Unknown opcode: " + insn.getOpcode());
     }
 
     List<AbstractInsnNode> successors = getSuccessors(insn);
