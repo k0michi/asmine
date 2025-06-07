@@ -22,47 +22,12 @@ public class FlowAnalyzer {
     this.labelIndices = getLabelIndices();
   }
 
-  public FlowAnalyzerThread getEntryThread() {
-    FlowAnalyzerThread thread = new FlowAnalyzerThread(
-            getEntryPoint(),
-            new ArrayList<>(),
-            new LinkedList<>()
-    );
-
-    if ((methodNode.access & Opcodes.ACC_STATIC) == 0) {
-      if (Objects.equals(methodNode.name, "<init>")) {
-        thread.addLocal(Opcodes.UNINITIALIZED_THIS);
-      } else {
-        thread.addLocal(className);
-      }
-    }
-
-    thread.addArgumentLocals(methodNode.desc);
-    return thread;
-  }
+  /*
+   * Entry points
+   */
 
   public AbstractInsnNode getEntryPoint() {
     return methodNode.instructions.getFirst();
-  }
-
-  public List<FlowAnalyzerThread> getAllEntryThreads() {
-    List<AbstractInsnNode> entryPoints = getAllEntryPoints();
-    List<FlowAnalyzerThread> threads = new ArrayList<>();
-
-    for (AbstractInsnNode entry : entryPoints) {
-      if (entry == getEntryPoint()) {
-        threads.add(getEntryThread());
-      } else {
-        FlowAnalyzerThread thread = new FlowAnalyzerThread(
-                entry,
-                new ArrayList<>(),
-                new LinkedList<>()
-        );
-        threads.add(thread);
-      }
-    }
-
-    return threads;
   }
 
   public List<AbstractInsnNode> getAllEntryPoints() {
@@ -106,19 +71,48 @@ public class FlowAnalyzer {
     return entries;
   }
 
-  private Map<LabelNode, Integer> getLabelIndices() {
-    Map<LabelNode, Integer> labelIndices = new HashMap<>();
+  public FlowAnalyzerThread getEntryThread() {
+    FlowAnalyzerThread thread = new FlowAnalyzerThread(
+            getEntryPoint(),
+            new ArrayList<>(),
+            new LinkedList<>()
+    );
 
-    for (int i = 0; i < methodNode.instructions.size(); i++) {
-      AbstractInsnNode insn = methodNode.instructions.get(i);
-
-      if (insn instanceof LabelNode) {
-        labelIndices.put((LabelNode) insn, i);
+    if ((methodNode.access & Opcodes.ACC_STATIC) == 0) {
+      if (Objects.equals(methodNode.name, "<init>")) {
+        thread.addLocal(Opcodes.UNINITIALIZED_THIS);
+      } else {
+        thread.addLocal(className);
       }
     }
 
-    return labelIndices;
+    thread.addArgumentLocals(methodNode.desc);
+    return thread;
   }
+
+  public List<FlowAnalyzerThread> getAllEntryThreads() {
+    List<AbstractInsnNode> entryPoints = getAllEntryPoints();
+    List<FlowAnalyzerThread> threads = new ArrayList<>();
+
+    for (AbstractInsnNode entry : entryPoints) {
+      if (entry == getEntryPoint()) {
+        threads.add(getEntryThread());
+      } else {
+        FlowAnalyzerThread thread = new FlowAnalyzerThread(
+                entry,
+                new ArrayList<>(),
+                new LinkedList<>()
+        );
+        threads.add(thread);
+      }
+    }
+
+    return threads;
+  }
+
+  /*
+   * Control flow
+   */
 
   public List<AbstractInsnNode> getSuccessors(AbstractInsnNode insn) {
     List<AbstractInsnNode> results = new ArrayList<>();
@@ -188,6 +182,10 @@ public class FlowAnalyzer {
 
     throw new IllegalArgumentException("No label found for instruction: " + insn);
   }
+
+  /*
+   * Simulation
+   */
 
   public List<FlowAnalyzerThread> step(FlowAnalyzerThread thread) {
     AbstractInsnNode insn = thread.getCurrentInsn();
@@ -617,5 +615,23 @@ public class FlowAnalyzer {
     }
 
     return threads;
+  }
+
+  /*
+   * Internal
+   */
+
+  private Map<LabelNode, Integer> getLabelIndices() {
+    Map<LabelNode, Integer> labelIndices = new HashMap<>();
+
+    for (int i = 0; i < methodNode.instructions.size(); i++) {
+      AbstractInsnNode insn = methodNode.instructions.get(i);
+
+      if (insn instanceof LabelNode) {
+        labelIndices.put((LabelNode) insn, i);
+      }
+    }
+
+    return labelIndices;
   }
 }
