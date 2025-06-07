@@ -102,7 +102,6 @@ public class FlowAnalyzerTest {
     Assertions.assertEquals(ArrayListHelper.of(Opcodes.INTEGER, Opcodes.LONG, Opcodes.FLOAT, Opcodes.DOUBLE, "java/lang/String", "java/lang/Class", "java/lang/Class"), thread.getStack());
   }
 
-  // aload
   @Test
   void test_7() {
     MethodNode methodNode = new MethodNode(Opcodes.ACC_STATIC, "test", "()V", null, null);
@@ -514,10 +513,15 @@ public class FlowAnalyzerTest {
     MethodNode methodNode = new MethodNode(Opcodes.ACC_STATIC, "test", "()V", null, null);
     methodNode.instructions.add(l0);
     methodNode.instructions.add(Insns.new_("A"));
+    methodNode.instructions.add(Insns.dup());
+    methodNode.instructions.add(Insns.invokespecial("A", "<init>", "()V", false));
     FlowAnalyzer flowAnalyzer = new FlowAnalyzer("Test", methodNode);
     FlowAnalyzerThread thread = execute(flowAnalyzer, 1);
     Assertions.assertEquals(ArrayListHelper.of(), thread.getLocals());
     Assertions.assertEquals(ArrayListHelper.of(l0), thread.getStack());
+    thread = execute(flowAnalyzer, 3);
+    Assertions.assertEquals(ArrayListHelper.of(), thread.getLocals());
+    Assertions.assertEquals(ArrayListHelper.of("A"), thread.getStack());
   }
 
   @Test

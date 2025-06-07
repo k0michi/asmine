@@ -520,8 +520,13 @@ public class FlowAnalyzer {
       case Opcodes.INVOKESPECIAL:
       case Opcodes.INVOKEINTERFACE: {
         thread.popMethodArguments(((MethodInsnNode) insn).desc);
-        thread.pop();
+        Object this_ = thread.pop();
         thread.pushMethodReturn(((MethodInsnNode) insn).desc);
+
+        if (insn.getOpcode() == Opcodes.INVOKESPECIAL &&
+                Objects.equals(((MethodInsnNode) insn).name, "<init>")) {
+          thread.substitute(this_, ((MethodInsnNode) insn).owner);
+        }
         break;
       }
       case Opcodes.INVOKESTATIC:
@@ -530,9 +535,10 @@ public class FlowAnalyzer {
         thread.pushMethodReturn(((MethodInsnNode) insn).desc);
         break;
       }
-      case Opcodes.NEW:
+      case Opcodes.NEW: {
         thread.push(AbstractInsnNodeHelper.getLabel(insn));
         break;
+      }
       case Opcodes.NEWARRAY:
         thread.pop();
         switch (((IntInsnNode) insn).operand) {

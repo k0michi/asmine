@@ -224,6 +224,20 @@ public class FlowAnalyzerThread implements Cloneable {
     return Arrays.asList(value1, value2);
   }
 
+  public void substitute(Object oldValue, Object newValue) {
+    for (int i = 0; i < locals.size(); i++) {
+      if (Objects.equals(locals.get(i), oldValue)) {
+        setLocal(i, newValue);
+      }
+    }
+
+    for (int i = 0; i < stack.size(); i++) {
+      if (Objects.equals(stack.get(i), oldValue)) {
+        setStack(i, newValue);
+      }
+    }
+  }
+
   @Override
   public FlowAnalyzerThread clone() {
     try {
