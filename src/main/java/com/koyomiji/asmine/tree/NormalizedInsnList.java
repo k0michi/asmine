@@ -45,14 +45,9 @@ public class NormalizedInsnList extends InsnList {
       FlowAnalyzerThread thread = stack.pop();
       AbstractInsnNode insn = thread.getCurrentInsn();
 
-      if (AbstractInsnNodeHelper.isReal(insn) && visited.contains(insn)) {
-        continue;
-      }
+      FrameNode frameNode = AbstractInsnNodeHelper.getFrame(insn);
 
-      visited.add(insn);
-
-      if (insn instanceof FrameNode) {
-        FrameNode frameNode = (FrameNode) insn;
+      if (frameNode != null) {
         List<Object> locals = FrameHelper.toPhysicalForm(frameNode.local);
         List<Object> stackItems = FrameHelper.toPhysicalForm(frameNode.stack);
 
@@ -72,6 +67,11 @@ public class NormalizedInsnList extends InsnList {
         intFrames.put(frameNode, thread.toFrameNode());
       }
 
+      if (visited.contains(insn)) {
+        continue;
+      }
+
+      visited.add(insn);
       stack.addAll(analyzer.step(thread));
     }
 

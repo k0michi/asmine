@@ -27,12 +27,12 @@ public class FlowAnalyzer {
    */
 
   public AbstractInsnNode getEntryPoint() {
-    return methodNode.instructions.getFirst();
+    return AbstractInsnNodeHelper.skipPseudo(methodNode.instructions.getFirst());
   }
 
   public List<AbstractInsnNode> getAllEntryPoints() {
     Stack<AbstractInsnNode> stack = new Stack<>();
-    stack.push(methodNode.instructions.getFirst());
+    stack.push(AbstractInsnNodeHelper.skipPseudo(methodNode.instructions.getFirst()));
     Set<AbstractInsnNode> visited = new HashSet<>();
     List<AbstractInsnNode> entries = new ArrayList<>();
 
@@ -40,7 +40,7 @@ public class FlowAnalyzer {
       AbstractInsnNode entry = null;
 
       for (AbstractInsnNode insn : methodNode.instructions) {
-        if (!visited.contains(insn)) {
+        if (AbstractInsnNodeHelper.isReal(insn) && !visited.contains(insn)) {
           entry = insn;
           break;
         }
@@ -118,28 +118,32 @@ public class FlowAnalyzer {
     List<AbstractInsnNode> results = new ArrayList<>();
 
     if (!AbstractInsnNodeHelper.isUnconditionalJump(insn) && insn.getNext() != null) {
-      results.add(insn.getNext());
+      results.add(AbstractInsnNodeHelper.skipPseudo(insn.getNext()));
     }
 
     if (insn instanceof JumpInsnNode) {
       JumpInsnNode jumpInsn = (JumpInsnNode) insn;
-      results.add(jumpInsn.label);
+      results.add(AbstractInsnNodeHelper.skipPseudo(jumpInsn.label));
     }
 
     if (insn instanceof LookupSwitchInsnNode) {
       LookupSwitchInsnNode switchInsn = (LookupSwitchInsnNode) insn;
 
-      results.addAll(switchInsn.labels);
+      for (LabelNode label : switchInsn.labels) {
+        results.add(AbstractInsnNodeHelper.skipPseudo(label));
+      }
 
-      results.add(switchInsn.dflt);
+      results.add(AbstractInsnNodeHelper.skipPseudo(switchInsn.dflt));
     }
 
     if (insn instanceof TableSwitchInsnNode) {
       TableSwitchInsnNode switchInsn = (TableSwitchInsnNode) insn;
 
-      results.addAll(switchInsn.labels);
+      for (LabelNode label : switchInsn.labels) {
+        results.add(AbstractInsnNodeHelper.skipPseudo(label));
+      }
 
-      results.add(switchInsn.dflt);
+      results.add(AbstractInsnNodeHelper.skipPseudo(switchInsn.dflt));
     }
 
     return results;
@@ -154,7 +158,7 @@ public class FlowAnalyzer {
       int insnIndex = methodNode.instructions.indexOf(insn);
 
       if (insnIndex >= beginIndex && insnIndex < endIndex) {
-        results.add(Pair.of(tryCatch.handler, tryCatch.type));
+        results.add(Pair.of(AbstractInsnNodeHelper.skipPseudo(tryCatch.handler), tryCatch.type));
       }
     }
 
@@ -170,17 +174,6 @@ public class FlowAnalyzer {
     }
 
     return successors;
-  }
-
-  private LabelNode getLabel(AbstractInsnNode insn) {
-    for (int i = methodNode.instructions.indexOf(insn) - 1; i >= 0; i--) {
-      AbstractInsnNode previousInsn = methodNode.instructions.get(i);
-      if (previousInsn instanceof LabelNode) {
-        return (LabelNode) previousInsn;
-      }
-    }
-
-    throw new IllegalArgumentException("No label found for instruction: " + insn);
   }
 
   /*
@@ -538,7 +531,7 @@ public class FlowAnalyzer {
         break;
       }
       case Opcodes.NEW:
-        thread.push(getLabel(insn));
+        thread.push(AbstractInsnNodeHelper.getLabel(insn));
         break;
       case Opcodes.NEWARRAY:
         thread.pop();

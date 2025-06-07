@@ -21,6 +21,62 @@ public class AbstractInsnNodeHelper {
     return insn.getOpcode() == -1;
   }
 
+  public static AbstractInsnNode skipPseudo(AbstractInsnNode insn) {
+    while (insn != null && isPseudo(insn)) {
+      insn = insn.getNext();
+    }
+
+    return insn;
+  }
+
+  public static LabelNode getLabel(AbstractInsnNode insn) {
+    LabelNode labelNode = null;
+    insn = insn.getPrevious();
+
+    while (insn != null && isPseudo(insn)) {
+      if (insn instanceof LabelNode) {
+        labelNode = (LabelNode) insn;
+        break;
+      }
+
+      insn = insn.getPrevious();
+    }
+
+    return labelNode;
+  }
+
+  public static FrameNode getFrame(AbstractInsnNode insn) {
+    FrameNode frameNode = null;
+    insn = insn.getPrevious();
+
+    while (insn != null && isPseudo(insn)) {
+      if (insn instanceof FrameNode) {
+        frameNode = (FrameNode) insn;
+        break;
+      }
+
+      insn = insn.getPrevious();
+    }
+
+    return frameNode;
+  }
+
+  public static LineNumberNode getLineNumber(AbstractInsnNode insn) {
+    LineNumberNode lineNumberNode = null;
+    insn = insn.getPrevious();
+
+    while (insn != null && isPseudo(insn)) {
+      if (insn instanceof LineNumberNode) {
+        lineNumberNode = (LineNumberNode) insn;
+        break;
+      }
+
+      insn = insn.getPrevious();
+    }
+
+    return lineNumberNode;
+  }
+
   public static boolean isUnconditionalJump(AbstractInsnNode insn) {
     return insn.getOpcode() == Opcodes.ARETURN ||
             insn.getOpcode() == Opcodes.ATHROW ||

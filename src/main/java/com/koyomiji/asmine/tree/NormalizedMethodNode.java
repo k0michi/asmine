@@ -200,14 +200,9 @@ public class NormalizedMethodNode extends MethodNode {
       FlowAnalyzerThread thread = stack.pop();
       AbstractInsnNode insn = thread.getCurrentInsn();
 
-      if (AbstractInsnNodeHelper.isReal(insn) && visited.contains(insn)) {
-        continue;
-      }
+      FrameNode frameNode = AbstractInsnNodeHelper.getFrame(insn);
 
-      visited.add(insn);
-
-      if (insn instanceof FrameNode) {
-        FrameNode frameNode = (FrameNode) insn;
+      if (frameNode != null) {
         FlowAnalyzerThread diffFrame = diffFrames.get(frameNode);
         List<Object> actualLocals = FrameHelper.toPhysicalForm(frameNode.local);
         List<Object> actualStack = FrameHelper.toPhysicalForm(frameNode.stack);
@@ -235,6 +230,11 @@ public class NormalizedMethodNode extends MethodNode {
         thread.setStack(actualStack);
       }
 
+      if (visited.contains(insn)) {
+        continue;
+      }
+
+      visited.add(insn);
       stack.addAll(analyzer.step(thread));
     }
 
