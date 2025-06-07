@@ -88,7 +88,18 @@ public class FlowAnalyzerTest {
 
   @Test
   void test_6() {
-    // TODO: LDC
+    MethodNode methodNode = new MethodNode(Opcodes.ACC_STATIC, "test", "()V", null, null);
+    methodNode.instructions.add(Insns.ldc(0));
+    methodNode.instructions.add(Insns.ldc(0L));
+    methodNode.instructions.add(Insns.ldc(0F));
+    methodNode.instructions.add(Insns.ldc(0D));
+    methodNode.instructions.add(Insns.ldc(""));
+    methodNode.instructions.add(Insns.ldc(Type.getType("Ljava/lang/String;")));
+    methodNode.instructions.add(Insns.ldc(Type.getType("[I")));
+    FlowAnalyzer flowAnalyzer = new FlowAnalyzer("Test", methodNode);
+    FlowAnalyzerThread thread = execute(flowAnalyzer, 7);
+    Assertions.assertEquals(ArrayListHelper.of(), thread.getLocals());
+    Assertions.assertEquals(ArrayListHelper.of(Opcodes.INTEGER, Opcodes.LONG, Opcodes.FLOAT, Opcodes.DOUBLE, "java/lang/String", "java/lang/Class", "java/lang/Class"), thread.getStack());
   }
 
   // aload
