@@ -7,6 +7,7 @@ import org.objectweb.asm.Handle;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.*;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class InsnStencils {
@@ -14,64 +15,131 @@ public class InsnStencils {
     return new InsnStencil(opcode);
   }
 
+  public static InsnStencil insn(int opcode) {
+    return insn(new ConstStencil<>(opcode));
+  }
+
   public static IntInsnStencil intInsn(IStencil<Integer> opcode, IStencil<Integer> operand) {
     return new IntInsnStencil(opcode, operand);
+  }
+
+  public static IntInsnStencil intInsn(int opcode, int operand) {
+    return intInsn(new ConstStencil<>(opcode), new ConstStencil<>(operand));
   }
 
   public static VarInsnStencil varInsn(IStencil<Integer> opcode, IStencil<Integer> varIndex) {
     return new VarInsnStencil(opcode, varIndex);
   }
 
+  public static VarInsnStencil varInsn(int opcode, int varIndex) {
+    return varInsn(new ConstStencil<>(opcode), new ConstStencil<>(varIndex));
+  }
+
   public static TypeInsnStencil typeInsn(IStencil<Integer> opcode, IStencil<String> type) {
     return new TypeInsnStencil(opcode, type);
+  }
+
+  public static TypeInsnStencil typeInsn(int opcode, String type) {
+    return typeInsn(new ConstStencil<>(opcode), new ConstStencil<>(type));
   }
 
   public static FieldInsnStencil fieldInsn(IStencil<Integer> opcode, IStencil<String> owner, IStencil<String> name, IStencil<String> desc) {
     return new FieldInsnStencil(opcode, owner, name, desc);
   }
 
+  public static FieldInsnStencil fieldInsn(int opcode, String owner, String name, String desc) {
+    return fieldInsn(new ConstStencil<>(opcode), new ConstStencil<>(owner), new ConstStencil<>(name), new ConstStencil<>(desc));
+  }
+
   public static MethodInsnStencil methodInsn(IStencil<Integer> opcode, IStencil<String> owner, IStencil<String> name, IStencil<String> desc, IStencil<Boolean> itf) {
     return new MethodInsnStencil(opcode, owner, name, desc, itf);
+  }
+
+  public static MethodInsnStencil methodInsn(int opcode, String owner, String name, String desc, boolean itf) {
+    return methodInsn(new ConstStencil<>(opcode), new ConstStencil<>(owner), new ConstStencil<>(name), new ConstStencil<>(desc), new ConstStencil<>(itf));
   }
 
   public static InvokeDynamicInsnStencil invokeDynamicInsn(IStencil<String> name, IStencil<String> desc, IStencil<Handle> bsm, IStencil<List<Object>> bsmArgs) {
     return new InvokeDynamicInsnStencil(name, desc, bsm, bsmArgs);
   }
 
+  public static InvokeDynamicInsnStencil invokeDynamicInsn(String name, String desc, Handle bsm, Object... bsmArgs) {
+    return invokeDynamicInsn(new ConstStencil<>(name), new ConstStencil<>(desc), new ConstStencil<>(bsm), new ConstStencil<>(Arrays.asList(bsmArgs)));
+  }
+
   public static JumpInsnStencil jumpInsn(IStencil<Integer> opcode, IStencil<LabelNode> label) {
     return new JumpInsnStencil(opcode, label);
+  }
+
+  public static JumpInsnStencil jumpInsn(int opcode, LabelNode label) {
+    return jumpInsn(new ConstStencil<>(opcode), new ConstStencil<>(label));
   }
 
   public static LabelStencil label(IStencil<LabelNode> label) {
     return new LabelStencil(label);
   }
 
+  public static LabelStencil label(LabelNode label) {
+    return label(new ConstStencil<>(label));
+  }
+
   public static LdcInsnStencil ldcInsn(IStencil<Object> cst) {
     return new LdcInsnStencil(cst);
+  }
+
+  public static LdcInsnStencil ldcInsn(Object cst) {
+    return ldcInsn(new ConstStencil<>(cst));
   }
 
   public static IincInsnStencil iincInsn(IStencil<Integer> varIndex, IStencil<Integer> incr) {
     return new IincInsnStencil(varIndex, incr);
   }
 
+  public static IincInsnStencil iincInsn(int varIndex, int incr) {
+    return iincInsn(new ConstStencil<>(varIndex), new ConstStencil<>(incr));
+  }
+
   public static TableSwitchInsnStencil tableSwitchInsn(IStencil<Integer> min, IStencil<Integer> max, IStencil<LabelNode> dflt, IStencil<List<LabelNode>> labels) {
     return new TableSwitchInsnStencil(min, max, dflt, labels);
+  }
+
+  public static TableSwitchInsnStencil tableSwitchInsn(int min, int max, LabelNode dflt, LabelNode... labels) {
+    return tableSwitchInsn(new ConstStencil<>(min), new ConstStencil<>(max), new ConstStencil<>(dflt), new ConstStencil<>(ArrayHelper.toList(labels)));
   }
 
   public static LookupSwitchInsnStencil lookupSwitchInsn(IStencil<LabelNode> dflt, IStencil<List<Integer>> keys, IStencil<List<LabelNode>> labels) {
     return new LookupSwitchInsnStencil(dflt, keys, labels);
   }
 
+  public static LookupSwitchInsnStencil lookupSwitchInsn(LabelNode dflt, int[] keys, LabelNode[] labels) {
+    return lookupSwitchInsn(new ConstStencil<>(dflt), new ConstStencil<>(ArrayHelper.toList(keys)), new ConstStencil<>(ArrayHelper.toList(labels)));
+  }
+
   public static MultiANewArrayInsnStencil multiANewArrayInsn(IStencil<String> desc, IStencil<Integer> dims) {
     return new MultiANewArrayInsnStencil(desc, dims);
+  }
+
+  public static MultiANewArrayInsnStencil multiANewArrayInsn(String desc, int dims) {
+    return multiANewArrayInsn(new ConstStencil<>(desc), new ConstStencil<>(dims));
   }
 
   public static FrameStencil frame(IStencil<List<Object>> local, IStencil<List<Object>> stack) {
     return new FrameStencil(local, stack);
   }
 
+  public static FrameStencil frame(Object[] local, Object[] stack) {
+    return new FrameStencil(
+        new ConstStencil<>(ArrayHelper.toList(local)),
+        new ConstStencil<>(ArrayHelper.toList(stack))
+    );
+  }
+
   public static LineNumberStencil lineNumber(IStencil<Integer> line, IStencil<LabelNode> start) {
     return new LineNumberStencil(line, start);
+  }
+
+  public static LineNumberStencil lineNumber(int line, LabelNode start) {
+    return lineNumber(new ConstStencil<>(line), new ConstStencil<>(start));
   }
 
   public static InsnStencil nop() {
@@ -142,32 +210,64 @@ public class InsnStencils {
     return intInsn(new ConstStencil<>(Opcodes.BIPUSH), operand);
   }
 
+  public static IntInsnStencil bipush(int operand) {
+    return bipush(new ConstStencil<>(operand));
+  }
+
   public static IntInsnStencil sipush(IStencil<Integer> operand) {
     return intInsn(new ConstStencil<>(Opcodes.SIPUSH), operand);
+  }
+
+  public static IntInsnStencil sipush(int operand) {
+    return sipush(new ConstStencil<>(operand));
   }
 
   public static LdcInsnStencil ldc(IStencil<Object> cst) {
     return ldcInsn(cst);
   }
 
+  public static LdcInsnStencil ldc(Object cst) {
+    return ldcInsn(new ConstStencil<>(cst));
+  }
+
   public static VarInsnStencil iload(IStencil<Integer> varIndex) {
     return varInsn(new ConstStencil<>(Opcodes.ILOAD), varIndex);
+  }
+
+  public static VarInsnStencil iload(int varIndex) {
+    return iload(new ConstStencil<>(varIndex));
   }
 
   public static VarInsnStencil lload(IStencil<Integer> varIndex) {
     return varInsn(new ConstStencil<>(Opcodes.LLOAD), varIndex);
   }
 
+  public static VarInsnStencil lload(int varIndex) {
+    return lload(new ConstStencil<>(varIndex));
+  }
+
   public static VarInsnStencil fload(IStencil<Integer> varIndex) {
     return varInsn(new ConstStencil<>(Opcodes.FLOAD), varIndex);
+  }
+
+  public static VarInsnStencil fload(int varIndex) {
+    return fload(new ConstStencil<>(varIndex));
   }
 
   public static VarInsnStencil dload(IStencil<Integer> varIndex) {
     return varInsn(new ConstStencil<>(Opcodes.DLOAD), varIndex);
   }
 
+  public static VarInsnStencil dload(int varIndex) {
+    return dload(new ConstStencil<>(varIndex));
+  }
+
   public static VarInsnStencil aload(IStencil<Integer> varIndex) {
     return varInsn(new ConstStencil<>(Opcodes.ALOAD), varIndex);
+  }
+
+  public static VarInsnStencil aload(int varIndex) {
+    return aload(new ConstStencil<>(varIndex));
   }
 
   public static InsnStencil iaload() {
@@ -206,20 +306,40 @@ public class InsnStencils {
     return varInsn(new ConstStencil<>(Opcodes.ISTORE), varIndex);
   }
 
+  public static VarInsnStencil istore(int varIndex) {
+    return istore(new ConstStencil<>(varIndex));
+  }
+
   public static VarInsnStencil lstore(IStencil<Integer> varIndex) {
     return varInsn(new ConstStencil<>(Opcodes.LSTORE), varIndex);
+  }
+
+  public static VarInsnStencil lstore(int varIndex) {
+    return lstore(new ConstStencil<>(varIndex));
   }
 
   public static VarInsnStencil fstore(IStencil<Integer> varIndex) {
     return varInsn(new ConstStencil<>(Opcodes.FSTORE), varIndex);
   }
 
+  public static VarInsnStencil fstore(int varIndex) {
+    return fstore(new ConstStencil<>(varIndex));
+  }
+
   public static VarInsnStencil dstore(IStencil<Integer> varIndex) {
     return varInsn(new ConstStencil<>(Opcodes.DSTORE), varIndex);
   }
 
+  public static VarInsnStencil dstore(int varIndex) {
+    return dstore(new ConstStencil<>(varIndex));
+  }
+
   public static VarInsnStencil astore(IStencil<Integer> varIndex) {
     return varInsn(new ConstStencil<>(Opcodes.ASTORE), varIndex);
+  }
+
+  public static VarInsnStencil astore(int varIndex) {
+    return astore(new ConstStencil<>(varIndex));
   }
 
   public static InsnStencil iastore() {
@@ -438,6 +558,10 @@ public class InsnStencils {
     return iincInsn(varIndex, incr);
   }
 
+  public static IincInsnStencil iinc(int varIndex, int incr) {
+    return iincInsn(new ConstStencil<>(varIndex), new ConstStencil<>(incr));
+  }
+
   public static InsnStencil i2l() {
     return insn(new ConstStencil<>(Opcodes.I2L));
   }
@@ -522,76 +646,152 @@ public class InsnStencils {
     return jumpInsn(new ConstStencil<>(Opcodes.IFEQ), label);
   }
 
+  public static JumpInsnStencil ifeq(LabelNode label) {
+    return ifeq(new ConstStencil<>(label));
+  }
+
   public static JumpInsnStencil ifne(IStencil<LabelNode> label) {
     return jumpInsn(new ConstStencil<>(Opcodes.IFNE), label);
+  }
+
+  public static JumpInsnStencil ifne(LabelNode label) {
+    return ifne(new ConstStencil<>(label));
   }
 
   public static JumpInsnStencil iflt(IStencil<LabelNode> label) {
     return jumpInsn(new ConstStencil<>(Opcodes.IFLT), label);
   }
 
+  public static JumpInsnStencil iflt(LabelNode label) {
+    return iflt(new ConstStencil<>(label));
+  }
+
   public static JumpInsnStencil ifge(IStencil<LabelNode> label) {
     return jumpInsn(new ConstStencil<>(Opcodes.IFGE), label);
+  }
+
+  public static JumpInsnStencil ifge(LabelNode label) {
+    return ifge(new ConstStencil<>(label));
   }
 
   public static JumpInsnStencil ifgt(IStencil<LabelNode> label) {
     return jumpInsn(new ConstStencil<>(Opcodes.IFGT), label);
   }
 
+  public static JumpInsnStencil ifgt(LabelNode label) {
+    return ifgt(new ConstStencil<>(label));
+  }
+
   public static JumpInsnStencil ifle(IStencil<LabelNode> label) {
     return jumpInsn(new ConstStencil<>(Opcodes.IFLE), label);
+  }
+
+  public static JumpInsnStencil ifle(LabelNode label) {
+    return ifle(new ConstStencil<>(label));
   }
 
   public static JumpInsnStencil if_icmpeq(IStencil<LabelNode> label) {
     return jumpInsn(new ConstStencil<>(Opcodes.IF_ICMPEQ), label);
   }
 
+  public static JumpInsnStencil if_icmpeq(LabelNode label) {
+    return if_icmpeq(new ConstStencil<>(label));
+  }
+
   public static JumpInsnStencil if_icmpne(IStencil<LabelNode> label) {
     return jumpInsn(new ConstStencil<>(Opcodes.IF_ICMPNE), label);
+  }
+
+  public static JumpInsnStencil if_icmpne(LabelNode label) {
+    return if_icmpne(new ConstStencil<>(label));
   }
 
   public static JumpInsnStencil if_icmplt(IStencil<LabelNode> label) {
     return jumpInsn(new ConstStencil<>(Opcodes.IF_ICMPLT), label);
   }
 
+  public static JumpInsnStencil if_icmplt(LabelNode label) {
+    return if_icmplt(new ConstStencil<>(label));
+  }
+
   public static JumpInsnStencil if_icmpge(IStencil<LabelNode> label) {
     return jumpInsn(new ConstStencil<>(Opcodes.IF_ICMPGE), label);
+  }
+
+  public static JumpInsnStencil if_icmpge(LabelNode label) {
+    return if_icmpge(new ConstStencil<>(label));
   }
 
   public static JumpInsnStencil if_icmpgt(IStencil<LabelNode> label) {
     return jumpInsn(new ConstStencil<>(Opcodes.IF_ICMPGT), label);
   }
 
+  public static JumpInsnStencil if_icmpgt(LabelNode label) {
+    return if_icmpgt(new ConstStencil<>(label));
+  }
+
   public static JumpInsnStencil if_icmple(IStencil<LabelNode> label) {
     return jumpInsn(new ConstStencil<>(Opcodes.IF_ICMPLE), label);
+  }
+
+  public static JumpInsnStencil if_icmple(LabelNode label) {
+    return if_icmple(new ConstStencil<>(label));
   }
 
   public static JumpInsnStencil if_acmpeq(IStencil<LabelNode> label) {
     return jumpInsn(new ConstStencil<>(Opcodes.IF_ACMPEQ), label);
   }
 
+  public static JumpInsnStencil if_acmpeq(LabelNode label) {
+    return if_acmpeq(new ConstStencil<>(label));
+  }
+
   public static JumpInsnStencil if_acmpne(IStencil<LabelNode> label) {
     return jumpInsn(new ConstStencil<>(Opcodes.IF_ACMPNE), label);
+  }
+
+  public static JumpInsnStencil if_acmpne(LabelNode label) {
+    return if_acmpne(new ConstStencil<>(label));
   }
 
   public static JumpInsnStencil goto_(IStencil<LabelNode> label) {
     return jumpInsn(new ConstStencil<>(Opcodes.GOTO), label);
   }
 
+  public static JumpInsnStencil goto_(LabelNode label) {
+    return goto_(new ConstStencil<>(label));
+  }
+
   public static JumpInsnStencil jsr(IStencil<LabelNode> label) {
     return jumpInsn(new ConstStencil<>(Opcodes.JSR), label);
+  }
+
+  public static JumpInsnStencil jsr(LabelNode label) {
+    return jsr(new ConstStencil<>(label));
   }
 
   public static VarInsnStencil ret(IStencil<Integer> varIndex) {
     return varInsn(new ConstStencil<>(Opcodes.RET), varIndex);
   }
 
-  public static TableSwitchInsnStencil tableSwitch(IStencil<Integer> min, IStencil<Integer> max, IStencil<LabelNode> dflt, IStencil<List<LabelNode>> labels) {
+  public static VarInsnStencil ret(int varIndex) {
+    return ret(new ConstStencil<>(varIndex));
+  }
+
+  public static TableSwitchInsnStencil tableswitch(IStencil<Integer> min, IStencil<Integer> max, IStencil<LabelNode> dflt, IStencil<List<LabelNode>> labels) {
     return tableSwitchInsn(min, max, dflt, labels);
   }
 
-  public static LookupSwitchInsnStencil lookupSwitch(IStencil<LabelNode> dflt, IStencil<List<Integer>> keys, IStencil<List<LabelNode>> labels) {
+  public static TableSwitchInsnStencil tableswitch(int min, int max, LabelNode dflt, LabelNode... labels) {
+    return tableSwitchInsn(new ConstStencil<>(min), new ConstStencil<>(max), new ConstStencil<>(dflt), new ConstStencil<>(ArrayHelper.toList(labels)));
+  }
+
+  public static LookupSwitchInsnStencil lookupswitch(IStencil<LabelNode> dflt, IStencil<List<Integer>> keys, IStencil<List<LabelNode>> labels) {
     return lookupSwitchInsn(dflt, keys, labels);
+  }
+
+  public static LookupSwitchInsnStencil lookupswitch(LabelNode dflt, int[] keys, LabelNode[] labels) {
+    return lookupSwitchInsn(new ConstStencil<>(dflt), new ConstStencil<>(ArrayHelper.toList(keys)), new ConstStencil<>(ArrayHelper.toList(labels)));
   }
 
   public static InsnStencil ireturn() {
@@ -622,48 +822,96 @@ public class InsnStencils {
     return fieldInsn(new ConstStencil<>(Opcodes.GETSTATIC), owner, name, desc);
   }
 
+  public static FieldInsnStencil getstatic(String owner, String name, String desc) {
+    return getstatic(new ConstStencil<>(owner), new ConstStencil<>(name), new ConstStencil<>(desc));
+  }
+
   public static FieldInsnStencil putstatic(IStencil<String> owner, IStencil<String> name, IStencil<String> desc) {
     return fieldInsn(new ConstStencil<>(Opcodes.PUTSTATIC), owner, name, desc);
+  }
+
+  public static FieldInsnStencil putstatic(String owner, String name, String desc) {
+    return putstatic(new ConstStencil<>(owner), new ConstStencil<>(name), new ConstStencil<>(desc));
   }
 
   public static FieldInsnStencil getfield(IStencil<String> owner, IStencil<String> name, IStencil<String> desc) {
     return fieldInsn(new ConstStencil<>(Opcodes.GETFIELD), owner, name, desc);
   }
 
+  public static FieldInsnStencil getfield(String owner, String name, String desc) {
+    return getfield(new ConstStencil<>(owner), new ConstStencil<>(name), new ConstStencil<>(desc));
+  }
+
   public static FieldInsnStencil putfield(IStencil<String> owner, IStencil<String> name, IStencil<String> desc) {
     return fieldInsn(new ConstStencil<>(Opcodes.PUTFIELD), owner, name, desc);
+  }
+
+  public static FieldInsnStencil putfield(String owner, String name, String desc) {
+    return putfield(new ConstStencil<>(owner), new ConstStencil<>(name), new ConstStencil<>(desc));
   }
 
   public static MethodInsnStencil invokevirtual(IStencil<String> owner, IStencil<String> name, IStencil<String> desc, IStencil<Boolean> itf) {
     return methodInsn(new ConstStencil<>(Opcodes.INVOKEVIRTUAL), owner, name, desc, itf);
   }
 
+  public static MethodInsnStencil invokevirtual(String owner, String name, String desc, boolean itf) {
+    return invokevirtual(new ConstStencil<>(owner), new ConstStencil<>(name), new ConstStencil<>(desc), new ConstStencil<>(itf));
+  }
+
   public static MethodInsnStencil invokespecial(IStencil<String> owner, IStencil<String> name, IStencil<String> desc, IStencil<Boolean> itf) {
     return methodInsn(new ConstStencil<>(Opcodes.INVOKESPECIAL), owner, name, desc, itf);
+  }
+
+  public static MethodInsnStencil invokespecial(String owner, String name, String desc, boolean itf) {
+    return invokespecial(new ConstStencil<>(owner), new ConstStencil<>(name), new ConstStencil<>(desc), new ConstStencil<>(itf));
   }
 
   public static MethodInsnStencil invokestatic(IStencil<String> owner, IStencil<String> name, IStencil<String> desc, IStencil<Boolean> itf) {
     return methodInsn(new ConstStencil<>(Opcodes.INVOKESTATIC), owner, name, desc, itf);
   }
 
+  public static MethodInsnStencil invokestatic(String owner, String name, String desc, boolean itf) {
+    return invokestatic(new ConstStencil<>(owner), new ConstStencil<>(name), new ConstStencil<>(desc), new ConstStencil<>(itf));
+  }
+
   public static MethodInsnStencil invokeinterface(IStencil<String> owner, IStencil<String> name, IStencil<String> desc, IStencil<Boolean> itf) {
     return methodInsn(new ConstStencil<>(Opcodes.INVOKEINTERFACE), owner, name, desc, itf);
+  }
+
+  public static MethodInsnStencil invokeinterface(String owner, String name, String desc, boolean itf) {
+    return invokeinterface(new ConstStencil<>(owner), new ConstStencil<>(name), new ConstStencil<>(desc), new ConstStencil<>(itf));
   }
 
   public static InvokeDynamicInsnStencil invokedynamic(IStencil<String> name, IStencil<String> desc, IStencil<Handle> bsm, IStencil<List<Object>> bsmArgs) {
     return invokeDynamicInsn(name, desc, bsm, bsmArgs);
   }
 
+  public static InvokeDynamicInsnStencil invokedynamic(String name, String desc, Handle bsm, Object... bsmArgs) {
+    return invokeDynamicInsn(new ConstStencil<>(name), new ConstStencil<>(desc), new ConstStencil<>(bsm), new ConstStencil<>(Arrays.asList(bsmArgs)));
+  }
+
   public static TypeInsnStencil new_(IStencil<String> type) {
     return typeInsn(new ConstStencil<>(Opcodes.NEW), type);
+  }
+
+  public static TypeInsnStencil new_(String type) {
+    return new_(new ConstStencil<>(type));
   }
 
   public static IntInsnStencil newarray(IStencil<Integer> type) {
     return intInsn(new ConstStencil<>(Opcodes.NEWARRAY), type);
   }
 
+  public static IntInsnStencil newarray(int type) {
+    return newarray(new ConstStencil<>(type));
+  }
+
   public static TypeInsnStencil anewarray(IStencil<String> type) {
     return typeInsn(new ConstStencil<>(Opcodes.ANEWARRAY), type);
+  }
+
+  public static TypeInsnStencil anewarray(String type) {
+    return anewarray(new ConstStencil<>(type));
   }
 
   public static InsnStencil arraylength() {
@@ -678,8 +926,16 @@ public class InsnStencils {
     return typeInsn(new ConstStencil<>(Opcodes.CHECKCAST), type);
   }
 
+  public static TypeInsnStencil checkcast(String type) {
+    return checkcast(new ConstStencil<>(type));
+  }
+
   public static TypeInsnStencil instanceof_(IStencil<String> type) {
     return typeInsn(new ConstStencil<>(Opcodes.INSTANCEOF), type);
+  }
+
+  public static TypeInsnStencil instanceof_(String type) {
+    return instanceof_(new ConstStencil<>(type));
   }
 
   public static InsnStencil monitorenter() {
@@ -694,11 +950,23 @@ public class InsnStencils {
     return multiANewArrayInsn(desc, dims);
   }
 
+  public static MultiANewArrayInsnStencil multianewarray(String desc, int dims) {
+    return multiANewArrayInsn(new ConstStencil<>(desc), new ConstStencil<>(dims));
+  }
+
   public static JumpInsnStencil ifnull(IStencil<LabelNode> label) {
     return jumpInsn(new ConstStencil<>(Opcodes.IFNULL), label);
   }
 
+  public static JumpInsnStencil ifnull(LabelNode label) {
+    return ifnull(new ConstStencil<>(label));
+  }
+
   public static JumpInsnStencil ifnonnull(IStencil<LabelNode> label) {
     return jumpInsn(new ConstStencil<>(Opcodes.IFNONNULL), label);
+  }
+
+  public static JumpInsnStencil ifnonnull(LabelNode label) {
+    return ifnonnull(new ConstStencil<>(label));
   }
 }
