@@ -524,11 +524,25 @@ public class FlowAnalyzerTest {
   void test_41() {
     MethodNode methodNode = new MethodNode(Opcodes.ACC_STATIC, "test", "()V", null, null);
     methodNode.instructions.add(Insns.iconst_1());
+    methodNode.instructions.add(Insns.newarray(Opcodes.T_BOOLEAN));
+    methodNode.instructions.add(Insns.iconst_1());
+    methodNode.instructions.add(Insns.newarray(Opcodes.T_CHAR));
+    methodNode.instructions.add(Insns.iconst_1());
+    methodNode.instructions.add(Insns.newarray(Opcodes.T_BYTE));
+    methodNode.instructions.add(Insns.iconst_1());
+    methodNode.instructions.add(Insns.newarray(Opcodes.T_SHORT));
+    methodNode.instructions.add(Insns.iconst_1());
     methodNode.instructions.add(Insns.newarray(Opcodes.T_INT));
+    methodNode.instructions.add(Insns.iconst_1());
+    methodNode.instructions.add(Insns.newarray(Opcodes.T_FLOAT));
+    methodNode.instructions.add(Insns.iconst_1());
+    methodNode.instructions.add(Insns.newarray(Opcodes.T_DOUBLE));
+    methodNode.instructions.add(Insns.iconst_1());
+    methodNode.instructions.add(Insns.newarray(Opcodes.T_LONG));
     FlowAnalyzer flowAnalyzer = new FlowAnalyzer("Test", methodNode);
-    FlowAnalyzerThread thread = execute(flowAnalyzer, 2);
+    FlowAnalyzerThread thread = execute(flowAnalyzer, 16);
     Assertions.assertEquals(ArrayListHelper.of(), thread.getLocals());
-    Assertions.assertEquals(ArrayListHelper.of("[I"), thread.getStack());
+    Assertions.assertEquals(ArrayListHelper.of("[Z", "[C", "[B", "[S", "[I", "[F", "[D", "[J"), thread.getStack());
   }
 
   @Test
