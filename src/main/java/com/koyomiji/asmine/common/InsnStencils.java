@@ -123,12 +123,15 @@ public class InsnStencils {
     return multiANewArrayInsn(new ConstStencil<>(desc), new ConstStencil<>(dims));
   }
 
-  public static FrameStencil frame(IStencil<Integer> type, IStencil<Integer> numLocal, IStencil<List<Object>> local, IStencil<Integer> numStack, IStencil<List<Object>> stack) {
-    return new FrameStencil(type, numLocal, local, numStack, stack);
+  public static FrameStencil frame(IStencil<List<Object>> local, IStencil<List<Object>> stack) {
+    return new FrameStencil(local, stack);
   }
 
-  public static FrameStencil frame(int type, int numLocal, Object[] local, int numStack, Object[] stack) {
-    return frame(new ConstStencil<>(type), new ConstStencil<>(numLocal), new ConstStencil<>(ArrayHelper.toList(local)), new ConstStencil<>(numStack), new ConstStencil<>(ArrayHelper.toList(stack)));
+  public static FrameStencil frame(Object[] local, Object[] stack) {
+    return new FrameStencil(
+        new ConstStencil<>(ArrayHelper.toList(local)),
+        new ConstStencil<>(ArrayHelper.toList(stack))
+    );
   }
 
   public static LineNumberStencil lineNumber(IStencil<Integer> line, IStencil<LabelNode> start) {

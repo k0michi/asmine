@@ -4,6 +4,7 @@ import com.koyomiji.asmine.common.ArrayListHelper;
 import com.koyomiji.asmine.common.ListHelper;
 import com.koyomiji.asmine.common.PrinterHelper;
 import com.koyomiji.asmine.tree.ExternalizedMethodNode;
+import com.koyomiji.asmine.tree.NormalizedMethodNode;
 import org.objectweb.asm.Attribute;
 import org.objectweb.asm.TypePath;
 import org.objectweb.asm.tree.*;
@@ -391,7 +392,7 @@ public class ClassQuery extends AbstractQuery<ClassNode> {
     int found = ListHelper.findIndex(classNode.methods, m -> m.name.equals(name) && m.desc.equals(desc));
 
     if (found != -1) {
-      ExternalizedMethodNode methodNode = getMethodNode(found);
+      NormalizedMethodNode methodNode = getMethodNode(found);
       return new MethodQuery<>(this, methodNode);
     }
 
@@ -422,25 +423,26 @@ public class ClassQuery extends AbstractQuery<ClassNode> {
    * Internal
    */
 
-  private ExternalizedMethodNode externalizeMethod(MethodNode methodNode) {
-    ExternalizedMethodNode externalizedMethodNode = new ExternalizedMethodNode(
+  private NormalizedMethodNode externalizeMethod(MethodNode methodNode) {
+    NormalizedMethodNode normalized = new NormalizedMethodNode(
+            classNode.name,
             methodNode.access,
             methodNode.name,
             methodNode.desc,
             methodNode.signature,
             methodNode.exceptions != null ? methodNode.exceptions.toArray(new String[0]) : null
     );
-    methodNode.accept(externalizedMethodNode);
-    return externalizedMethodNode;
+    methodNode.accept(normalized);
+    return normalized;
   }
 
-  private ExternalizedMethodNode getMethodNode(int index) {
+  private NormalizedMethodNode getMethodNode(int index) {
     MethodNode methodNode = classNode.methods.get(index);
 
-    if (!(methodNode instanceof ExternalizedMethodNode)) {
+    if (!(methodNode instanceof NormalizedMethodNode)) {
       classNode.methods.set(index, externalizeMethod(methodNode));
     }
 
-    return (ExternalizedMethodNode) classNode.methods.get(index);
+    return (NormalizedMethodNode) classNode.methods.get(index);
   }
 }
