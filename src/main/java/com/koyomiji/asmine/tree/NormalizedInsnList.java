@@ -1,6 +1,9 @@
 package com.koyomiji.asmine.tree;
 
+import com.koyomiji.asmine.common.FrameHelper;
 import com.koyomiji.asmine.frame.ControlFlowAnalyzer;
+import com.koyomiji.asmine.frame.FlowAnalyzer;
+import com.koyomiji.asmine.frame.FlowAnalyzerThread;
 import com.koyomiji.asmine.frame.Frame;
 import com.koyomiji.asmine.tuple.Pair;
 import com.koyomiji.asmine.tuple.Triplet;
@@ -35,80 +38,44 @@ public class NormalizedInsnList extends InsnList {
   }
 
   private Map<FrameNode, FrameNode> integrateFrames() {
-    Stack<Triplet<AbstractInsnNode, LabelNode, Frame>> stack = new Stack<>();
+    Stack<FlowAnalyzerThread> stack = new Stack<>();
     Set<AbstractInsnNode> visited = new HashSet<>();
     Map<FrameNode, FrameNode> intFrames = new HashMap<>();
-    ControlFlowAnalyzer analyzer = new ControlFlowAnalyzer(methodNode);
+    FlowAnalyzer analyzer = new FlowAnalyzer(className, methodNode);
+    stack.addAll(analyzer.getAllEntryThreads());
 
-    while (true) {
-      AbstractInsnNode entry = null;
+    while (!stack.isEmpty()) {
+      FlowAnalyzerThread thread = stack.pop();
+      AbstractInsnNode insn = thread.getCurrentInsn();
 
-      for (AbstractInsnNode insn : this) {
-        if (!visited.contains(insn)) {
-          entry = insn;
-          break;
-        }
+      if (AbstractInsnNodeHelper.isReal(insn) && visited.contains(insn)) {
+        continue;
       }
 
-      if (entry == null) {
-        break;
-      }
+      visited.add(insn);
 
-      if (entry == this.getFirst()) {
-        stack.push(Triplet.of(entry, null, new Frame(className, methodNode)));
-      } else {
-        stack.push(Triplet.of(entry, null, new Frame()));
-      }
+      if (insn instanceof FrameNode) {
+        FrameNode frameNode = (FrameNode) insn;
+        List<Object> locals = FrameHelper.toPhysicalForm(frameNode.local);
+        List<Object> stackItems = FrameHelper.toPhysicalForm(frameNode.stack);
 
-      while (!stack.isEmpty()) {
-        Triplet<AbstractInsnNode, LabelNode, Frame> triplet = stack.pop();
-        AbstractInsnNode insn = triplet.first;
-        LabelNode labelNode = triplet.second;
-        Frame inferred = triplet.third;
-
-        if (insn == null || AbstractInsnNodeHelper.isReal(insn) && visited.contains(insn)) {
-          continue;
-        }
-
-        visited.add(insn);
-
-        if (insn instanceof FrameNode) {
-          FrameNode frameNode = (FrameNode) insn;
-          Frame frameGuide = new Frame(frameNode);
-
-          for (int i = 0; i < frameGuide.getLocalsSize(); i++) {
-            if (frameGuide.getLocalsRaw().get(i) != Frame.AUTO) {
-              inferred.setLocal(i, frameGuide.getLocalsRaw().get(i));
-            }
+        for (int i = 0; i < locals.size(); i++) {
+          if (locals.get(i) != Frame.AUTO) {
+            thread.setLocal(i, locals.get(i));
           }
+        }
 
-          for (int i = 0; i < frameGuide.getStackSize(); i++) {
-            if (frameGuide.getStackRaw().get(i) != Frame.AUTO) {
-              inferred.setStack(i, frameGuide.getStackRaw().get(i));
-            }
+        for (int i = 0; i < stackItems.size(); i++) {
+          if (stackItems.get(i) != Frame.AUTO) {
+            thread.setStack(i, stackItems.get(i));
           }
-
-          inferred.compactLocals(Opcodes.TOP);
-          intFrames.put(frameNode, inferred.toFrameNode());
         }
 
-        if (AbstractInsnNodeHelper.isReal(insn)) {
-          inferred.execute(labelNode, insn);
-        }
-
-        if (insn instanceof LabelNode) {
-          labelNode = (LabelNode) insn;
-        }
-
-        for (AbstractInsnNode suc : analyzer.getSuccessors(insn)) {
-          stack.push(Triplet.of(suc, labelNode, inferred.clone()));
-        }
-
-        for (Pair<AbstractInsnNode, String> suc : analyzer.getExceptionSuccessors(insn)) {
-          Frame exceptionFrame = new Frame(new Object[0], new Object[]{suc.second});
-          stack.push(Triplet.of(suc.first, labelNode, exceptionFrame));
-        }
+        thread.compactLocals(Opcodes.TOP);
+        intFrames.put(frameNode, thread.toFrameNode());
       }
+
+      stack.addAll(analyzer.step(thread));
     }
 
     return intFrames;

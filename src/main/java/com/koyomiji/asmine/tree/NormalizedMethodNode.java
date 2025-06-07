@@ -1,9 +1,11 @@
 package com.koyomiji.asmine.tree;
 
+import com.koyomiji.asmine.common.FrameHelper;
 import com.koyomiji.asmine.compat.OpcodesCompat;
 import com.koyomiji.asmine.frame.ControlFlowAnalyzer;
+import com.koyomiji.asmine.frame.FlowAnalyzer;
+import com.koyomiji.asmine.frame.FlowAnalyzerThread;
 import com.koyomiji.asmine.frame.Frame;
-import com.koyomiji.asmine.frame.FrameManipInsnNode;
 import com.koyomiji.asmine.tuple.Pair;
 import com.koyomiji.asmine.tuple.Triplet;
 import org.objectweb.asm.*;
@@ -175,104 +177,71 @@ public class NormalizedMethodNode extends MethodNode {
   }
 
   private void differentiateFrames() {
-    Stack<Triplet<AbstractInsnNode, LabelNode, Frame>> stack = new Stack<>();
+    Stack<FlowAnalyzerThread> stack = new Stack<>();
     Set<AbstractInsnNode> visited = new HashSet<>();
-    Map<FrameNode, Frame> diffFrames = new HashMap<>();
-    ControlFlowAnalyzer analyzer = new ControlFlowAnalyzer(this);
+    Map<FrameNode, FlowAnalyzerThread> diffFrames = new HashMap<>();
+    FlowAnalyzer analyzer = new FlowAnalyzer(className, this);
 
     for (AbstractInsnNode insn : instructions) {
       if (insn instanceof FrameNode) {
         FrameNode frameNode = (FrameNode) insn;
-        Object[] local = new Object[maxLocals];
+        List<Object> local = new ArrayList<>();
 
         for (int i = 0; i < maxLocals; i++) {
-          local[i] = Frame.AUTO;
+          local.add(Frame.AUTO);
         }
 
-        Object[] stackItems = new Object[0];
-        Frame diffFrame = new Frame(local, stackItems);
+        List<Object> stackItems = new ArrayList<>();
+        FlowAnalyzerThread diffFrame = new FlowAnalyzerThread(insn, local, stackItems);
         diffFrames.put(frameNode, diffFrame);
       }
     }
 
-    while (true) {
-      AbstractInsnNode entry = null;
+    stack.addAll(analyzer.getAllEntryThreads());
 
-      for (AbstractInsnNode insn : instructions) {
-        if (!visited.contains(insn)) {
-          entry = insn;
-          break;
-        }
+    while (!stack.isEmpty()) {
+      FlowAnalyzerThread thread = stack.pop();
+      AbstractInsnNode insn = thread.getCurrentInsn();
+
+      if (AbstractInsnNodeHelper.isReal(insn) && visited.contains(insn)) {
+        continue;
       }
 
-      if (entry == null) {
-        break;
-      }
+      visited.add(insn);
 
-      if (entry == instructions.getFirst()) {
-        stack.push(Triplet.of(entry, null, new Frame(className, this)));
-      } else {
-        stack.push(Triplet.of(entry, null, new Frame()));
-      }
+      if (insn instanceof FrameNode) {
+        FrameNode frameNode = (FrameNode) insn;
+        FlowAnalyzerThread diffFrame = diffFrames.get(frameNode);
+        List<Object> actualLocals = FrameHelper.toPhysicalForm(frameNode.local);
+        List<Object> actualStack = FrameHelper.toPhysicalForm(frameNode.stack);
 
-      while (!stack.isEmpty()) {
-        Triplet<AbstractInsnNode, LabelNode, Frame> triplet = stack.pop();
-        AbstractInsnNode insn = triplet.first;
-        LabelNode labelNode = triplet.second;
-        Frame inferred = triplet.third;
+        for (int i = 0; i < Math.max(actualLocals.size(), thread.getLocalSize()); i++) {
+          Object actualLocal = i < actualLocals.size() ? actualLocals.get(i) : Opcodes.TOP;
+          Object inferredLocal = thread.getLocal(i);
 
-        if (insn == null || AbstractInsnNodeHelper.isReal(insn) && visited.contains(insn)) {
-          continue;
-        }
-
-        visited.add(insn);
-
-        if (insn instanceof FrameNode) {
-          FrameNode frameNode = (FrameNode) insn;
-          Frame diffFrame = diffFrames.get(frameNode);
-          Frame actualFrame = new Frame(frameNode);
-
-          for (int i = 0; i < Math.max(actualFrame.getStackRaw().size(), inferred.getStackRaw().size()); i++) {
-            Object inferredStack = i < inferred.getStackRaw().size() ? inferred.getStackRaw().get(i) : Opcodes.TOP;
-            Object actualStack = i < actualFrame.getStackRaw().size() ? actualFrame.getStackRaw().get(i) : Opcodes.TOP;
-
-            if (!Objects.equals(actualStack, inferredStack)) {
-              diffFrame.setStack(i, actualStack);
-            }
+          if (!Objects.equals(actualLocal, inferredLocal)) {
+            diffFrame.setLocal(i, actualLocal);
           }
+        }
 
-          for (int i = 0; i < Math.max(actualFrame.getLocalsRaw().size(), inferred.getLocalsRaw().size()); i++) {
-            Object inferredLocal = i < inferred.getLocalsRaw().size() ? inferred.getLocalsRaw().get(i) : Opcodes.TOP;
-            Object actualLocal = i < actualFrame.getLocalsRaw().size() ? actualFrame.getLocalsRaw().get(i) : Opcodes.TOP;
+        thread.setLocals(actualLocals);
 
-            if (!Objects.equals(actualLocal, inferredLocal)) {
-              diffFrame.setLocal(i, actualLocal);
-            }
+        for (int i = 0; i < Math.max(actualStack.size(), thread.getStackSize()); i++) {
+          Object actualStackItem = i < actualStack.size() ? actualStack.get(i) : Opcodes.TOP;
+          Object inferredStackItem = thread.getStack(i);
+
+          if (!Objects.equals(actualStackItem, inferredStackItem)) {
+            diffFrame.setStack(i, actualStackItem);
           }
-
-          inferred = actualFrame;
         }
 
-        if (AbstractInsnNodeHelper.isReal(insn)) {
-          inferred.execute(labelNode, insn);
-        }
-
-        if (insn instanceof LabelNode) {
-          labelNode = (LabelNode) insn;
-        }
-
-        for (AbstractInsnNode suc : analyzer.getSuccessors(insn)) {
-          stack.push(Triplet.of(suc, labelNode, inferred.clone()));
-        }
-
-        for (Pair<AbstractInsnNode, String> suc : analyzer.getExceptionSuccessors(insn)) {
-          Frame exceptionFrame = new Frame(new Object[0], new Object[]{suc.second});
-          stack.push(Triplet.of(suc.first, labelNode, exceptionFrame));
-        }
+        thread.setStack(actualStack);
       }
+
+      stack.addAll(analyzer.step(thread));
     }
 
-    for (Map.Entry<FrameNode, Frame> entry : diffFrames.entrySet()) {
+    for (Map.Entry<FrameNode, FlowAnalyzerThread> entry : diffFrames.entrySet()) {
       instructions.set(entry.getKey(), entry.getValue().toFrameNode());
     }
   }
