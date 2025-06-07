@@ -1,7 +1,7 @@
 package com.koyomiji.asmine.test;
 
 import com.koyomiji.asmine.common.ArrayListHelper;
-import com.koyomiji.asmine.frame.Frame;
+import com.koyomiji.asmine.analysis.Frame;
 import com.koyomiji.asmine.common.Insns;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

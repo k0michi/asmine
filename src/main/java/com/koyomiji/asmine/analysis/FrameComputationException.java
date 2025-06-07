@@ -1,4 +1,4 @@
-package com.koyomiji.asmine.frame;
+package com.koyomiji.asmine.analysis;
 
 public class FrameComputationException extends RuntimeException {
   public FrameComputationException() {

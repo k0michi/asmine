@@ -1,4 +1,4 @@
-package com.koyomiji.asmine.frame;
+package com.koyomiji.asmine.analysis;
 
 import com.koyomiji.asmine.common.FrameHelper;
 import com.koyomiji.asmine.common.ListHelper;

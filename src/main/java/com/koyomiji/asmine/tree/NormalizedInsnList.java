@@ -1,12 +1,9 @@
 package com.koyomiji.asmine.tree;
 
 import com.koyomiji.asmine.common.FrameHelper;
-import com.koyomiji.asmine.frame.ControlFlowAnalyzer;
-import com.koyomiji.asmine.frame.FlowAnalyzer;
-import com.koyomiji.asmine.frame.FlowAnalyzerThread;
-import com.koyomiji.asmine.frame.Frame;
-import com.koyomiji.asmine.tuple.Pair;
-import com.koyomiji.asmine.tuple.Triplet;
+import com.koyomiji.asmine.analysis.FlowAnalyzer;
+import com.koyomiji.asmine.analysis.FlowAnalyzerThread;
+import com.koyomiji.asmine.analysis.Frame;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.*;

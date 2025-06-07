@@ -1,7 +1,7 @@
 package com.koyomiji.asmine.test;
 
 import com.koyomiji.asmine.common.ArrayListHelper;
-import com.koyomiji.asmine.frame.Frame;
+import com.koyomiji.asmine.analysis.Frame;
 import com.koyomiji.asmine.tree.NormalizedMethodNode;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -9,7 +9,6 @@ import org.objectweb.asm.Label;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.FrameNode;
 import org.objectweb.asm.tree.MethodNode;
-import org.objectweb.asm.tree.TryCatchBlockNode;
 
 public class NormalizedMethodNodeTest {
   @Test

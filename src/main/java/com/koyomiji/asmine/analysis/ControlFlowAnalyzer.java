@@ -1,8 +1,7 @@
-package com.koyomiji.asmine.frame;
+package com.koyomiji.asmine.analysis;
 
 import com.koyomiji.asmine.tree.AbstractInsnNodeHelper;
 import com.koyomiji.asmine.tuple.Pair;
-import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.*;
 
 import java.util.ArrayList;
