@@ -147,7 +147,7 @@ public class FlowAnalyzerThread implements Cloneable {
     Type[] argumentTypes = Type.getArgumentTypes(methodDescriptor);
 
     for (Type type : argumentTypes) {
-      for (Object verificationType : getVerificationTypesForType(type)) {
+      for (Object verificationType : FrameHelper.fromType(type)) {
         addLocal(verificationType);
       }
     }
@@ -160,7 +160,7 @@ public class FlowAnalyzerThread implements Cloneable {
   public void pushDescriptor(String descriptor) {
     Type type = Type.getType(descriptor);
 
-    for (Object verificationType : getVerificationTypesForType(type)) {
+    for (Object verificationType : FrameHelper.fromType(type)) {
       push(verificationType);
     }
   }
@@ -168,7 +168,7 @@ public class FlowAnalyzerThread implements Cloneable {
   public void pushMethodReturn(String methodDescriptor) {
     Type returnType = Type.getReturnType(methodDescriptor);
 
-    for (Object verificationType : getVerificationTypesForType(returnType)) {
+    for (Object verificationType : FrameHelper.fromType(returnType)) {
       push(verificationType);
     }
   }
@@ -178,28 +178,6 @@ public class FlowAnalyzerThread implements Cloneable {
 
     for (int i = 0; i < verificationTypes.size(); i++) {
       stack.set(begin + i, verificationTypes.get(i));
-    }
-  }
-
-  private List<Object> getVerificationTypesForType(Type type) {
-    if (Objects.equals(type, Type.VOID_TYPE)) {
-      return Arrays.asList();
-    } else if (Objects.equals(type, Type.BOOLEAN_TYPE) ||
-            Objects.equals(type, Type.CHAR_TYPE) ||
-            Objects.equals(type, Type.BYTE_TYPE) ||
-            Objects.equals(type, Type.SHORT_TYPE) ||
-            Objects.equals(type, Type.INT_TYPE)) {
-      return Arrays.asList(Opcodes.INTEGER);
-    } else if (Objects.equals(type, Type.FLOAT_TYPE)) {
-      return Arrays.asList(Opcodes.FLOAT);
-    } else if (Objects.equals(type, Type.LONG_TYPE)) {
-      return Arrays.asList(Opcodes.LONG, Opcodes.TOP);
-    } else if (Objects.equals(type, Type.DOUBLE_TYPE)) {
-      return Arrays.asList(Opcodes.DOUBLE, Opcodes.TOP);
-    } else if (type.getSort() == Type.OBJECT || type.getSort() == Type.ARRAY) {
-      return Arrays.asList(type.getInternalName());
-    } else {
-      throw new IllegalArgumentException("Unsupported type: " + type);
     }
   }
 
@@ -219,7 +197,7 @@ public class FlowAnalyzerThread implements Cloneable {
   public void popDescriptor(String descriptor) {
     Type type = Type.getType(descriptor);
 
-    for (Object verificationType : getVerificationTypesForType(type)) {
+    for (Object verificationType : FrameHelper.fromType(type)) {
       pop();
     }
   }
@@ -228,7 +206,7 @@ public class FlowAnalyzerThread implements Cloneable {
     Type[] argumentTypes = Type.getArgumentTypes(methodDescriptor);
 
     for (Type type : argumentTypes) {
-      for (Object verificationType : getVerificationTypesForType(type)) {
+      for (Object verificationType : FrameHelper.fromType(type)) {
         pop();
       }
     }
