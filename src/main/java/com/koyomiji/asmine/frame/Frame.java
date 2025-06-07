@@ -11,7 +11,6 @@ import org.objectweb.asm.tree.*;
 import java.util.*;
 
 public class Frame implements Cloneable {
-  public static final Object UNKNOWN = new Object();
   public static final Object AUTO = new Object();
 
   private ArrayList<Object> locals = new ArrayList<>();
@@ -60,11 +59,6 @@ public class Frame implements Cloneable {
 
     for (int i = 0; i < locals.size(); ) {
       Object local = locals.get(i);
-
-      if (local == UNKNOWN) {
-        local = Opcodes.TOP;
-      }
-
       results.add(local);
       i += FrameHelper.getSize(local);
     }
@@ -85,11 +79,6 @@ public class Frame implements Cloneable {
 
     for (int i = 0; i < stack.size(); ) {
       Object stackItem = stack.get(i);
-
-      if (stackItem == UNKNOWN) {
-        stackItem = Opcodes.TOP;
-      }
-
       results.add(stackItem);
       i += FrameHelper.getSize(stackItem);
     }
@@ -155,7 +144,6 @@ public class Frame implements Cloneable {
     allocateLocals(index);
     locals.set(index, value);
     modifyPreIndex(index - 1);
-//    shrinkLocals();
   }
 
   public void setLocal2(int index, Object value) {
@@ -163,7 +151,6 @@ public class Frame implements Cloneable {
     locals.set(index, value);
     locals.set(index + 1, Opcodes.TOP);
     modifyPreIndex(index - 1);
-//    shrinkLocals();
   }
 
   public void setStack(int index, Object value) {
@@ -186,8 +173,6 @@ public class Frame implements Cloneable {
     if (locals.size() > firstIndex) {
       modifyPreIndex(firstIndex - 1);
     }
-
-//    shrinkLocals();
   }
 
   public void push(Object value) {
@@ -680,95 +665,6 @@ public class Frame implements Cloneable {
         break;
       default:
         throw new IllegalArgumentException("Unsupported opcode: " + insn.getOpcode());
-    }
-  }
-
-  public static Object getCommonType(Object type1, Object type2) {
-    if (Objects.equals(type1, type2)) {
-      return type1;
-    } else if (type1 == Opcodes.NULL && type2 instanceof String) {
-      return type2;
-    } else if (type1 instanceof String && type2 == Opcodes.NULL) {
-      return type1;
-    } else if (type1 instanceof String && type2 instanceof String) {
-      // Both are class types, but we don't know the common type
-      return UNKNOWN;
-    } else {
-      return Opcodes.TOP;
-    }
-  }
-
-  public void mergeWith(Frame other) {
-    if (getStackSize() != other.getStackSize()) {
-      throw new FrameComputationException("Cannot merge frames with different stack sizes");
-    }
-
-    int maxLocals = Math.max(this.locals.size(), other.locals.size());
-    ListHelper.resize(this.locals, maxLocals);
-
-    for (int i = 0; i < maxLocals; i++) {
-      Object type1 = i < this.locals.size() ? this.locals.get(i) : Opcodes.TOP;
-      Object type2 = i < other.locals.size() ? other.locals.get(i) : Opcodes.TOP;
-      this.locals.set(i, getCommonType(type1, type2));
-    }
-
-    int maxStackSize = Math.max(this.stack.size(), other.stack.size());
-    ListHelper.resize(this.stack, maxStackSize);
-
-    for (int i = 0; i < maxStackSize; i++) {
-      Object type1 = i < this.stack.size() ? this.stack.get(i) : Opcodes.TOP;
-      Object type2 = i < other.stack.size() ? other.stack.get(i) : Opcodes.TOP;
-      this.stack.set(i, getCommonType(type1, type2));
-    }
-  }
-
-  // Returns this - other
-  public FrameNode compareWith(Frame other) {
-    List<Object> locals = new ArrayList<>();
-    List<Object> stack = new ArrayList<>();
-
-    for (int i = 0; i < Math.max(this.locals.size(), other.locals.size()); i++) {
-      Object type1 = i < this.locals.size() ? this.locals.get(i) : Opcodes.TOP;
-      Object type2 = i < other.locals.size() ? other.locals.get(i) : Opcodes.TOP;
-
-      if (!Objects.equals(type1, type2)) {
-        locals.add(type1);
-      } else {
-        locals.add(AUTO);
-      }
-    }
-
-    for(int i = 0; i < Math.max(this.stack.size(), other.stack.size()); i++) {
-      Object type1 = i < this.stack.size() ? this.stack.get(i) : Opcodes.TOP;
-      Object type2 = i < other.stack.size() ? other.stack.get(i) : Opcodes.TOP;
-
-      if (!Objects.equals(type1, type2)) {
-        stack.add(type1);
-      } else {
-        stack.add(AUTO);
-      }
-    }
-
-    return new FrameNode(
-        Opcodes.F_NEW,
-        locals.size(),
-        locals.toArray(new Object[0]),
-        stack.size(),
-        stack.toArray(new Object[0])
-    );
-  }
-
-  public void overwriteWith(Frame other) {
-    for (int i = 0; i < Math.min(locals.size(), other.locals.size());) {
-      if (locals.get(i) == Opcodes.TOP) {
-        locals.set(i, other.locals.get(i));
-      }
-    }
-
-    for (int i = 0; i < Math.min(stack.size(), other.stack.size());) {
-      if (stack.get(i) == Opcodes.TOP) {
-        stack.set(i, other.stack.get(i));
-      }
     }
   }
 
