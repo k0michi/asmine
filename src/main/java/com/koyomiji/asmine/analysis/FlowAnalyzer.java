@@ -117,7 +117,7 @@ public class FlowAnalyzer {
   public List<AbstractInsnNode> getSuccessors(AbstractInsnNode insn) {
     List<AbstractInsnNode> results = new ArrayList<>();
 
-    if (!AbstractInsnNodeHelper.isUnconditionalJump(insn) && insn.getNext() != null) {
+    if (!AbstractInsnNodeHelper.isUnconditionalJump(insn)) {
       results.add(AbstractInsnNodeHelper.skipPseudo(insn.getNext()));
     }
 
@@ -276,7 +276,7 @@ public class FlowAnalyzer {
         if (arrayref == Opcodes.NULL) {
           thread.push(Opcodes.NULL);
         } else {
-          thread.push(Type.getType(((String) arrayref)).getElementType().getDescriptor());
+          thread.pushType(Type.getType(arrayref.toString()).getElementType());
         }
         break;
       }
@@ -470,7 +470,7 @@ public class FlowAnalyzer {
         thread.push2(Opcodes.LONG);
         break;
       case Opcodes.IINC:
-        thread.setLocal(((VarInsnNode) insn).var, Opcodes.INTEGER);
+        thread.setLocal(((IincInsnNode) insn).var, Opcodes.INTEGER);
         break;
       case Opcodes.I2L:
       case Opcodes.F2L:
@@ -566,7 +566,7 @@ public class FlowAnalyzer {
         break;
       case Opcodes.ANEWARRAY: {
         thread.pop();
-        thread.push("[" + ((TypeInsnNode) insn).desc);
+        thread.push("[L" + ((TypeInsnNode) insn).desc + ";");
         break;
       }
       case Opcodes.CHECKCAST:

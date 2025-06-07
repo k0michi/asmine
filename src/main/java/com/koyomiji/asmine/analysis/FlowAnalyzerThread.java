@@ -157,12 +157,14 @@ public class FlowAnalyzerThread implements Cloneable {
     stack.add(value);
   }
 
-  public void pushDescriptor(String descriptor) {
-    Type type = Type.getType(descriptor);
-
+  public void pushType(Type type) {
     for (Object verificationType : FrameHelper.fromType(type)) {
       push(verificationType);
     }
+  }
+
+  public void pushDescriptor(String descriptor) {
+    pushType(Type.getType(descriptor));
   }
 
   public void pushMethodReturn(String methodDescriptor) {
