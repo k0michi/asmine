@@ -225,7 +225,7 @@ public class FlowAnalyzerThread implements Cloneable {
   }
 
   @Override
-  protected FlowAnalyzerThread clone() {
+  public FlowAnalyzerThread clone() {
     try {
       FlowAnalyzerThread clone = (FlowAnalyzerThread) super.clone();
       clone.locals = (ArrayList<Object>) this.locals.clone();
