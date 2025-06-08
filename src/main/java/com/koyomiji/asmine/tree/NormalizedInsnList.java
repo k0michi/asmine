@@ -21,11 +21,11 @@ public class NormalizedInsnList extends InsnList {
 
   @Override
   public void accept(MethodVisitor methodVisitor) {
-    Map<FrameNode, FrameNode> intFrames = integrateFrames();
+    Map<FrameNode, FrameNode> absFrames = absolutizeFrames();
     AbstractInsnNode currentInsn = getFirst();
     while (currentInsn != null) {
-      if (intFrames.containsKey(currentInsn)){
-        intFrames.get(currentInsn).accept(methodVisitor);
+      if (absFrames.containsKey(currentInsn)){
+        absFrames.get(currentInsn).accept(methodVisitor);
       } else {
         currentInsn.accept(methodVisitor);
       }
@@ -34,10 +34,10 @@ public class NormalizedInsnList extends InsnList {
     }
   }
 
-  private Map<FrameNode, FrameNode> integrateFrames() {
+  private Map<FrameNode, FrameNode> absolutizeFrames() {
     Stack<FlowAnalyzerThread> stack = new Stack<>();
     Set<AbstractInsnNode> visited = new HashSet<>();
-    Map<FrameNode, FrameNode> intFrames = new HashMap<>();
+    Map<FrameNode, FrameNode> absFrames = new HashMap<>();
     FlowAnalyzer analyzer = new FlowAnalyzer(className, methodNode);
     stack.addAll(analyzer.getAllEntryThreads());
 
@@ -64,7 +64,7 @@ public class NormalizedInsnList extends InsnList {
         }
 
         thread.compactLocals(Opcodes.TOP);
-        intFrames.put(frameNode, thread.toFrameNode());
+        absFrames.put(frameNode, thread.toFrameNode());
       }
 
       if (visited.contains(insn)) {
@@ -75,6 +75,6 @@ public class NormalizedInsnList extends InsnList {
       stack.addAll(analyzer.step(thread));
     }
 
-    return intFrames;
+    return absFrames;
   }
 }

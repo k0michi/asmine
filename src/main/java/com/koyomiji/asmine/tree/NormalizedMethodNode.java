@@ -170,13 +170,13 @@ public class NormalizedMethodNode extends MethodNode {
   @Override
   public void visitEnd() {
     super.visitEnd();
-    differentiateFrames();
+    relativizeFrames();
   }
 
-  private void differentiateFrames() {
+  private void relativizeFrames() {
     Stack<FlowAnalyzerThread> stack = new Stack<>();
     Set<AbstractInsnNode> visited = new HashSet<>();
-    Map<FrameNode, FlowAnalyzerThread> diffFrames = new HashMap<>();
+    Map<FrameNode, FlowAnalyzerThread> relFrames = new HashMap<>();
     FlowAnalyzer analyzer = new FlowAnalyzer(className, this);
 
     for (AbstractInsnNode insn : instructions) {
@@ -189,8 +189,8 @@ public class NormalizedMethodNode extends MethodNode {
         }
 
         List<Object> stackItems = new ArrayList<>();
-        FlowAnalyzerThread diffFrame = new FlowAnalyzerThread(insn, local, stackItems);
-        diffFrames.put(frameNode, diffFrame);
+        FlowAnalyzerThread relFrame = new FlowAnalyzerThread(insn, local, stackItems);
+        relFrames.put(frameNode, relFrame);
       }
     }
 
@@ -203,7 +203,7 @@ public class NormalizedMethodNode extends MethodNode {
       FrameNode frameNode = AbstractInsnNodeHelper.getFrame(insn);
 
       if (frameNode != null) {
-        FlowAnalyzerThread diffFrame = diffFrames.get(frameNode);
+        FlowAnalyzerThread relFrame = relFrames.get(frameNode);
         List<Object> actualLocals = FrameHelper.toPhysicalForm(frameNode.local);
         List<Object> actualStack = FrameHelper.toPhysicalForm(frameNode.stack);
 
@@ -212,7 +212,7 @@ public class NormalizedMethodNode extends MethodNode {
           Object inferredLocal = thread.getLocal(i);
 
           if (!Objects.equals(actualLocal, inferredLocal)) {
-            diffFrame.setLocal(i, actualLocal);
+            relFrame.setLocal(i, actualLocal);
           }
         }
 
@@ -223,7 +223,7 @@ public class NormalizedMethodNode extends MethodNode {
           Object inferredStackItem = thread.getStack(i);
 
           if (!Objects.equals(actualStackItem, inferredStackItem)) {
-            diffFrame.setStack(i, actualStackItem);
+            relFrame.setStack(i, actualStackItem);
           }
         }
 
@@ -238,7 +238,7 @@ public class NormalizedMethodNode extends MethodNode {
       stack.addAll(analyzer.step(thread));
     }
 
-    for (Map.Entry<FrameNode, FlowAnalyzerThread> entry : diffFrames.entrySet()) {
+    for (Map.Entry<FrameNode, FlowAnalyzerThread> entry : relFrames.entrySet()) {
       instructions.set(entry.getKey(), entry.getValue().toFrameNode());
     }
   }
