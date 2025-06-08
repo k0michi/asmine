@@ -7,6 +7,7 @@ import com.koyomiji.asmine.compat.OpcodesCompat;
 import com.koyomiji.asmine.query.MethodQuery;
 import com.koyomiji.asmine.regex.compiler.Regexes;
 import com.koyomiji.asmine.regex.compiler.code.CodeRegexes;
+import com.koyomiji.asmine.stencil.Stencils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.objectweb.asm.Opcodes;
@@ -759,5 +760,42 @@ public class MethodQueryTest {
             .setMaxLocals(1)
             .getMaxLocals();
     Assertions.assertEquals(1, result);
+  }
+
+  // trailing label
+  @Test
+  void test_14() {
+    boolean present = MethodQuery.ofNew()
+            .addInsns(
+                    Insns.iconst_1(),
+                    Insns.label()
+            )
+            .selectCodeFragments(
+                    Regexes.concatenate(
+                            CodeRegexes.stencil(InsnStencils.iconst_1()),
+                            CodeRegexes.stencil(InsnStencils.label(Stencils.any()))
+                    )
+            )
+            .isPresent();
+
+    Assertions.assertTrue(present);
+  }
+
+  // label only
+  @Test
+  void test_15() {
+    boolean present = MethodQuery.ofNew()
+            .addInsns(
+                    Insns.iconst_1(),
+                    Insns.label()
+            )
+            .selectCodeFragments(
+                    Regexes.concatenate(
+                            CodeRegexes.stencil(InsnStencils.label(Stencils.any()))
+                    )
+            )
+            .isPresent();
+
+    Assertions.assertTrue(present);
   }
 }
