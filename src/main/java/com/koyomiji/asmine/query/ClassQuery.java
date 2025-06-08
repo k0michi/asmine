@@ -3,7 +3,6 @@ package com.koyomiji.asmine.query;
 import com.koyomiji.asmine.common.ArrayListHelper;
 import com.koyomiji.asmine.common.ListHelper;
 import com.koyomiji.asmine.common.PrinterHelper;
-import com.koyomiji.asmine.tree.ExternalizedMethodNode;
 import com.koyomiji.asmine.tree.NormalizedMethodNode;
 import org.objectweb.asm.Attribute;
 import org.objectweb.asm.TypePath;
@@ -423,7 +422,7 @@ public class ClassQuery extends AbstractQuery<ClassNode> {
    * Internal
    */
 
-  private NormalizedMethodNode externalizeMethod(MethodNode methodNode) {
+  private NormalizedMethodNode normalizeMethod(MethodNode methodNode) {
     NormalizedMethodNode normalized = new NormalizedMethodNode(
             classNode.name,
             methodNode.access,
@@ -440,7 +439,7 @@ public class ClassQuery extends AbstractQuery<ClassNode> {
     MethodNode methodNode = classNode.methods.get(index);
 
     if (!(methodNode instanceof NormalizedMethodNode)) {
-      classNode.methods.set(index, externalizeMethod(methodNode));
+      classNode.methods.set(index, normalizeMethod(methodNode));
     }
 
     return (NormalizedMethodNode) classNode.methods.get(index);
