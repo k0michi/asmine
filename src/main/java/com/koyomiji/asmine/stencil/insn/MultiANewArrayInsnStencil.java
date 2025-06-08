@@ -1,25 +1,25 @@
 package com.koyomiji.asmine.stencil.insn;
 
-import com.koyomiji.asmine.stencil.AbstractParameter;
-import com.koyomiji.asmine.stencil.IParameterRegistry;
-import com.koyomiji.asmine.stencil.ConstParameter;
-import com.koyomiji.asmine.stencil.ResolutionExeption;
+import com.koyomiji.asmine.stencil.IStencil;
+import com.koyomiji.asmine.stencil.IStencilRegistry;
+import com.koyomiji.asmine.stencil.ConstStencil;
+import com.koyomiji.asmine.stencil.StencilEvaluationException;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.MultiANewArrayInsnNode;
 
 public class MultiANewArrayInsnStencil extends AbstractInsnStencil {
-  public AbstractParameter<String> desc;
-  public AbstractParameter<Integer> dims;
+  public IStencil<String> desc;
+  public IStencil<Integer> dims;
 
-  public MultiANewArrayInsnStencil(AbstractParameter<String> desc, AbstractParameter<Integer> dims) {
-    super(new ConstParameter<>(Opcodes.MULTIANEWARRAY));
+  public MultiANewArrayInsnStencil(IStencil<String> desc, IStencil<Integer> dims) {
+    super(new ConstStencil<>(Opcodes.MULTIANEWARRAY));
     this.desc = desc;
     this.dims = dims;
   }
 
   @Override
-  public boolean match(IParameterRegistry registry, AbstractInsnNode insn) {
+  public boolean match(IStencilRegistry registry, AbstractInsnNode insn) {
     return super.match(registry, insn)
             && insn instanceof MultiANewArrayInsnNode
             && desc.match(registry, ((MultiANewArrayInsnNode) insn).desc)
@@ -27,10 +27,10 @@ public class MultiANewArrayInsnStencil extends AbstractInsnStencil {
   }
 
   @Override
-  public AbstractInsnNode instantiate(IParameterRegistry registry) throws ResolutionExeption {
+  public AbstractInsnNode evaluate(IStencilRegistry registry) throws StencilEvaluationException {
     return new MultiANewArrayInsnNode(
-            this.desc.instantiate(registry),
-            this.dims.instantiate(registry)
+            this.desc.evaluate(registry),
+            this.dims.evaluate(registry)
     );
   }
 

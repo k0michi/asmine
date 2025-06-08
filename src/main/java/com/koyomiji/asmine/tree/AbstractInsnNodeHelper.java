@@ -1,5 +1,6 @@
 package com.koyomiji.asmine.tree;
 
+import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.*;
 
 import java.util.Arrays;
@@ -18,6 +19,75 @@ public class AbstractInsnNodeHelper {
 
   public static boolean isPseudo(AbstractInsnNode insn) {
     return insn.getOpcode() == -1;
+  }
+
+  public static AbstractInsnNode skipPseudo(AbstractInsnNode insn) {
+    while (insn != null && isPseudo(insn)) {
+      insn = insn.getNext();
+    }
+
+    return insn;
+  }
+
+  public static LabelNode getLabel(AbstractInsnNode insn) {
+    LabelNode labelNode = null;
+    insn = insn.getPrevious();
+
+    while (insn != null && isPseudo(insn)) {
+      if (insn instanceof LabelNode) {
+        labelNode = (LabelNode) insn;
+        break;
+      }
+
+      insn = insn.getPrevious();
+    }
+
+    return labelNode;
+  }
+
+  public static FrameNode getFrame(AbstractInsnNode insn) {
+    FrameNode frameNode = null;
+    insn = insn.getPrevious();
+
+    while (insn != null && isPseudo(insn)) {
+      if (insn instanceof FrameNode) {
+        frameNode = (FrameNode) insn;
+        break;
+      }
+
+      insn = insn.getPrevious();
+    }
+
+    return frameNode;
+  }
+
+  public static LineNumberNode getLineNumber(AbstractInsnNode insn) {
+    LineNumberNode lineNumberNode = null;
+    insn = insn.getPrevious();
+
+    while (insn != null && isPseudo(insn)) {
+      if (insn instanceof LineNumberNode) {
+        lineNumberNode = (LineNumberNode) insn;
+        break;
+      }
+
+      insn = insn.getPrevious();
+    }
+
+    return lineNumberNode;
+  }
+
+  public static boolean isUnconditionalJump(AbstractInsnNode insn) {
+    return insn.getOpcode() == Opcodes.ARETURN ||
+            insn.getOpcode() == Opcodes.ATHROW ||
+            insn.getOpcode() == Opcodes.DRETURN ||
+            insn.getOpcode() == Opcodes.FRETURN ||
+            insn.getOpcode() == Opcodes.GOTO ||
+            insn.getOpcode() == Opcodes.IRETURN ||
+            insn.getOpcode() == Opcodes.LOOKUPSWITCH ||
+            insn.getOpcode() == Opcodes.LRETURN ||
+            insn.getOpcode() == Opcodes.RETURN ||
+            insn.getOpcode() == Opcodes.TABLESWITCH;
   }
 
   public static boolean equals(AbstractInsnNode insn1, AbstractInsnNode insn2) {

@@ -1,18 +1,17 @@
 package com.koyomiji.asmine.test;
 
-import com.koyomiji.asmine.common.ArrayListHelper;
-import com.koyomiji.asmine.common.InsnStencils;
-import com.koyomiji.asmine.common.Insns;
+import com.koyomiji.asmine.common.*;
 import com.koyomiji.asmine.compat.OpcodesCompat;
 import com.koyomiji.asmine.query.MethodQuery;
 import com.koyomiji.asmine.regex.compiler.Regexes;
 import com.koyomiji.asmine.regex.compiler.code.CodeRegexes;
+import com.koyomiji.asmine.stencil.Stencils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.tree.FrameNode;
 import org.objectweb.asm.tree.InsnNode;
 import org.objectweb.asm.tree.MethodNode;
-import org.objectweb.asm.util.Textifier;
 
 public class MethodQueryTest {
   @Test
@@ -575,14 +574,14 @@ public class MethodQueryTest {
             )
             .selectCodeFragments(
                     Regexes.concatenate(
-                    Regexes.bind(0,
-                            Regexes.concatenate(
-                                    CodeRegexes.stencil(InsnStencils.nop())
+                            Regexes.bind(0,
+                                    Regexes.concatenate(
+                                            CodeRegexes.stencil(InsnStencils.nop())
+                                    )
+                            ),
+                            Regexes.bind(1,
+                                    Regexes.any()
                             )
-                    ),
-                    Regexes.bind(1,
-                            Regexes.any()
-                    )
                     )
             )
             .selectBound(0)
@@ -759,5 +758,94 @@ public class MethodQueryTest {
             .setMaxLocals(1)
             .getMaxLocals();
     Assertions.assertEquals(1, result);
+  }
+
+  // trailing label
+  @Test
+  void test_14() {
+    boolean present = MethodQuery.ofNew()
+            .addInsns(
+                    Insns.iconst_1(),
+                    Insns.label()
+            )
+            .selectCodeFragments(
+                    Regexes.concatenate(
+                            CodeRegexes.stencil(InsnStencils.iconst_1()),
+                            CodeRegexes.stencil(InsnStencils.label(Stencils.any()))
+                    )
+            )
+            .isPresent();
+
+    Assertions.assertTrue(present);
+  }
+
+  // label only
+  @Test
+  void test_15() {
+    boolean present = MethodQuery.ofNew()
+            .addInsns(
+                    Insns.iconst_1(),
+                    Insns.label()
+            )
+            .selectCodeFragments(
+                    Regexes.concatenate(
+                            CodeRegexes.stencil(InsnStencils.label(Stencils.any()))
+                    )
+            )
+            .isPresent();
+
+    Assertions.assertTrue(present);
+  }
+
+  // setLocal, setStack
+  @Test
+  void test_16() {
+    MethodNode mn = MethodQuery.ofNew()
+            .addInsns(
+                    Insns.return_(),
+                    Insns.frame(Opcodes.F_NEW, 0, new Object[0], 1, new Object[]{"A"}),
+                    Insns.areturn()
+            )
+            .selectCodeFragment(
+                    Regexes.concatenate(
+                            CodeRegexes.stencil(InsnStencils.frame(Stencils.bind(0))),
+                            CodeRegexes.stencil(InsnStencils.areturn())
+                    )
+            )
+            .replaceWith(
+                    InsnStencils.frame(FrameStencils.setLocal(FrameStencils.setStack(Stencils.bound(0), 2, "B"), 1, "C")),
+                    InsnStencils.areturn()
+            )
+            .done()
+            .done();
+
+    Assertions.assertEquals(ArrayListHelper.of("A", OpcodesHelper.AUTO, "B"), ((FrameNode) mn.instructions.get(1)).stack);
+    Assertions.assertEquals(ArrayListHelper.of(OpcodesHelper.AUTO, "C"), ((FrameNode) mn.instructions.get(1)).local);
+  }
+
+  // setLocal, setStack
+  @Test
+  void test_17() {
+    MethodNode mn = MethodQuery.ofNew()
+            .addInsns(
+                    Insns.return_(),
+                    Insns.frame(Opcodes.F_NEW, 1, new Object[]{Opcodes.LONG}, 1, new Object[]{Opcodes.LONG}),
+                    Insns.areturn()
+            )
+            .selectCodeFragment(
+                    Regexes.concatenate(
+                            CodeRegexes.stencil(InsnStencils.frame(Stencils.bind(0))),
+                            CodeRegexes.stencil(InsnStencils.areturn())
+                    )
+            )
+            .replaceWith(
+                    InsnStencils.frame(FrameStencils.setLocal(FrameStencils.setStack(Stencils.bound(0), 2, Opcodes.INTEGER), 2, Opcodes.INTEGER)),
+                    InsnStencils.areturn()
+            )
+            .done()
+            .done();
+
+    Assertions.assertEquals(ArrayListHelper.of(Opcodes.LONG, Opcodes.INTEGER), ((FrameNode) mn.instructions.get(1)).stack);
+    Assertions.assertEquals(ArrayListHelper.of(Opcodes.LONG, Opcodes.INTEGER), ((FrameNode) mn.instructions.get(1)).local);
   }
 }
