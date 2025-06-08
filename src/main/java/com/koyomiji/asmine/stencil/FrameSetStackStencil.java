@@ -4,6 +4,7 @@ import com.koyomiji.asmine.common.FrameHelper;
 import com.koyomiji.asmine.common.OpcodesHelper;
 import org.objectweb.asm.tree.FrameNode;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -12,14 +13,14 @@ public class FrameSetStackStencil implements IStencil<FrameNode> {
   public int begin;
   public List<Object> values;
 
-  public FrameSetStackStencil(IStencil<FrameNode> frame, int begin, Object value) {
-    this(frame, begin, Collections.singletonList(value));
-  }
-
   public FrameSetStackStencil(IStencil<FrameNode> frame, int begin, List<Object> values) {
     this.frame = frame;
     this.begin = begin;
     this.values = values;
+  }
+
+  public FrameSetStackStencil(IStencil<FrameNode> frame, int begin, Object... values) {
+    this(frame, begin, Arrays.asList(values));
   }
 
   @Override

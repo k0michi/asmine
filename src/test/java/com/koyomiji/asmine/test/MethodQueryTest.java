@@ -822,4 +822,30 @@ public class MethodQueryTest {
     Assertions.assertEquals(ArrayListHelper.of("A", OpcodesHelper.AUTO, "B"), ((FrameNode) mn.instructions.get(1)).stack);
     Assertions.assertEquals(ArrayListHelper.of(OpcodesHelper.AUTO, "C"), ((FrameNode) mn.instructions.get(1)).local);
   }
+
+  // setLocal, setStack
+  @Test
+  void test_17() {
+    MethodNode mn = MethodQuery.ofNew()
+            .addInsns(
+                    Insns.return_(),
+                    Insns.frame(Opcodes.F_NEW, 1, new Object[]{Opcodes.LONG}, 1, new Object[]{Opcodes.LONG}),
+                    Insns.areturn()
+            )
+            .selectCodeFragment(
+                    Regexes.concatenate(
+                            CodeRegexes.stencil(InsnStencils.frame(Stencils.bind(0))),
+                            CodeRegexes.stencil(InsnStencils.areturn())
+                    )
+            )
+            .replaceWith(
+                    InsnStencils.frame(FrameStencils.setLocal(FrameStencils.setStack(Stencils.bound(0), 2, Opcodes.INTEGER), 2, Opcodes.INTEGER)),
+                    InsnStencils.areturn()
+            )
+            .done()
+            .done();
+
+    Assertions.assertEquals(ArrayListHelper.of(Opcodes.LONG, Opcodes.INTEGER), ((FrameNode) mn.instructions.get(1)).stack);
+    Assertions.assertEquals(ArrayListHelper.of(Opcodes.LONG, Opcodes.INTEGER), ((FrameNode) mn.instructions.get(1)).local);
+  }
 }
