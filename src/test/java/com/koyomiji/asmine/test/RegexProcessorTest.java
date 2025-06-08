@@ -723,4 +723,38 @@ public class RegexProcessorTest {
     RegexThread thread = vm.execute();
     Assertions.assertEquals(Pair.of(0, 1), thread.getBoundLast(0));
   }
+
+  // (|a)
+  @Test
+  void test_17() {
+    RegexModule insns = compile(
+            Regexes.bind(0,
+                    Regexes.alternate(
+                            Regexes.concatenate(),
+                            StringRegexes.literal('a')
+                    )
+            )
+    );
+    List<Object> string = split("a");
+    RegexProcessor vm = new RegexProcessor(insns, string);
+    RegexThread thread = vm.execute();
+    Assertions.assertEquals(Pair.of(0, 0), thread.getBoundLast(0));
+  }
+
+  // (a|)
+  @Test
+  void test_18() {
+    RegexModule insns = compile(
+            Regexes.bind(0,
+                    Regexes.alternate(
+                            StringRegexes.literal('a'),
+                            Regexes.concatenate()
+                    )
+            )
+    );
+    List<Object> string = split("a");
+    RegexProcessor vm = new RegexProcessor(insns, string);
+    RegexThread thread = vm.execute();
+    Assertions.assertEquals(Pair.of(0, 1), thread.getBoundLast(0));
+  }
 }
