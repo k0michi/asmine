@@ -1,9 +1,6 @@
 package com.koyomiji.asmine.test;
 
-import com.koyomiji.asmine.common.ArrayListHelper;
-import com.koyomiji.asmine.common.InsnStencils;
-import com.koyomiji.asmine.common.Insns;
-import com.koyomiji.asmine.common.OpcodesHelper;
+import com.koyomiji.asmine.common.*;
 import com.koyomiji.asmine.compat.OpcodesCompat;
 import com.koyomiji.asmine.query.MethodQuery;
 import com.koyomiji.asmine.regex.compiler.Regexes;
@@ -800,7 +797,7 @@ public class MethodQueryTest {
     Assertions.assertTrue(present);
   }
 
-  // listSet
+  // setLocal, setStack
   @Test
   void test_16() {
     MethodNode mn = MethodQuery.ofNew()
@@ -811,17 +808,18 @@ public class MethodQueryTest {
             )
             .selectCodeFragment(
                     Regexes.concatenate(
-                            CodeRegexes.stencil(InsnStencils.frame(Stencils.bind(0), Stencils.bind(1))),
+                            CodeRegexes.stencil(InsnStencils.frame(Stencils.bind(0))),
                             CodeRegexes.stencil(InsnStencils.areturn())
                     )
             )
             .replaceWith(
-                    InsnStencils.frame(Stencils.bound(0), Stencils.listSet(Stencils.bound(1), 2, "B", OpcodesHelper.AUTO)),
+                    InsnStencils.frame(FrameStencils.setLocal(FrameStencils.setStack(Stencils.bound(0), 2, "B"), 1, "C")),
                     InsnStencils.areturn()
             )
             .done()
             .done();
 
     Assertions.assertEquals(ArrayListHelper.of("A", OpcodesHelper.AUTO, "B"), ((FrameNode) mn.instructions.get(1)).stack);
+    Assertions.assertEquals(ArrayListHelper.of(OpcodesHelper.AUTO, "C"), ((FrameNode) mn.instructions.get(1)).local);
   }
 }

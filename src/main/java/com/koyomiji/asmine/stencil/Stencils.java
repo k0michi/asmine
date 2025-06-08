@@ -31,12 +31,4 @@ public class Stencils {
   public static <T> ListStencil<T> list(IStencil<T>... children) {
     return new ListStencil<>(children);
   }
-
-  public static <T> ListSetStencil<T> listSet(IStencil<List<T>> list, int index, T value) {
-    return new ListSetStencil<>(list, index, value);
-  }
-
-  public static <T> ListSetStencil<T> listSet(IStencil<List<T>> list, int index, T value, T defaultValue) {
-    return new ListSetStencil<>(list, index, value, defaultValue);
-  }
 }

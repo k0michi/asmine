@@ -207,7 +207,7 @@ public class CodeRegexProcessorTest {
             Regexes.concatenate(
                     CodeRegexes.stencil(InsnStencils.label(Stencils.bind(p0))),
                     CodeRegexes.stencil(InsnStencils.lineNumber(Stencils.bind(p1), Stencils.bound(p0))),
-                    CodeRegexes.stencil(InsnStencils.frame(Stencils.any(), Stencils.any())),
+                    CodeRegexes.stencil(InsnStencils.frame(Stencils.any())),
                     CodeRegexes.literal(Insns.iconst_0())
             )
     );
