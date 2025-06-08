@@ -3,7 +3,7 @@ package com.koyomiji.asmine.analysis;
 import com.koyomiji.asmine.common.ArrayListHelper;
 import com.koyomiji.asmine.tree.AbstractInsnNodeHelper;
 import com.koyomiji.asmine.tuple.Pair;
-import org.objectweb.asm.ConstantDynamic;
+//import org.objectweb.asm.ConstantDynamic;
 import org.objectweb.asm.Handle;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
@@ -250,8 +250,8 @@ public class FlowAnalyzer {
           }
         } else if (value instanceof Handle) {
           thread.push("java/lang/invoke/MethodHandle");
-        } else if (value instanceof ConstantDynamic) {
-          thread.push(((ConstantDynamic) value).getDescriptor());
+//        } else if (value instanceof ConstantDynamic) {
+//          thread.push(((ConstantDynamic) value).getDescriptor());
         } else {
           throw new IllegalArgumentException("Unsupported LDC value: " + value);
         }
