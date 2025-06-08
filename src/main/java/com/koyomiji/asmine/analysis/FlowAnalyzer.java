@@ -1,6 +1,7 @@
 package com.koyomiji.asmine.analysis;
 
 import com.koyomiji.asmine.common.ArrayListHelper;
+import com.koyomiji.asmine.common.InsnListIterableAdapter;
 import com.koyomiji.asmine.tree.AbstractInsnNodeHelper;
 import com.koyomiji.asmine.tuple.Pair;
 import org.objectweb.asm.ConstantDynamic;
@@ -39,7 +40,7 @@ public class FlowAnalyzer {
     while (true) {
       AbstractInsnNode entry = null;
 
-      for (AbstractInsnNode insn : methodNode.instructions) {
+      for (AbstractInsnNode insn : new InsnListIterableAdapter(methodNode.instructions)) {
         if (AbstractInsnNodeHelper.isReal(insn) && !visited.contains(insn)) {
           entry = insn;
           break;

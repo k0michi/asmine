@@ -1,6 +1,7 @@
 package com.koyomiji.asmine.tree;
 
 import com.koyomiji.asmine.common.FrameHelper;
+import com.koyomiji.asmine.common.InsnListIterableAdapter;
 import com.koyomiji.asmine.common.OpcodesHelper;
 import com.koyomiji.asmine.compat.OpcodesCompat;
 import com.koyomiji.asmine.analysis.FlowAnalyzer;
@@ -179,7 +180,7 @@ public class NormalizedMethodNode extends MethodNode {
     Map<FrameNode, FlowAnalyzerThread> relFrames = new HashMap<>();
     FlowAnalyzer analyzer = new FlowAnalyzer(className, this);
 
-    for (AbstractInsnNode insn : instructions) {
+    for (AbstractInsnNode insn : new InsnListIterableAdapter(instructions)) {
       if (insn instanceof FrameNode) {
         FrameNode frameNode = (FrameNode) insn;
         List<Object> local = new ArrayList<>();
