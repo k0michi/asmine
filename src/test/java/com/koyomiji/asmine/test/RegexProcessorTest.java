@@ -571,7 +571,6 @@ public class RegexProcessorTest {
       compile(Regexes.concatenate(
               Regexes.bind(0, Regexes.any()),
               Regexes.bind(0, Regexes.any())
-
       ));
     });
   }
@@ -582,7 +581,6 @@ public class RegexProcessorTest {
     Assertions.assertThrows(RegexCompilerException.class, () -> {
       compile(Regexes.concatenate(
               Regexes.bound(0)
-
       ));
     });
   }
@@ -697,5 +695,32 @@ public class RegexProcessorTest {
             Pair.of(1, 3),
             Pair.of(3, 5)
     ), thread.getBounds(0));
+  }
+
+  // empty
+  @Test
+  void test_15() {
+    RegexModule insns = compile(Regexes.bind(0, Regexes.concatenate()));
+    List<Object> string = split("a");
+    RegexProcessor vm = new RegexProcessor(insns, string);
+    Assertions.assertEquals(Pair.of(0, 0), vm.execute().getBoundLast(0));
+  }
+
+  // (a*)*
+  @Test
+  void test_16() {
+    RegexModule insns = compile(
+            Regexes.star(
+                    Regexes.bind(0,
+                            Regexes.star(
+                                    StringRegexes.literal('a')
+                            )
+                    )
+            )
+    );
+    List<Object> string = split("a");
+    RegexProcessor vm = new RegexProcessor(insns, string);
+    RegexThread thread = vm.execute();
+    Assertions.assertEquals(Pair.of(0, 1), thread.getBoundLast(0));
   }
 }
