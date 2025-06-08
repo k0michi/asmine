@@ -1,8 +1,6 @@
 package com.koyomiji.asmine.regex.compiler;
 
-import com.koyomiji.asmine.regex.ForkInsn;
-import com.koyomiji.asmine.regex.JumpInsn;
-import com.koyomiji.asmine.regex.AbstractRegexInsn;
+import com.koyomiji.asmine.regex.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +20,9 @@ public class StarNode extends AbstractQuantifierNode {
     PseudoLabelInsn l1 = new PseudoLabelInsn();
     PseudoLabelInsn l2 = new PseudoLabelInsn();
 
+    context.emit(new ProgressBeginInsn());
     context.emit(l0);
+    context.emit(new ProgressInsn());
     context.emit(type == QuantifierType.GREEDY
             ? new PseudoForkInsn(l1, l2)
             : new PseudoForkInsn(l2, l1));
@@ -30,5 +30,6 @@ public class StarNode extends AbstractQuantifierNode {
     child.compile(context);
     context.emit(new PseudoJumpInsn(l0));
     context.emit(l2);
+    context.emit(new ProgressEndInsn());
   }
 }
