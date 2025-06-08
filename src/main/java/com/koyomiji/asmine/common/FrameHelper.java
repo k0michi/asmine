@@ -10,7 +10,7 @@ import java.util.Objects;
 
 public class FrameHelper {
   public static int getSize(Object verificationType) {
-    return verificationType == Opcodes.LONG || verificationType == Opcodes.DOUBLE ? 2 : 1;
+    return Objects.equals(verificationType, Opcodes.LONG) || Objects.equals(verificationType, Opcodes.DOUBLE) ? 2 : 1;
   }
 
   public static List<Object> toPhysicalForm(List<Object> verificationTypes) {
