@@ -27,6 +27,7 @@ public class Stencils {
     return new ListStencil<>(children);
   }
 
+  @SafeVarargs
   public static <T> ListStencil<T> list(IStencil<T>... children) {
     return new ListStencil<>(children);
   }
