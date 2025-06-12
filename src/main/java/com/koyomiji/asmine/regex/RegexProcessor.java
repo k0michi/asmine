@@ -70,30 +70,6 @@ public class RegexProcessor {
     return intransitives;
   }
 
-  private List<RegexThread> skipBoundaries(RegexThread thread) {
-    Stack<RegexThread> stack = new Stack<>();
-    stack.push(thread);
-
-    LinkedList<RegexThread> intransitives = new LinkedList<>();
-
-    while (!stack.isEmpty()) {
-      RegexThread t = stack.pop();
-
-      if (t.isRunning() && (getInstruction(t).getExecutionType() == AbstractRegexInsn.TRANSITIVE || getInstruction(t).getExecutionType() == AbstractRegexInsn.BOUNDARY)) {
-        List<RegexThread> children = step(t);
-
-        for (int i = children.size() - 1; i >= 0; i--) {
-          RegexThread child = children.get(i);
-          stack.push(child);
-        }
-      } else {
-        intransitives.add(t);
-      }
-    }
-
-    return intransitives;
-  }
-
   protected void visitChar(Object character) {
   }
 
@@ -118,23 +94,27 @@ public class RegexProcessor {
           break match;
         }
 
-        for (RegexThread u : skipTransitives(t)) {
-          if (u.isTerminated()) {
-            terminated = u;
-            break match;
+        if (isTransitiveChar(getCurrentChar())) {
+          // Consume the current char. This is prioritized over skipping
+          for (RegexThread u : skipTransitives(t.clone())) {
+            if (u.isTerminated()) {
+              terminated = u;
+              break match;
+            }
+
+            next.addAll(step(u));
           }
 
-          if (isTransitiveChar(getCurrentChar())) {
-            next.add(u);
-          } else {
-            for (RegexThread v : skipBoundaries(u)) {
-              if (v.isTerminated()) {
-                terminated = v;
-                break match;
-              }
-
-              next.addAll(step(v));
+          // In case of skipping the current char
+          next.add(t);
+        } else {
+          for (RegexThread u : skipTransitives(t)) {
+            if (u.isTerminated()) {
+              terminated = u;
+              break match;
             }
+
+            next.addAll(step(u));
           }
         }
       }

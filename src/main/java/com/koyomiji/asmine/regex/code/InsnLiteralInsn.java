@@ -65,6 +65,6 @@ public class InsnLiteralInsn extends AbstractRegexInsn {
 
   @Override
   public int getExecutionType() {
-    return AbstractInsnNodeHelper.isPseudo(literal) ? BOUNDARY : CONSUMING;
+    return CONSUMING;
   }
 }

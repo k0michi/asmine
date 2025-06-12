@@ -68,6 +68,6 @@ public class InsnStencilInsn extends AbstractRegexInsn {
 
   @Override
   public int getExecutionType() {
-    return stencil.isPseudo() ? BOUNDARY : CONSUMING;
+    return CONSUMING;
   }
 }

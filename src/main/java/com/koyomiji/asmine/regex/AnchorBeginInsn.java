@@ -18,6 +18,6 @@ public class AnchorBeginInsn extends AbstractRegexInsn {
 
   @Override
   public int getExecutionType() {
-    return BOUNDARY;
+    return TRANSITIVE;
   }
 }
