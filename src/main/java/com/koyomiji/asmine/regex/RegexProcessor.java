@@ -46,7 +46,7 @@ public class RegexProcessor {
     return getInstruction(thread).execute(this, thread);
   }
 
-  private List<RegexThread> skipTransitive(RegexThread thread) {
+  private List<RegexThread> skipTransitives(RegexThread thread) {
     Stack<RegexThread> stack = new Stack<>();
     stack.push(thread);
 
@@ -55,7 +55,31 @@ public class RegexProcessor {
     while (!stack.isEmpty()) {
       RegexThread t = stack.pop();
 
-      if (t.isRunning() && getInstruction(t).isTransitive()) {
+      if (t.isRunning() && getInstruction(t).getExecutionType() == AbstractRegexInsn.TRANSITIVE) {
+        List<RegexThread> children = step(t);
+
+        for (int i = children.size() - 1; i >= 0; i--) {
+          RegexThread child = children.get(i);
+          stack.push(child);
+        }
+      } else {
+        intransitives.add(t);
+      }
+    }
+
+    return intransitives;
+  }
+
+  private List<RegexThread> skipBoundaries(RegexThread thread) {
+    Stack<RegexThread> stack = new Stack<>();
+    stack.push(thread);
+
+    LinkedList<RegexThread> intransitives = new LinkedList<>();
+
+    while (!stack.isEmpty()) {
+      RegexThread t = stack.pop();
+
+      if (t.isRunning() && (getInstruction(t).getExecutionType() == AbstractRegexInsn.TRANSITIVE || getInstruction(t).getExecutionType() == AbstractRegexInsn.BOUNDARY)) {
         List<RegexThread> children = step(t);
 
         for (int i = children.size() - 1; i >= 0; i--) {
@@ -85,32 +109,33 @@ public class RegexProcessor {
     for (stringPointer = begin; stringPointer <= string.size(); stringPointer++) {
       visitChar(getCurrentChar());
 
-      if (isTransitiveChar(getCurrentChar())) {
-        continue;
-      }
-
       List<RegexThread> next = new ArrayList<>();
 
       match:
-      for (int j = 0; j < threads.size(); j++) {
-        RegexThread thread = threads.get(j);
-
-        if (thread.isTerminated()) {
-          terminated = thread;
+      for (RegexThread t : threads) {
+        if (t.isTerminated()) {
+          terminated = t;
           break match;
         }
 
-        List<RegexThread> intransitives = skipTransitive(thread);
-
-        for (int k = 0; k < intransitives.size(); k++) {
-          RegexThread t = intransitives.get(k);
-
-          if (t.isTerminated()) {
-            terminated = t;
+        for (RegexThread u : skipTransitives(t)) {
+          if (u.isTerminated()) {
+            terminated = u;
             break match;
           }
 
-          next.addAll(step(t));
+          if (isTransitiveChar(getCurrentChar())) {
+            next.add(u);
+          } else {
+            for (RegexThread v : skipBoundaries(u)) {
+              if (v.isTerminated()) {
+                terminated = v;
+                break match;
+              }
+
+              next.addAll(step(v));
+            }
+          }
         }
       }
 

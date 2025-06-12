@@ -13,7 +13,7 @@ public abstract class AbstractPseudoInsn extends AbstractRegexInsn {
   }
 
   @Override
-  public boolean isTransitive() {
-    return false;
+  public int getExecutionType() {
+    throw new UnsupportedOperationException("PseudoInsn cannot be executed");
   }
 }
