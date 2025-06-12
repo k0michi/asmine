@@ -31,7 +31,7 @@ public class ForkInsn extends AbstractRegexInsn {
   }
 
   @Override
-  public boolean isTransitive() {
-    return true;
+  public int getExecutionType() {
+    return TRANSITIVE;
   }
 }

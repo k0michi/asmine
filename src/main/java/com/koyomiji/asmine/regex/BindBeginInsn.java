@@ -20,7 +20,7 @@ public class BindBeginInsn extends AbstractRegexInsn {
   }
 
   @Override
-  public boolean isTransitive() {
-    return true;
+  public int getExecutionType() {
+    return TRANSITIVE;
   }
 }

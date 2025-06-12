@@ -13,7 +13,7 @@ public class AnyInsn extends AbstractRegexInsn {
   }
 
   @Override
-  public boolean isTransitive() {
-    return false;
+  public int getExecutionType() {
+    return CONSUMING;
   }
 }
