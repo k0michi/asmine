@@ -8,6 +8,7 @@ import com.koyomiji.asmine.stencil.insn.AbstractInsnStencil;
 import com.koyomiji.asmine.stencil.insn.FrameStencil;
 import com.koyomiji.asmine.stencil.insn.LabelStencil;
 import com.koyomiji.asmine.stencil.insn.LineNumberStencil;
+import com.koyomiji.asmine.tree.AbstractInsnNodeHelper;
 import com.koyomiji.asmine.tuple.Pair;
 import org.objectweb.asm.tree.FrameNode;
 import org.objectweb.asm.tree.LabelNode;
@@ -66,7 +67,7 @@ public class InsnStencilInsn extends AbstractRegexInsn {
   }
 
   @Override
-  public boolean isTransitive() {
-    return stencil.isPseudo();
+  public int getExecutionType() {
+    return CONSUMING;
   }
 }

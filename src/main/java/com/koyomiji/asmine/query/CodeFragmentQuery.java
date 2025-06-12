@@ -8,6 +8,7 @@ import com.koyomiji.asmine.stencil.StencilEvaluationException;
 import com.koyomiji.asmine.stencil.insn.AbstractInsnStencil;
 import com.koyomiji.asmine.tree.AbstractInsnNodeHelper;
 import com.koyomiji.asmine.tuple.Pair;
+import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.InsnList;
 
 import java.util.ArrayList;
@@ -51,8 +52,8 @@ public class CodeFragmentQuery<T> extends AbstractQuery<T> {
     this.selected = selected;
   }
 
-  private InsnList instantiate(List<AbstractInsnStencil> insns) throws StencilEvaluationException {
-    InsnList insnList = new InsnList();
+  private List<AbstractInsnNode> instantiate(List<AbstractInsnStencil> insns) throws StencilEvaluationException {
+    List<AbstractInsnNode> insnList = new ArrayList<>();
 
     for (AbstractInsnStencil insn : insns) {
       insnList.add(insn.evaluate(matchResult));
