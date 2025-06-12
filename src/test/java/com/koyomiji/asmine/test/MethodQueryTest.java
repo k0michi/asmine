@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.FrameNode;
 import org.objectweb.asm.tree.InsnNode;
+import org.objectweb.asm.tree.LabelNode;
 import org.objectweb.asm.tree.MethodNode;
 
 public class MethodQueryTest {
@@ -847,5 +848,35 @@ public class MethodQueryTest {
 
     Assertions.assertEquals(ArrayListHelper.of(Opcodes.LONG, Opcodes.INTEGER), ((FrameNode) mn.instructions.get(1)).stack);
     Assertions.assertEquals(ArrayListHelper.of(Opcodes.LONG, Opcodes.INTEGER), ((FrameNode) mn.instructions.get(1)).local);
+  }
+
+  @Test
+  void test_18() {
+    LabelNode l0 = null, l1 = null;
+
+    MethodNode mn = MethodQuery.ofNew()
+            .addInsns(
+                    l0 = Insns.label(),
+                    Insns.return_(),
+                    l1 = Insns.label()
+            )
+            .selectCodeFragment(
+                    Regexes.concatenate(
+                            CodeRegexes.stencil(InsnStencils.label(Stencils.bind(0))),
+                            CodeRegexes.stencil(InsnStencils.return_()),
+                            CodeRegexes.stencil(InsnStencils.label(Stencils.bind(1)))
+                    )
+            )
+            .replaceWith(
+                    InsnStencils.label(Stencils.bound(0)),
+                    InsnStencils.ireturn(),
+                    InsnStencils.label(Stencils.bound(1))
+            )
+            .done()
+            .done();
+
+    Assertions.assertEquals(l0, mn.instructions.get(0));
+    Assertions.assertEquals(Opcodes.IRETURN, mn.instructions.get(1).getOpcode());
+    Assertions.assertEquals(l1, mn.instructions.get(2));
   }
 }
