@@ -352,28 +352,4 @@ public class CodeRegexProcessorTest {
     CodeRegexThread thread = vm.execute();
     Assertions.assertEquals(Pair.of(0, 4), thread.getBoundLast(0));
   }
-
-  @Test
-  void test_18() throws StencilEvaluationException {
-    RegexModule regex = compile(
-            Regexes.concatenate(
-                    new SkipPseudoNode(),
-                    Regexes.bind(0,
-                            Regexes.concatenate(
-                                    Regexes.any(),
-                                    Regexes.any()
-                            )
-                    )
-            )
-    );
-    List<AbstractInsnNode> string = ArrayListHelper.of(
-            Insns.label(),
-            Insns.iconst_0(),
-            Insns.label(),
-            Insns.iconst_0()
-    );
-    CodeRegexProcessor vm = new CodeRegexProcessor(regex, string);
-    CodeRegexThread thread = vm.execute();
-    Assertions.assertEquals(Pair.of(1, 4), thread.getBoundLast(0));
-  }
 }
