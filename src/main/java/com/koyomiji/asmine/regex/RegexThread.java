@@ -218,4 +218,17 @@ public class RegexThread implements Cloneable {
   public List<Object> getTrace() {
     return trace;
   }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    RegexThread that = (RegexThread) o;
+    return terminated == that.terminated && functionPointer == that.functionPointer && programCounter == that.programCounter && Objects.equals(stack, that.stack) && Objects.equals(callStack, that.callStack) && Objects.equals(scopes, that.scopes) && Objects.equals(scopeStack, that.scopeStack) && Objects.equals(stringBinds, that.stringBinds) && Objects.equals(trace, that.trace);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(terminated, functionPointer, programCounter, stack, callStack, scopes, scopeStack, stringBinds, trace);
+  }
 }

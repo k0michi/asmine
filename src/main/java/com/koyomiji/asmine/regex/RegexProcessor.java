@@ -77,6 +77,12 @@ public class RegexProcessor {
     return execute(0);
   }
 
+  private void addThread(List<RegexThread> threads, Set<RegexThread> memo, RegexThread thread) {
+    if (memo.add(thread)) {
+      threads.add(thread);
+    }
+  }
+
   public RegexThread execute(int begin) {
     this.threads = new ArrayList<>();
     this.threads.add(newThread(nextThreadID++));
@@ -86,6 +92,7 @@ public class RegexProcessor {
       visitChar(getCurrentChar());
 
       List<RegexThread> next = new ArrayList<>();
+      Set<RegexThread> nextMemo = new HashSet<>();
 
       match:
       for (RegexThread t : threads) {
@@ -102,11 +109,13 @@ public class RegexProcessor {
               break match;
             }
 
-            next.addAll(step(u));
+            for (RegexThread v : step(u)) {
+              addThread(next, nextMemo, v);
+            }
           }
 
           // In case of skipping the current char
-          next.add(t);
+          addThread(next, nextMemo, t);
         } else {
           for (RegexThread u : skipTransitives(t)) {
             if (u.isTerminated()) {
@@ -114,7 +123,9 @@ public class RegexProcessor {
               break match;
             }
 
-            next.addAll(step(u));
+            for (RegexThread v : step(u)) {
+              addThread(next, nextMemo, v);
+            }
           }
         }
       }
