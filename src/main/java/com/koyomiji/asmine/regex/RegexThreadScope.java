@@ -2,6 +2,7 @@ package com.koyomiji.asmine.regex;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class RegexThreadScope implements Cloneable {
   public int parent;
@@ -39,5 +40,18 @@ public class RegexThreadScope implements Cloneable {
 
   public boolean isEnded() {
     return end != -1;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    RegexThreadScope that = (RegexThreadScope) o;
+    return parent == that.parent && begin == that.begin && end == that.end && Objects.equals(key, that.key) && Objects.equals(children, that.children);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(parent, key, begin, end, children);
   }
 }
