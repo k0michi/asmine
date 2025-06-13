@@ -24,37 +24,6 @@ public class InsnLiteralInsn extends AbstractRegexInsn {
   public List<RegexThread> execute(RegexProcessor processor, RegexThread thread) {
     CodeRegexProcessor codeProcessor = (CodeRegexProcessor) processor;
 
-    if (AbstractInsnNodeHelper.isPseudo(literal)) {
-      if (literal instanceof LabelNode) {
-        LabelNode label = codeProcessor.getCurrentLabel();
-
-        if (codeProcessor.compareCharToLiteral(label, literal)) {
-          thread.advanceProgramCounter();
-          return ArrayListHelper.of(thread);
-        } else {
-          return ArrayListHelper.of();
-        }
-      } else if (literal instanceof LineNumberNode) {
-        LineNumberNode lineNumber = codeProcessor.getCurrentLineNumber();
-
-        if (codeProcessor.compareCharToLiteral(lineNumber, literal)) {
-          thread.advanceProgramCounter();
-          return ArrayListHelper.of(thread);
-        } else {
-          return ArrayListHelper.of();
-        }
-      } else if (literal instanceof FrameNode) {
-        FrameNode frame = codeProcessor.getCurrentFrame();
-
-        if (codeProcessor.compareCharToLiteral(frame, literal)) {
-          thread.advanceProgramCounter();
-          return ArrayListHelper.of(thread);
-        } else {
-          return ArrayListHelper.of();
-        }
-      }
-    }
-
     if (!codeProcessor.compareCurrentCharToLiteral(literal)) {
       return ArrayListHelper.of();
     }
