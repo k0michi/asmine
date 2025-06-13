@@ -9,10 +9,6 @@ import org.objectweb.asm.tree.*;
 import java.util.List;
 
 public class CodeRegexProcessor extends RegexProcessor {
-  private LineNumberNode lineNumberNode;
-  private FrameNode frameNode;
-  private LabelNode labelNode;
-
   public CodeRegexProcessor(RegexModule module, List<?> string) {
     super(module, string);
   }
@@ -30,23 +26,6 @@ public class CodeRegexProcessor extends RegexProcessor {
   protected MatchResult newMatchResult(RegexThread thread) {
     CodeRegexThread codeThread = (CodeRegexThread) thread;
     return new CodeMatchResult(codeThread);
-  }
-
-  @Override
-  protected void visitChar(Object character) {
-    if (character instanceof AbstractInsnNode) {
-      AbstractInsnNode insn = (AbstractInsnNode) character;
-
-      if (insn instanceof LineNumberNode) {
-        lineNumberNode = (LineNumberNode) insn;
-      } else if (insn instanceof FrameNode) {
-        frameNode = (FrameNode) insn;
-      } else if (insn instanceof LabelNode) {
-        labelNode = (LabelNode) insn;
-      }
-    }
-
-    super.visitChar(character);
   }
 
   @Override
@@ -89,17 +68,5 @@ public class CodeRegexProcessor extends RegexProcessor {
 
   public boolean compareCurrentCharToStencil(RegexThread thread, IStencil<?> expected) {
     return compareCharToStencil(thread, getCurrentChar(), expected);
-  }
-
-  public LabelNode getCurrentLabel() {
-    return labelNode;
-  }
-
-  public LineNumberNode getCurrentLineNumber() {
-    return lineNumberNode;
-  }
-
-  public FrameNode getCurrentFrame() {
-    return frameNode;
   }
 }
